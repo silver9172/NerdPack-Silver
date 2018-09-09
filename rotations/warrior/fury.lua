@@ -1,9 +1,4 @@
 local GUI = {
-	-- Sotr
-	{type = 'header', text = 'Shield of the Righteous', align = 'center'},
-	{type = 'spinner', text = 'Use 2nd Charge', key = 'sotr', default_spin = 75},
-	{type = 'ruler'},{type = 'spacer'},
-	
 	-- Survival
 	{type = 'header', text = 'Survival', align = 'center'},
 	{type = 'spinner', text = 'Victory Rush', key = 'vr', default_spin = 75},
@@ -34,34 +29,34 @@ local interrupts = {
 
 local utility = {
 	-- Check player
-	{ 'Battle Shout', 'buff.duration <= 600', 'player'},
+	{ 'Battle Shout', '!buff.any', 'player'},
 	
 	-- Check party/raid
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest2'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest3'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest4'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest5'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest6'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest7'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest8'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest9'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest10'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest11'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest12'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest13'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest14'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest15'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest16'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest17'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest18'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest19'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest20'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest21'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest22'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest23'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest24'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest25'},
+	{ 'Battle Shout', '!buff.any', 'lowest'},
+	{ 'Battle Shout', '!buff.any', 'lowest2'},
+	{ 'Battle Shout', '!buff.any', 'lowest3'},
+	{ 'Battle Shout', '!buff.any', 'lowest4'},
+	{ 'Battle Shout', '!buff.any', 'lowest5'},
+	{ 'Battle Shout', '!buff.any', 'lowest6'},
+	{ 'Battle Shout', '!buff.any', 'lowest7'},
+	{ 'Battle Shout', '!buff.any', 'lowest8'},
+	{ 'Battle Shout', '!buff.any', 'lowest9'},
+	{ 'Battle Shout', '!buff.any', 'lowest10'},
+	{ 'Battle Shout', '!buff.any', 'lowest11'},
+	{ 'Battle Shout', '!buff.any', 'lowest12'},
+	{ 'Battle Shout', '!buff.any', 'lowest13'},
+	{ 'Battle Shout', '!buff.any', 'lowest14'},
+	{ 'Battle Shout', '!buff.any', 'lowest15'},
+	{ 'Battle Shout', '!buff.any', 'lowest16'},
+	{ 'Battle Shout', '!buff.any', 'lowest17'},
+	{ 'Battle Shout', '!buff.any', 'lowest18'},
+	{ 'Battle Shout', '!buff.any', 'lowest19'},
+	{ 'Battle Shout', '!buff.any', 'lowest20'},
+	{ 'Battle Shout', '!buff.any', 'lowest21'},
+	{ 'Battle Shout', '!buff.any', 'lowest22'},
+	{ 'Battle Shout', '!buff.any', 'lowest23'},
+	{ 'Battle Shout', '!buff.any', 'lowest24'},
+	{ 'Battle Shout', '!buff.any', 'lowest25'},
 }
 
 local cooldowns = {

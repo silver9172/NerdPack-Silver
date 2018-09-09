@@ -33,34 +33,34 @@ local interrupts = {
 
 local utility = {
 	-- Check player
-	{ 'Battle Shout', 'buff.duration <= 600', 'player'},
+	{ 'Battle Shout', '!buff.any', 'player'},
 	
 	-- Check party/raid
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest2'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest3'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest4'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest5'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest6'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest7'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest8'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest9'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest10'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest11'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest12'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest13'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest14'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest15'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest16'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest17'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest18'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest19'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest20'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest21'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest22'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest23'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest24'},
-	{ 'Battle Shout', 'buff.duration <= 600', 'lowest25'},
+	{ 'Battle Shout', '!buff.any', 'lowest'},
+	{ 'Battle Shout', '!buff.any', 'lowest2'},
+	{ 'Battle Shout', '!buff.any', 'lowest3'},
+	{ 'Battle Shout', '!buff.any', 'lowest4'},
+	{ 'Battle Shout', '!buff.any', 'lowest5'},
+	{ 'Battle Shout', '!buff.any', 'lowest6'},
+	{ 'Battle Shout', '!buff.any', 'lowest7'},
+	{ 'Battle Shout', '!buff.any', 'lowest8'},
+	{ 'Battle Shout', '!buff.any', 'lowest9'},
+	{ 'Battle Shout', '!buff.any', 'lowest10'},
+	{ 'Battle Shout', '!buff.any', 'lowest11'},
+	{ 'Battle Shout', '!buff.any', 'lowest12'},
+	{ 'Battle Shout', '!buff.any', 'lowest13'},
+	{ 'Battle Shout', '!buff.any', 'lowest14'},
+	{ 'Battle Shout', '!buff.any', 'lowest15'},
+	{ 'Battle Shout', '!buff.any', 'lowest16'},
+	{ 'Battle Shout', '!buff.any', 'lowest17'},
+	{ 'Battle Shout', '!buff.any', 'lowest18'},
+	{ 'Battle Shout', '!buff.any', 'lowest19'},
+	{ 'Battle Shout', '!buff.any', 'lowest20'},
+	{ 'Battle Shout', '!buff.any', 'lowest21'},
+	{ 'Battle Shout', '!buff.any', 'lowest22'},
+	{ 'Battle Shout', '!buff.any', 'lowest23'},
+	{ 'Battle Shout', '!buff.any', 'lowest24'},
+	{ 'Battle Shout', '!buff.any', 'lowest25'},
 }
 
 local interrupts = {
@@ -71,10 +71,11 @@ local interrupts = {
 local activeMitigation = {
 	{ 'Victory Rush', 'player.health <= 70'},
 	
-	{ 'Shield Block', 'player.spell.charges >= 2', 'target'},
-	{ 'Shield Block', '!player.buff & player.incdmg.phys(4) >= { player.health.max * 0.2 }'},
+	{ 'Shield Block', 'player.spell.charges >= 2', 'target'}, -- Prevent cap
+	--{ 'Shield Block', '!player.buff & player.incdmg.phys(4) >= { player.health.max * 0.2 }'},
 	
-	{ 'Last Stand', 'player.health <= 50 & player.incdmg.phys(4) >= { player.health.max * 0.6 }'}, 
+	{ 'Demoralizing Shout', 'player.health <= 75 & player.incdmg(4) >= { player.health.max * 0.3 }', 'target'}, 
+	{ 'Last Stand', 'player.health <= 50 & player.incdmg(4) >= { player.health.max * 0.6 }'}, 
 }
 
 local cooldowns = {

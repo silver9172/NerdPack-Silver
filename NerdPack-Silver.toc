@@ -7,6 +7,8 @@
 conditions.lua
 fakeunits.lua
 
+rotations\rogue\assassination.lua
+
 rotations\paladin\protection.lua
 rotations\paladin\holy.lua
 rotations\paladin\retribution.lua
