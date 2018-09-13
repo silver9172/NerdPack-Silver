@@ -55,13 +55,13 @@ local cooldowns = {
 
 local aoeRotation = {
 	{ 'Rupture', 'player.combopoints >= 4 & debuff.duration <= 6 & range <= 8 & infront', 'target'},
-	{ 'Rupture', 'player.combopoints >= 4 & debuff.duration <= 6 & count.enemies.debuffs <= 3 & range <= 8 & infront', 'enemies'},
+	{ 'Rupture', 'player.combopoints >= 4 & debuff.duration <= 6 & count.enemies.debuffs <= 3 & range <= 8 & infront & enemy', 'enemies'},
 	-- Vendetta
 	{ 'Vendetta', 'toggle(cooldowns) & target.bosscheck >= 1 & debuff(Rupture)', 'target'}, 
 	{ cooldowns, 'target.debuff(Vendetta)'}, 
 	-- Garrote
 	{ 'Garrote', 'debuff.duration <= 5.4 & range <= 8 & infront', 'target'},
-	{ 'Garrote', 'debuff.duration <= 5.4 & count.enemies.debuffs <= 3 & range <= 8 & infront', 'enemies'},
+	{ 'Garrote', 'debuff.duration <= 5.4 & count.enemies.debuffs <= 3 & range <= 8 & infront & enemy', 'enemies'},
 	{ 'Crimson Tempest', '{ player.combopoints >= 4 & !talent(3,2) || player.combopoints >= 5 & talent(3,2)}', 'target'},
 	{ 'Envenom', 'range <= 8 &  & infront & { player.combopoints >= 4 & !talent(3,2) || player.combopoints >= 5 & talent(3,2)}', 'target'},
 	{ 'Poisoned Knife', 'player.buff(Sharpened Blades).count > 29 & infront', 'target'},
@@ -101,15 +101,16 @@ local inCombat = {
 	{ survival},
 	{ aoeRotation, 'player.area(10).enemies >= 2'}, 
 	{ rotation, 'target.enemy'},
+	--{ 'Poisoned Knife'}, 
 }
 
 local outCombat = {
 	-- Poisons --
-	{ 'Deadly Poison', 'player.buff.duration <= 600 & !player.lastcast & !moving'},
-	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !moving'},
+	{ 'Deadly Poison', 'player.buff.duration <= 600 & !player.lastcast & !player.moving'},
+	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !player.moving'},
 	-------------
 
-	{ 'Stealth', '!player.buff & !player.buff(Vanish)'},
+	--{ 'Stealth', '!player.buff & !player.buff(Vanish) & !lastcast'},
 	{ keybinds},
 	{ preCombat}
 }
