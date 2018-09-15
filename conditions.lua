@@ -131,6 +131,20 @@ NeP.DSL:Register('immunitycheck', function ()
 end)
 
 ---------------------------------------
+--------------- Rogue -----------------
+---------------------------------------
+
+NeP.DSL:Register('combopoints.deficit', function ()
+	local max = 5
+    if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 then
+        max = 6
+    end
+	local curr = GetComboPoints('player','target')
+	--print(max - curr)
+	return (max - curr)
+end)
+
+---------------------------------------
 -------------- Warrior ----------------
 ---------------------------------------
 
