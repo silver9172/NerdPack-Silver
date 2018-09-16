@@ -110,7 +110,11 @@ NeP.DSL:Register('bosscheck', function()
 		elseif ( UnitClassification("target") == "rare" ) then
 			check = 1
 			return check
-		elseif UnitLevel("target") >= UnitLevel("player") + 2 then
+		-- This is for dungeon bosses
+		elseif UnitLevel("target") >= UnitLevel("player") + 2 and not IsInRaid() then
+			check = 1
+			return check
+		elseif UnitLevel("target") < 0 then
 			check = 1
 			return check
 		else
@@ -142,6 +146,30 @@ NeP.DSL:Register('combopoints.deficit', function ()
 	local curr = GetComboPoints('player','target')
 	--print(max - curr)
 	return (max - curr)
+end)
+
+NeP.DSL:Register('stealthed', function()
+    if NeP.DSL:Get('buff')('player', 'Shadow Dance') or NeP.DSL:Get('buff')('player', 'Stealth') or NeP.DSL:Get('buff')('player', 'Subterfuge') or NeP.DSL:Get('buff')('player', 'Vanish') or NeP.DSL:Get('buff')('player', 'Shadowmeld') or NeP.DSL:Get('buff')('player', 'Prowl') then
+        return true
+    else
+        return false
+    end
+end)
+
+NeP.DSL:Register('variable.stealth_threshold', function()
+	--actions.precombat+=/variable,name=stealth_threshold,value=60+talent.vigor.enabled*35+talent.master_of_shadows.enabled*10
+	local x = (60 + NeP.DSL:Get('talent.enabled')(nil, '3,1') * 35 + NeP.DSL:Get('talent.enabled')(nil, '7,1') * 10)
+	--print(x)
+    return x
+end)
+
+NeP.DSL:Register('shd_threshold', function()
+	--cooldown.shadow_dance.charges_fractional>=1.75
+	if NeP.DSL:Get('spell.charges')('player', 'Shadow Dance') >= 1.75 then
+		return true
+	else
+		return false
+	end
 end)
 
 ---------------------------------------

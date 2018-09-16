@@ -8,6 +8,7 @@ conditions.lua
 fakeunits.lua
 
 rotations\rogue\assassination.lua
+rotations\rogue\subtley.lua
 
 rotations\paladin\protection.lua
 rotations\paladin\holy.lua

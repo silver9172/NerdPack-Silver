@@ -83,7 +83,7 @@ local wowhead = {
 	{ 'Garrote', 'debuff.duration <= 5.4 & combopoints.deficit >= 2', 'target'},
 	{ 'Garrote', 'debuff.duration <= 5.4 & combopoints.deficit >= 2 & count.enemies.debuffs < 3 & range <= 8 & infront & enemy & toggle(cleave)', 'enemies'},
 	{ 'Crimson Tempest', 'combopoints.deficit <= 1 & debuff.duration <= 2', 'target'},
-	{ 'Rupture', 'combopoints.deficit <= 1 & debuff.duration <= 6', 'target'},
+	{ 'Rupture', '{combopoints.deficit <= 1 & debuff.duration <= 6} || { !debuff & bosscheck = 1}', 'target'},
 	{ 'Rupture', 'combopoints.deficit <= 1 & debuff.duration <= 6 & count.enemies.debuffs < 3 & range <= 8 & infront & enemy & toggle(cleave)', 'enemies'},
 	{ 'Envenom', 'combopoints.deficit <= 1 & { player.area(8).enemies >= 2 || target.debuff(Vendetta) || target.debuff(Toxic Blade) || player.deficit < 40}', 'target'}, 
 	{ 'Fan of Knives', 'toggle(aoe) & { player.buff(Hidden Blades).count >= 19 || player.area(10).enemies > 2}', 'target'}, 
