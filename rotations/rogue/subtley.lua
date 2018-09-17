@@ -149,7 +149,7 @@ local stealthCooldowns = {
 	--actions.stealth_cds+=/shadow_dance,if=(!talent.dark_shadow.enabled|dot.nightblade.remains>=5+talent.subterfuge.enabled)&(variable.shd_threshold|buff.symbols_of_death.remains>=1.2|spell_targets>=4&cooldown.symbols_of_death.remains>10)
 	{ 'Shadow Dance', '{ !talent(6,1) || target.debuff(Nightblade).duration >= 5 + talent(2,2)} & { variable.shd_threshold || buff(Symbols of Death).duration >= 1.2 || player.area(8).enemies >= 4 & spell(Symbols of Death).cooldown > 10}', 'player'}, 
 	--actions.stealth_cds+=/shadow_dance,if=target.time_to_die<cooldown.symbols_of_death.remains
-	{ 'Shadow Dance', 'target.ttd < buff(Symbols of Death).duration', 'player'}, 
+	{ 'Shadow Dance', 'target.ttd < spell.(Symbols of Death).cooldown', 'player'}, 
 }
 
 local stealthed = {
@@ -183,7 +183,7 @@ local simCraft = {
 	--actions+=/call_action_list,name=stealth_cds,if=energy.deficit<=variable.stealth_threshold&combo_points.deficit>=4
 	{ stealthCooldowns, 'player.deficit <= variable.stealth_threshold & combopoints.deficit >= 4'},
 	--# Finish at 4+ without DS, 5+ with DS (outside stealth)
-	{ finish, 'combopoints.deficit <= 1'}, 
+	{ finish, 'combopoints.deficit <= 1 & !player.stealthed'}, 
 	--actions+=/call_action_list,name=finish,if=combo_points>=4+talent.deeper_stratagem.enabled|target.time_to_die<=1&combo_points>=3
 	{ finish, 'combopoints >= 4 + talent(3,2) || target.ttd <= 1 & combopoints >= 3'},
 	--# Use a builder when reaching the energy threshold (minus 40 if none of Alacrity, Shadow Focus, and Master of Shadows is selected)
@@ -199,6 +199,7 @@ local simCraft = {
 local inCombat = {
 	{ '/startattack', '!isattacking & target.enemy'},
 	{ keybinds},
+	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
 	{ utility},
 	-- { rotation}
