@@ -173,34 +173,26 @@ NeP.DSL:Register('shd_threshold', function()
 end)
 
 NeP.DSL:Register('poisoned_bleeds', function()
-	local x = 0 
+	local x = 0
+	local y = 0
 	for i=1,40 do
 		local name = UnitDebuff('target',i)
-		if name == 'Rupture' or name == 'Garrote' then
-			local x = x + 1
-			return x
-		end
+			if name == 'Rupture' then
+				x = x + 1
+			end
 	end
-	
-	--local rupture = UnitDebuff('target', 'Rupture')
-	--local garrote = UnitDebuff('target', 'Garrote')
-	--local mutilatedFlesh = UnitDebuff('target', 'Mutilated Flesh')	
-	--local int = 0
-	--if rupture then
-	--	int = int + 1
-	--end
-	--if garrote then
-	--	int = int + 1
-	--end
-	--if mutilatedFlesh then
-	--	int = int + 1
-	--end
-	--return int
+	for i=1,40 do
+		local name = UnitDebuff('target',i)
+			if name == 'Garrote' then
+				y = y + 1
+			end
+	end
+	return (x + y)
 end)
 
 -- energy.regen+poisoned_bleeds*7%(2*spell_haste)
 NeP.DSL:Register('energy_regen_combined', function()
-	local x = (NeP.DSL:Get('energy.regen')() + NeP.DSL:Get('poisoned_bleeds')() * 7 / (2 * NeP.DSL:Get('haste')('player'))
+	local x = (NeP.DSL:Get('energy.regen')() + NeP.DSL:Get('poisoned_bleeds')() * 7 / (2 * NeP.DSL:Get('haste')('player')))
 	return x
 end)
 

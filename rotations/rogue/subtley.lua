@@ -31,7 +31,6 @@ local keybinds = {
 
 local interrupts = {
 	{ 'Kick'},
-	{ 'Arcane Torrent', 'target.range <= 8 & spell(Kick).cooldown > gcd & !prev_gcd(Kick)'},
 }
 
 local survival = {
@@ -43,28 +42,6 @@ local survival = {
 	
 	-- Healthstones
 	--{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
-}
-
-local cooldowns = {
-	{ 'Blood Fury', 'debuff(Vendetta)', 'target'},
-	{ 'Beserking', 'debuff(Vendetta)', 'target'}, 
-	{ 'Shadow Blades'},
-}
-
-local rotation = {
-	{ survival},
-	{ cooldowns, 'target.bosscheck >= 1'},
-	{ 'Nightblade', 'combopoints.deficit <= 1 & debuff.duration <= 4.8', 'target'}, 
-	-- Nightblade Cleave
-	-- Symbols of Death
-	{ 'Symbols of Death', 'player.buff(Shadow Dance)', 'target'}, 
-	{ 'Secret Technique', 'combopoints.deficit <= 1 & player.buff(Symbols of Death)', 'target'},
-	{ 'Shadow Dance', '{ player.energy >= 55 & player.spell(Symbols of Death).cooldown = 0} || { player.buff(Symbols of Death).duration >= 5 & !player.buff}', 'target'}, 
-	{ 'Marked for Death', '!player.buff(Shadow Dance) & combopoints.deficit > 4', 'target'}, 
-	-- Vanish
-	{ 'Eviscerate', 'combopoints.deficit <= 1', 'target'},
-	{ 'Shadowstrike', 'combopoints.deficit >= 2 & { player.buff(Shadow Dance) || player.buff(Stealth)}', 'target'},
-	{ 'Backstab', 'combopoints.deficit >= 2 & player.deficit < 40', 'target'},
 }
 
 local utility = {
@@ -95,10 +72,10 @@ local build = {
 	{ 'Backstab'}, 
 }
 
-local scCooldowns = {
+local cooldowns = {
 	--actions.cds=potion,if=buff.bloodlust.react|target.time_to_die<=60|(buff.vanish.up&(buff.shadow_blades.up|cooldown.shadow_blades.remains<=30))
 	--actions.cds+=/blood_fury,if=stealthed.rogue
-	{ 'Blood Fury', 'player.stealthed'}, 
+	{ 'Blood Fury', 'player.stealthed & target.bosscheck >= 1'}, 
 	--actions.cds+=/berserking,if=stealthed.rogue
 	--actions.cds+=/fireblood,if=stealthed.rogue
 	--actions.cds+=/ancestral_call,if=stealthed.rogue
@@ -172,7 +149,7 @@ local simCraft = {
 	--# Executed every time the actor is available.
 	--# Check CDs at first
 	--actions=call_action_list,name=cds
-	{ scCooldowns, 'target.range <= 8 & target.enemy'}, 
+	{ cooldowns, 'target.range <= 8 & target.enemy'}, 
 	--# Run fully switches to the Stealthed Rotation (by doing so, it forces pooling if nothing is available).
 	--actions+=/run_action_list,name=stealthed,if=stealthed.all
 	{ stealthed, 'player.stealthed'}, 
