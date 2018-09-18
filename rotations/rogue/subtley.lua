@@ -55,12 +55,12 @@ local preCombat = {
 	--{ 'Symbols of Death', 'pull_timer <= 11'},
 	--{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow) & toggle(cooldowns)'},
 	{ 'Symbols of Death', 'pull_timer <= 1'},
-	{ 'Shadowstep', 'pull_timer <= 0.1'},
 }
 
 -------------------------------------------------
 ------------------- Sim Craft -------------------
 -------------------------------------------------
+
 local build = {
 	--# Shuriken Toss at 29+ Sharpened Blades stacks. 1T at Rank 1, up to 4 at Rank 2, up to 5 at Rank 3
 	--actions.build=shuriken_toss,if=buff.sharpened_blades.stack>=29&spell_targets.shuriken_storm<=1+3*azerite.sharpened_blades.rank=2+4*azerite.sharpened_blades.rank=3
@@ -77,8 +77,11 @@ local cooldowns = {
 	--actions.cds+=/blood_fury,if=stealthed.rogue
 	{ 'Blood Fury', 'player.stealthed & target.bosscheck >= 1'}, 
 	--actions.cds+=/berserking,if=stealthed.rogue
+	{ 'Berserking', 'player.stealthed & target.bosscheck >= 1'}, 
 	--actions.cds+=/fireblood,if=stealthed.rogue
+	{ 'Fireblood', 'player.stealthed & target.bosscheck >= 1'}, 
 	--actions.cds+=/ancestral_call,if=stealthed.rogue
+	{ 'Ancestral Call', 'player.stealthed & target.bosscheck >= 1'}, 
 	--actions.cds+=/symbols_of_death,if=dot.nightblade.ticking
 	{ 'Symbols of Death', 'target.debuff(Nightblade)', 'player'},
 	--actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=target.time_to_die<combo_points.deficit
@@ -88,6 +91,7 @@ local cooldowns = {
 	--actions.cds+=/shadow_blades,if=combo_points.deficit>=2+stealthed.all
 	{ 'Shadow Blades', 'combopoints.deficit >= 2 + stealthed & target.bosscheck >= 1', 'player'}, 
 	--actions.cds+=/shuriken_tornado,if=spell_targets>=3&dot.nightblade.ticking&buff.symbols_of_death.up&buff.shadow_dance.up
+	{ 'Shuriken Tornado', 'player.area(10).enemies >= 3 & debuff(Nightblade) & player.buff(Symbols of Death) & player.buff(Shadow Dance)', 'target'},
 	--actions.cds+=/shadow_dance,if=!buff.shadow_dance.up&target.time_to_die<=5+talent.subterfuge.enabled
 	{ 'Shadow Dance', '!buff & target.ttd <= 5 + talent(2,2)', 'player'}, 
 }
