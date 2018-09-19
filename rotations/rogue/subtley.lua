@@ -2,6 +2,7 @@ local GUI = {
 	-- General
 	{type = 'header', 		text = 'General', align = 'center'},
 	{type = 'checkbox',		text = 'Multi-Dot',						key = 'multi', 	default = true},
+	{type = 'checkbox',		text = 'OOC Stealth',					key = 'stealth',default = true},
 	{type = 'ruler'},{type = 'spacer'},
 	
 	-- Survival
@@ -15,7 +16,7 @@ local GUI = {
 	{type = 'header', 		text = 'Cooldowns when toggled on', align = 'center'},
 	{type = 'checkbox',		text = 'Vanish',						key = 'van', 	default = true},
 	{type = 'checkbox',		text = 'Shadow Blades',					key = 'sb', 	default = true},
-	{type = 'checkbox',		text = 'Potion of the Old War',			key = 'ow', 	default = true},
+	{type = 'checkbox',		text = 'DPS potion',					key = 'pot', 	default = true},
 	{type = 'ruler'},{type = 'spacer'},} 
 
 local exeOnLoad = function()
@@ -34,7 +35,7 @@ local interrupts = {
 }
 
 local survival = {
-	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
+	{ 'Crimson Vial', 'health <= UI(cv) & energy >= 35', 'player'},
 	{ 'Evasion', 'player.threat >= 100'},
 		
 	-- Health Pot
@@ -45,15 +46,15 @@ local survival = {
 }
 
 local utility = {
-	{ 'Tricks of the Trade', '!focus.buff & !focus.enemy', 'focus'},
-	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
+	{ 'Tricks of the Trade', '!buff & !enemy', 'focus'},
+	{ 'Tricks of the Trade', '!buff', 'tank'},
 }
 
 local preCombat = {
-	{ 'Tricks of the Trade', '!focus.buff & pull_timer <= 4', 'focus'},
-	{ 'Tricks of the Trade', '!tank.buff & pull_timer <= 4', 'tank'},
+	{ 'Tricks of the Trade', '!buff & dbm(pull_timer) <= 4', 'focus'},
+	{ 'Tricks of the Trade', '!buff & dbm(pull_timer) <= 4', 'tank'},
 	--{ 'Symbols of Death', 'pull_timer <= 11'},
-	--{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow) & toggle(cooldowns)'},
+	--{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(pot) & toggle(cooldowns)'},
 	{ 'Symbols of Death', 'pull_timer <= 1'},
 }
 
@@ -183,12 +184,11 @@ local inCombat = {
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
 	{ utility},
-	-- { rotation}
 	{ simCraft}, 
 }
 
 local outCombat = {
-	{ 'Stealth', '!player.buff & !player.buff(Vanish)'},
+	{ 'Stealth', '!player.buff & !player.buff(Vanish) & UI(stealth)'},
 	{ keybinds},
 	--{ preCombat}
 }

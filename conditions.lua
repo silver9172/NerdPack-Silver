@@ -138,6 +138,11 @@ end)
 --------------- Rogue -----------------
 ---------------------------------------
 
+NeP.DSL:Register('energy.regen', function()
+    local eregen = select(2, _G.GetPowerRegen('player'))
+    return eregen
+end)
+
 NeP.DSL:Register('combopoints.deficit', function ()
 	local max = 5
     if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 then
@@ -204,6 +209,15 @@ NeP.DSL:Register('use_filler', function()
 	else
 		return false
 	end
+end)
+
+--cp_max_spend
+NeP.DSL:Register('cp_max_spend', function()
+	local max = 4
+    if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 then
+        max = 5
+    end
+	return max
 end)
 
 ---------------------------------------

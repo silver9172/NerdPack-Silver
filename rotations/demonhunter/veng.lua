@@ -62,35 +62,6 @@ local survival = {
 }	
 
 local legionEvents = {
-	----------------
-	---- 5 Mans ----
-	----------------
-	-- Tank Dummy
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Uber Strike) & !player.lastcast'},
-	
-	-- Neltharion's Lair --
-	{ 'Demon Spikes', 'player.buff.duration <= 1 & target.casting(Sunder) & !player.lastcast'},
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Molten Crash) & !player.lastcast'},
-	
-	-- Black Rook Hold
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Vengeful Shear) & !player.lastcast'},
-	
-	-- Vault of the Wardens
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Darkstrikes) & !player.lastcast'},
-	
-	-- Assault on Violet hold
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Doom) & !player.lastcast'},
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Mandible Strike) & !player.lastcast'},
-	
-	-- Halls of Valor
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Savage Blade) & !player.lastcast'},
-	
-	-- Maw of Souls
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.casting(Dark Slash) & !player.lastcast'},
-	
-	-- Karazhan
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & player.debuff(Dent Armor) & !player.lastcast'},
-	{ 'Demon Spikes', 'player.buff.duration <= 2.5 & target.channeling(Piercing Missiles) & !player.lastcast'},
 	
 }
 

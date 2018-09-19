@@ -32,8 +32,7 @@ local keybinds = {
 }
 
 local interrupts = {
-	{ 'Consume Magic'},
-	{ 'Arcane Torrent', 'target.range <= 8 & spell(Kick).cooldown > gcd & !prev_gcd(Rebuke)'},
+	{ 'Disrupt'},
 }
 
 local survival = {
