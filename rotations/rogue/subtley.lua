@@ -20,6 +20,12 @@ local GUI = {
 	{type = 'ruler'},{type = 'spacer'},} 
 
 local exeOnLoad = function()
+	NeP.Interface:AddToggle({
+		key  = 'cleave',
+		name = 'Cleave',
+		text = 'Cleave targets close by while doing single target damage',
+		icon = 'Interface\\ICONS\\ability_rogue_nightblade',
+	})
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 	print('|cffADFF2F --- Supported Talents')
 	print('|cffADFF2F --- WIP')
@@ -51,11 +57,11 @@ local utility = {
 }
 
 local preCombat = {
-	{ 'Tricks of the Trade', '!buff & dbm(pull_timer) <= 4', 'focus'},
-	{ 'Tricks of the Trade', '!buff & dbm(pull_timer) <= 4', 'tank'},
-	--{ 'Symbols of Death', 'pull_timer <= 11'},
+	{ 'Tricks of the Trade', '!buff & dbm(Pull in) <= 4', 'focus'},
+	{ 'Tricks of the Trade', '!buff & dbm(Pull in) <= 4', 'tank'},
 	--{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(pot) & toggle(cooldowns)'},
-	{ 'Symbols of Death', 'pull_timer <= 1'},
+	{ 'Shadow Blades', 'dbm(Pull in) <= 1 & dbm(Pull in) > 0'},
+	--{ 'Shadowstrike', 'dbm(Pull in) <= 0.1 & dbm(Pull in) > 0'}, 
 }
 
 -------------------------------------------------
@@ -74,6 +80,15 @@ local build = {
 }
 
 local cooldowns = {
+	-------------------------------------------------
+	---------------------- PVP ----------------------
+	-------------------------------------------------
+	{ 'Cold Blood', 'player.stealthed'}, 
+	
+	-------------------------------------------------
+	-------------------------------------------------
+	-------------------------------------------------
+
 	--actions.cds=potion,if=buff.bloodlust.react|target.time_to_die<=60|(buff.vanish.up&(buff.shadow_blades.up|cooldown.shadow_blades.remains<=30))
 	--actions.cds+=/blood_fury,if=stealthed.rogue
 	{ 'Blood Fury', 'player.stealthed & target.bosscheck >= 1'}, 
@@ -100,13 +115,13 @@ local cooldowns = {
 local finish = {
 	--# Keep up Nightblade if it is about to run out. Do not use NB during Dance, if talented into Dark Shadow.
 	--actions.finish=nightblade,if=(!talent.dark_shadow.enabled|!buff.shadow_dance.up)&target.time_to_die-remains>6&remains<tick_time*2&(spell_targets.shuriken_storm<4|!buff.symbols_of_death.up)
-	{ 'Nightblade', 'range <= 8 & & infront & { !talent(6,1) || !player.buff(Shadow Dance)} & ttd > 6 & debuff.duration < 6 & { player.area(10).enemies < 4 || !player.buff(Symbols of Death)}', 'target'},  
+	{ 'Nightblade', 'range <= 8 & & infront & { !talent(6,1) || !player.buff(Shadow Dance)} & ttd - debuff.duration > 6 & debuff.duration < 6 & { player.area(10).enemies < 4 || !player.buff(Symbols of Death)}', 'target'},  
 	--# Multidotting outside Dance on targets that will live for the duration of Nightblade with refresh during pandemic if you have less than 6 targets or play with Secret Technique.
 	--actions.finish+=/nightblade,cycle_targets=1,if=spell_targets.shuriken_storm>=2&(spell_targets.shuriken_storm<=5|talent.secret_technique.enabled)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
-	{ 'Nightblade', 'range <= 8 & & infront & player.area(10).enemies >= 2 & { player.area(10).enemies <= 5 || talent(7,2) } & !player.buff(Shadow Dance) & ttd >= { 5+{2*player.combopoints}} & debuff.duration <= 4.8', 'enemies'},
+	{ 'Nightblade', 'count.enemies.debuffs < 5 & range <= 8 & & infront & player.area(10).enemies >= 2 & { player.area(10).enemies <= 5 || talent(7,2) } & !player.buff(Shadow Dance) & ttd >= { 5+{2*player.combopoints}} & debuff.duration <= 4.8', 'enemies'},
 	--# Refresh Nightblade early if it will expire during Symbols. Do that refresh if SoD gets ready in the next 5s.
 	--actions.finish+=/nightblade,if=remains<cooldown.symbols_of_death.remains+10&cooldown.symbols_of_death.remains<=5&target.time_to_die-remains>cooldown.symbols_of_death.remains+5
-	
+	{ 'Nightblade', 'debuff.duration  < player.spell(Symbols of Death)cooldown + 10 & player.spell(Symbols of Death)cooldown <= 5 & ttd ttd - debuff.duration > player.spell(Symbols of Death)cooldown + 5', 'target'}, 
 	--# Secret Technique during Symbols. With Dark Shadow and multiple targets also only during Shadow Dance (until threshold in next line).
 	--actions.finish+=/secret_technique,if=buff.symbols_of_death.up&(!talent.dark_shadow.enabled|spell_targets.shuriken_storm<2|buff.shadow_dance.up)
 	{ 'Secret Technique', 'player.buff(Symbols of Death) & { !talent(6,1) || player.area(10).enemies < 2 || player.buff(Shadow Dance)}', 'target'}, 
@@ -123,15 +138,15 @@ local stealthCooldowns = {
 	--actions.stealth_cds=variable,name=shd_threshold,value=cooldown.shadow_dance.charges_fractional>=1.75
 	--# Vanish unless we are about to cap on Dance charges. Only when Find Weakness is about to run out.
 	--actions.stealth_cds+=/vanish,if=!variable.shd_threshold&debuff.find_weakness.remains<1
-	{ 'Vanish', '!variable.shd_threshold & target.debuff(Find Weakness).duration < 1 & toggle(cooldowns) & bosscheck = 1 & partycheck > 1 & talent(1,2)'},
+	{ 'Vanish', '!shd_threshold & target.debuff(Find Weakness).duration < 1 & toggle(cooldowns) & bosscheck = 1 & partycheck > 1 & talent(1,2)'},
 	--# Pool for Shadowmeld + Shadowstrike unless we are about to cap on Dance charges. Only when Find Weakness is about to run out.
 	--actions.stealth_cds+=/pool_resource,for_next=1,extra_amount=40
 	--actions.stealth_cds+=/shadowmeld,if=energy>=40&energy.deficit>=10&!variable.shd_threshold&debuff.find_weakness.remains<1
 	--# With Dark Shadow only Dance when Nightblade will stay up. Use during Symbols or above threshold.
 	--actions.stealth_cds+=/shadow_dance,if=(!talent.dark_shadow.enabled|dot.nightblade.remains>=5+talent.subterfuge.enabled)&(variable.shd_threshold|buff.symbols_of_death.remains>=1.2|spell_targets>=4&cooldown.symbols_of_death.remains>10)
-	{ 'Shadow Dance', '{ !talent(6,1) || target.debuff(Nightblade).duration >= 5 + talent(2,2)} & { variable.shd_threshold || buff(Symbols of Death).duration >= 1.2 || player.area(8).enemies >= 4 & spell(Symbols of Death).cooldown > 10}', 'player'}, 
+	{ 'Shadow Dance', '{ !talent(6,1) || target.debuff(Nightblade).duration >= 5 + talent(2,2)} & { shd_threshold || buff(Symbols of Death).duration >= 1.2 || player.area(8).enemies >= 4 & spell(Symbols of Death).cooldown > 10}', 'player'}, 
 	--actions.stealth_cds+=/shadow_dance,if=target.time_to_die<cooldown.symbols_of_death.remains
-	{ 'Shadow Dance', 'target.ttd < spell.(Symbols of Death).cooldown', 'player'}, 
+	{ 'Shadow Dance', 'target.ttd < spell(Symbols of Death).cooldown', 'player'}, 
 }
 
 local stealthed = {
@@ -143,7 +158,7 @@ local stealthed = {
 	{ finish, 'combopoints.deficit <= 1 - { talent(3,2) & player.buff(Vanish)}'},  
 	--# At 2 targets with Secret Technique keep up Find Weakness by cycling Shadowstrike.
 	--actions.stealthed+=/shadowstrike,cycle_targets=1,if=talent.secret_technique.enabled&talent.find_weakness.enabled&debuff.find_weakness.remains<1&spell_targets.shuriken_storm=2&target.time_to_die-remains>6
-	{ 'Shadowstrike', 'talent(7,2) & talent(1,2) & debuff(Find Weakness).duration < 1 & player.area(10).enemies = 2 & ttd > 6', 'enemies'}, 
+	{ 'Shadowstrike', 'talent(7,2) & talent(1,2) & debuff(Find Weakness).duration < 1 & player.area(10).enemies = 2 & ttd - debuff.duration > 6', 'enemies'}, 
 	--actions.stealthed+=/shuriken_storm,if=spell_targets.shuriken_storm>=3
 	{ 'Shuriken Storm', 'player.area(10).enemies >= 3', 'target'},
 	--actions.stealthed+=/shadowstrike
@@ -190,7 +205,7 @@ local inCombat = {
 local outCombat = {
 	{ 'Stealth', '!player.buff & !player.buff(Vanish) & UI(stealth)'},
 	{ keybinds},
-	--{ preCombat}
+	{ preCombat}
 }
 
 NeP.CR:Add(261, {
@@ -198,5 +213,7 @@ NeP.CR:Add(261, {
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,
-	load = exeOnLoad
+	load = exeOnLoad,
+ wow_ver = '8.0.1',
+ nep_ver = '1.11',
 })

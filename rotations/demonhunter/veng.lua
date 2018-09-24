@@ -28,24 +28,11 @@ local exeOnLoad = function()
 end
 
 local keybinds = {
-
+	{ 'Infernal Strike', 'keybind(control)', 'cursor.ground'},
 }
 
 local interrupts = {
-	{ 'Consume Magic'},
-	{ 'Arcane Torrent', 'target.range <= 8 & spell(Consume Magic).cooldown > gcd & !prev_gcd(Consume Magic)'},
-}
-
-local cooldowns = {
-
-}
-	
-local simCraft = {
-
-}
-
-local utility = {
-
+	{ 'Disrupt'},
 }
 
 local preCombat = {
@@ -65,29 +52,70 @@ local legionEvents = {
 	
 }
 
-local rotation = {
-	{ legionEvents},
-	{ 'Fiery Brand', '!player.buff(Demon Spikes) & !player.buff(Metamorphosis)'},
+	-- # Fiery Brand Rotation
+	-- actions.brand=sigil_of_flame,if=cooldown.fiery_brand.remains<2
+	-- actions.brand+=/infernal_strike,if=cooldown.fiery_brand.remains=0
+	-- actions.brand+=/fiery_brand
+	-- actions.brand+=/immolation_aura,if=dot.fiery_brand.ticking
+	-- actions.brand+=/fel_devastation,if=dot.fiery_brand.ticking
+	-- actions.brand+=/infernal_strike,if=dot.fiery_brand.ticking
+	-- actions.brand+=/sigil_of_flame,if=dot.fiery_brand.ticking
+
+local defensives = {
+	-- # Defensives
+	-- actions.defensives=demon_spikes
 	{ 'Demon Spikes', '!player.buff(Demon Spikes) & player.spell.recharge <= 2'},
-	{ '!Empower Wards', 'target.casting.percent > 70'},
-	{ 'Empower Wards', 'player.incdmg.magic(5) >= player.health.max*0.70'}, 
-	{ 'Spirit Bomb', '!target.debuff(Frailty) & player.buff(Soul Fragments).count >= 1'},
-	{ 'Soul Carver', 'target.debuff(Fiery Brand)'},
-	{ 'Immolation Aura', 'player.pain <= 80'},
-	{ 'Sigil of Flame', 'target.debuff.duration <= 2.5', 'target'},
-	{ 'Infernal Strike', 'target.debuff(Sigil of Flame).duration <= 2.5 & player.spell(Sigil of Flame).cooldown >= 4 & player.spell(Sigil of Flame).cooldown <= 25 & !player.lastcast', 'player.ground'}, 
-	{ 'Felblade', 'talent(3,1) & player.pain <= 70'},
-	{ 'Soul Cleave', 'player.buff(Soul Fragments).count == 5 || player.incdmg(5) >= player.health.max*0.70 || player.pain >= 80'},
-	{ 'Shear', 'player.buff(Blade Turning)'},
-	{ 'Fracture', 'talent(4,2) & player.pain >= 60'},
-	{ 'Shear'}
+	-- actions.defensives+=/metamorphosis
+	{ 'Metamorphosis'}, 
+	-- actions.defensives+=/fiery_brand
+	{ 'Fiery Brand'}, 
+}
+
+local normal = {
+	-- # Normal Rotation
+	-- actions.normal=infernal_strike
+	-- actions.normal+=/spirit_bomb,if=soul_fragments>=4
+	-- actions.normal+=/soul_cleave,if=!talent.spirit_bomb.enabled
+	-- actions.normal+=/soul_cleave,if=talent.spirit_bomb.enabled&soul_fragments=0
+	-- actions.normal+=/immolation_aura,if=pain<=90
+	{ 'Immolation Aura', 'player.pain <= 90'},
+	-- actions.normal+=/felblade,if=pain<=70
+	{ 'Felblade', 'player.pain <= 70'},
+	-- actions.normal+=/fracture,if=soul_fragments<=3
+	{ 'Fracture', 'player.buff(Soul Fragments).count <= 3', 'target'}, 
+	-- actions.normal+=/fel_devastation
+	{ 'Fel Devastation'}, 
+	-- actions.normal+=/soul_cleave
+	{ 'Soul Cleave'},
+	-- actions.normal+=/sigil_of_flame
+	{ 'Sigil of Flame', nil, 'target.ground'},
+	-- actions.normal+=/shear
+	{ 'Shear'}, 
+	-- actions.normal+=/throw_glaive
+	{ 'Throw Glave'}, 
+}
+
+local rotation = {
+	-- # Executed every time the actor is available.
+	-- actions=auto_attack
+	-- actions+=/consume_magic
+	{ 'Consume Magic'}, 
+	-- # ,if=!raid_event.adds.exists|active_enemies>1
+	-- actions+=/use_item,slot=trinket1
+	-- # ,if=!raid_event.adds.exists|active_enemies>1
+	-- actions+=/use_item,slot=trinket2
+	-- actions+=/call_action_list,name=brand,if=talent.charred_flesh.enabled
+	-- actions+=/call_action_list,name=defensives
+	{ defensives, 'range <= 8'},
+	-- actions+=/call_action_list,name=normal
+	{ normal}, 
 }
 
 local inCombat = {
+	{ keybinds},
 	{ '/startattack', '!isattacking & target.range < 10 & target.enemy & target.alive'},
-	{ interrupts, 'target.interruptAt(50)'},
-	{ 'Throw Glaive', '!inmelee', 'target'},
-	{ rotation, 'target.inmelee'},
+	{ interrupts, 'target.interruptAt(45)'},
+	{ rotation},
 }
 
 local outCombat = {

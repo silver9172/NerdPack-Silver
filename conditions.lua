@@ -143,6 +143,16 @@ NeP.DSL:Register('energy.regen', function()
     return eregen
 end)
 
+NeP.DSL:Register('energy.time_to_max', function()
+    local deficit = NeP.DSL:Get('deficit')()
+    local eregen = NeP.DSL:Get('energy.regen')()
+    return deficit / eregen
+end)NeP.DSL:Register('energy.time_to_max', function()
+    local deficit = NeP.DSL:Get('deficit')()
+    local eregen = NeP.DSL:Get('energy.regen')()
+    return deficit / eregen
+end)
+
 NeP.DSL:Register('combopoints.deficit', function ()
 	local max = 5
     if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 then
@@ -219,6 +229,98 @@ NeP.DSL:Register('cp_max_spend', function()
     end
 	return max
 end)
+
+NeP.DSL:Register('garrote.exsanguinated', function()
+	for i=1,40 do
+		local name, _, _, _, duration = UnitDebuff('target',i);
+		if name == 'Garrote' then
+			if duration < 18 then
+				return 1
+			else
+				return 0
+			end
+		else
+			return 0
+		end
+	end
+end)
+
+NeP.DSL:Register('rupture.exsanguinated', function()
+	for i=1,40 do
+		local name, _, _, _, duration = UnitDebuff('target',i);
+		if name == 'Rupture' then
+			if duration < 20 then
+				return 1
+			else
+				return 0
+			end
+		else
+			return 0
+		end
+	end
+end)
+
+NeP.DSL:Register("rtb_buffs", function()
+  local roll = 0
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193357)) > 1.5 then  roll = roll + 1 end -- Shark Infested Waters
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193359)) > 1.5 then  roll = roll + 1 end -- True Bearing
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199603)) > 1.5 then  roll = roll + 1 end -- Jolly Roger
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193358)) > 1.5 then  roll = roll + 1 end -- Grand Melee
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199600)) > 1.5 then  roll = roll + 1 end -- Buried Treasure
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193356)) > 1.5 then  roll = roll + 1 end -- Broadsides
+    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(202665)) > 1.5 then  roll = roll + 1 end -- Curse of the Dreadblades
+    return roll
+end)
+
+NeP.DSL:Register("rtb_buffs.duration", function()
+	local dur = 0
+	local x = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193357))
+	local y = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193359))
+	local z = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199603))
+	local a = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199600))
+	local b = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193356))
+	local c = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(202665))
+	if x > 0 then 
+		dur = x
+		return x
+	end
+	if y > 0 then 
+		dur = y
+		return y
+	end
+	if z > 0 then 
+		dur = z
+		return z
+	end
+	if a > 0 then 
+		dur = a
+		return a
+	end
+	if b > 0 then 
+		dur = b
+		return b
+	end
+	if c > 0 then 
+		dur = c
+		return c
+	end
+end)
+
+	--rtb_buffs<2&(buff.loaded_dice.up|!buff.grand_melee.up&!buff.ruthless_precision.up)
+NeP.DSL:Register("rtb_reroll", function()
+	if NeP.DSL:Get('rtb_buffs')('player') < 2 and ( NeP.DSL:Get('buff')('player', 'Loaded Dice') or not NeP.DSL:Get('buff')('player', 'Grand Melee') or not NeP.DSL:Get('buff')('player', 'Ruthless Precision')) then	
+		return 1
+	else 
+		return 0
+	end
+end)
+
+	-- combo_points.deficit>=2+2*(talent.ghostly_strike.enabled&cooldown.ghostly_strike.remains<1)+buff.broadside.up&energy>60&!buff.skull_and_crossbones.up
+
+	
+	-- # With multiple targets, this variable is checked to decide whether some CDs should be synced with Blade Flurry
+	-- actions+=/variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
+
 
 ---------------------------------------
 -------------- Warrior ----------------

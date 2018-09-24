@@ -9,6 +9,7 @@ fakeunits.lua
 
 rotations\rogue\assassination.lua
 rotations\rogue\subtley.lua
+rotations\rogue\outlaw.lua
 
 rotations\demonhunter\veng.lua
 rotations\demonhunter\havoc.lua
