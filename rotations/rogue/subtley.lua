@@ -60,7 +60,7 @@ local preCombat = {
 	{ 'Tricks of the Trade', '!buff & dbm(Pull in) <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!buff & dbm(Pull in) <= 4', 'tank'},
 	--{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(pot) & toggle(cooldowns)'},
-	{ 'Shadow Blades', 'dbm(Pull in) <= 1 & dbm(Pull in) > 0'},
+	{ 'Shadow Blades', 'dbm(Pull in) < 1 & dbm(Pull in) > 0'},
 	--{ 'Shadowstrike', 'dbm(Pull in) <= 0.1 & dbm(Pull in) > 0'}, 
 }
 
@@ -144,9 +144,9 @@ local stealthCooldowns = {
 	--actions.stealth_cds+=/shadowmeld,if=energy>=40&energy.deficit>=10&!variable.shd_threshold&debuff.find_weakness.remains<1
 	--# With Dark Shadow only Dance when Nightblade will stay up. Use during Symbols or above threshold.
 	--actions.stealth_cds+=/shadow_dance,if=(!talent.dark_shadow.enabled|dot.nightblade.remains>=5+talent.subterfuge.enabled)&(variable.shd_threshold|buff.symbols_of_death.remains>=1.2|spell_targets>=4&cooldown.symbols_of_death.remains>10)
-	{ 'Shadow Dance', '{ !talent(6,1) || target.debuff(Nightblade).duration >= 5 + talent(2,2)} & { shd_threshold || buff(Symbols of Death).duration >= 1.2 || player.area(8).enemies >= 4 & spell(Symbols of Death).cooldown > 10}', 'player'}, 
+	{ 'Shadow Dance', '!buff & { !talent(6,1) || target.debuff(Nightblade).duration >= 5 + talent(2,2)} & { shd_threshold || buff(Symbols of Death).duration >= 1.2 || player.area(8).enemies >= 4 & spell(Symbols of Death).cooldown > 10}', 'player'}, 
 	--actions.stealth_cds+=/shadow_dance,if=target.time_to_die<cooldown.symbols_of_death.remains
-	{ 'Shadow Dance', 'target.ttd < spell(Symbols of Death).cooldown', 'player'}, 
+	{ 'Shadow Dance', 'target.ttd < spell(Symbols of Death).cooldown & !buff', 'player'}, 
 }
 
 local stealthed = {
@@ -199,6 +199,8 @@ local inCombat = {
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
 	{ utility},
+	-- Gets NB up early in rotation regardless of CPs
+	{ 'Nightblade', '!debuff & combat.time < 10', 'target'},
 	{ simCraft}, 
 }
 
