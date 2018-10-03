@@ -59,7 +59,7 @@ local utility = {
 local preCombat = {
 	{ 'Tricks of the Trade', '!buff & dbm(Pull in) <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!buff & dbm(Pull in) <= 4', 'tank'},
-	--{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(pot) & toggle(cooldowns)'},
+	{ '#Battle Potion of Agility', '!player.buff & dbm(Pull in) < 1 & UI(pot) & toggle(cooldowns)'},
 	{ 'Shadow Blades', 'dbm(Pull in) < 1 & dbm(Pull in) > 0'},
 	--{ 'Shadowstrike', 'dbm(Pull in) <= 0.1 & dbm(Pull in) > 0'}, 
 }

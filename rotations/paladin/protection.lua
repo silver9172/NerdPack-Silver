@@ -23,67 +23,26 @@ local exeOnLoad = function()
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
 	
-local legionEvents = {
+local events = {
 	----------------
 	---- 5 Mans ----
 	----------------
 	-- Tank Dummy
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Uber Strike) & !player.lastcast'},
-	
-	-- Neltharion's Lair --
-	{ '53600', 'player.buff.duration <= 1 & target.casting(Sunder) & !player.lastcast'},
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Molten Crash) & !player.lastcast'},
-	
-	-- Black Rook Hold
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Vengeful Shear) & !player.lastcast'},
-	
-	-- Vault of the Wardens
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Darkstrikes) & !player.lastcast'},
-	
-	-- Assault on Violet hold
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Doom) & !player.lastcast'},
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Mandible Strike) & !player.lastcast'},
-	
-	-- Halls of Valor
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Savage Blade) & !player.lastcast'},
-	
-	-- Maw of Souls
-	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Dark Slash) & !player.lastcast'},
-	
-	-- Karazhan
-	{ '53600', 'player.buff.duration <= 2.5 & player.debuff(Dent Armor) & !player.lastcast'},
-	{ '53600', 'player.buff.duration <= 2.5 & target.channeling(Piercing Missiles) & !player.lastcast'},
-	
-	-----------------
-	--- Nighthold ---
-	-----------------
-	-- Skorpyron
-	{ '53600', 'target.threat == 100 & player.buff.duration <= 1.5 & target.casting(Arcanoslash) & !player.lastcast'},
-	
-	-- Trilliax
-	{ '53600', 'player.buff.duration <= 1.5 & target.casting(Arcane Slash) & !player.lastcast'},
-
-	-- Spellblade
-	{ '53600', 'player.buff.duration <= 1.5 & target.channeling(Annihilate) & !player.lastcast'},
-	
-	-- Krosus
-	{ '53600', 'player.buff.duration <= 1.5 & target.casting(Slam) & !player.lastcast'},
-	{ '53600', 'player.buff.duration <= 1.5 & target.casting(Orb of Destruction) & !player.lastcast'},
-	{ '53600', 'player.buff.duration <= 1.5 & player.debuff(Searing Brand).count >= 3 & !player.lastcast'},
+	{ 'Shield of the Righteous', 'player.buff.duration <= 2.5 & casting(Uber Strike) & !player.lastcast', 'target'},
 }
 
 
 local interrupts = {
 	{ 'Rebuke'},
 	{ 'Hammer of Justice', 'spell(Rebuke).cooldown > gcd'},
-	{ 'Arcane Torrent', 'target.range<=8&spell(Rebuke).cooldown>gcd&!prev_gcd(Rebuke)'},
 }
 
 local activeMitigation = {
 	-- Shield of the Righteous
-	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & target.range <= 8 & target.threat == 100 & !talent(7,2)'},
+	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & range <= 8 & threat == 100 & !talent(7,2)', 'target'},
 	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & target.range <= 8 & target.threat == 100 & talent(7,2) & !player.spell(Seraphim).cooldown = 0'},
-	{ 'Shield of the Righteous', '!player.buff & player.health <= UI(sotr) & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
+	-- Use 2nd charge
+	{ 'Shield of the Righteous', '!player.buff & player.incdmg(5) >= { player.health.max * 0.25 } & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
 	
 	-- Light of the Protector
 	{ 'Light of the Protector', 'health <= UI(lotp)', 'player'},
@@ -93,12 +52,11 @@ local activeMitigation = {
 }
 
 local cooldowns = {
-	{ legionEvents},
+	{ events},
 	
 	{ 'Bastion of Light', 'player.spell(Shield of the Righteous).charges < 1'},
 	
 	-- All health based. Uncheck in UI to use only manually
-	{ 'Eye of Tyr', 'UI(eye_check) & player.health <= UI(eye_spin) & !player.buff(Ardent Defender) & target.range <= 8 & !player.buff(Guardian of Ancient Kings)'}, 
 	{ 'Ardent Defender', 'UI(ad_check) & player.health <= UI(ad_spin) & !target.debuff(Eye of Tyr) & !player.buff(Guardian of Ancient Kings)'},
 	{ 'Guardian of Ancient Kings', 'UI(ak_check) & player.health <= UI(ak_spin) & !target.debuff(Eye of Tyr) & !player.buff(Ardent Defender)'},
 
@@ -110,26 +68,17 @@ local cooldowns = {
 	-- Add UI toggle for LoH
 	{ 'Lay on Hands', 'player.health < 15'},
 	--{ 'Lay on Hands', 'lowest.health < 15'},
-	
-	-- Add UI toggle for trinket
-	{ '#trinket2', 'player.health <= 75'},
 }
 
 local rotation = {
-	{ 'Consecration', '!player.buff & player.area(8).enemies >= 1'},
-	{ 'Avenger\'s Shield', 'talent(2,3) & player.spell(Judgment).charges < 1'},
-	{ 'Avenger\'s Shield', 'target.area(10).enemies >= 2'},
-	{ 'Blinding Light', 'player.area(10).enemies >= 2'},
 	{ 'Judgment'},
-	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1 & !player.lastcast' }, 
-	{ 'Consecration', 'player.area(8).enemies >= 1'},
-	{ 'Avenger\'s Shield'},
-	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1' }, 
-	{ 'Hammer of the Righteous', '!talent(1,2)'},
+	{ 'Consecration', 'player.area(8).enemies > 0 & !buff', 'target'}, 
+	{ 'Avenger\'s Shield'}, 
+	{ 'Hammer of the Righteous'},
+	{ 'Consecration', 'player.area(8).enemies > 0', 'target'},
 }
 
 local inCombat = {
-	{ '/targetenemy [dead][noharm]', '{target.dead || !target.exists} & !player.area(40).enemies=0'},
 	{ '/startattack', '!isattacking & target.exists'},
 	{ target},
 	{ interrupts, 'target.interruptAt(50)'},

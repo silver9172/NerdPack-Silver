@@ -5,14 +5,10 @@
 ## Dependencies: NerdPack
 
 conditions.lua
-fakeunits.lua
 
 rotations\rogue\assassination.lua
 rotations\rogue\subtley.lua
 rotations\rogue\outlaw.lua
-
-rotations\demonhunter\veng.lua
-rotations\demonhunter\havoc.lua
 
 rotations\paladin\protection.lua
 rotations\paladin\holy.lua

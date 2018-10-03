@@ -1,4 +1,5 @@
 local _, Silver = ...
+local _G = _G
 
 ---------------------------------------
 --------------- General ---------------
@@ -132,6 +133,127 @@ NeP.DSL:Register('immunitycheck', function ()
 		end
 	end
 	return 0
+end)
+
+NeP.DSL:Register("magicDispel", function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('debuff.any')(unit, 'Wildfire')
+	or NeP.DSL:Get('debuff.any')(unit, 'Molten Gold')
+	or NeP.DSL:Get('debuff.any')(unit, 'Terrifying Screech')
+	or NeP.DSL:Get('debuff.any')(unit, 'Terrifying Visage')
+	
+	-- Freehold
+	or NeP.DSL:Get('debuff.any')(unit, 'Oiled Blade')
+	
+	-- King's Rest
+	or NeP.DSL:Get('debuff.any')(unit, 'Frost Shock')
+	
+	-- Shrine of the Storm
+	or NeP.DSL:Get('debuff.any')(unit, 'Choking Brine')
+	or NeP.DSL:Get('debuff.any')(unit, 'Electrifying Shock')
+	-- or NeP.DSL:Get('debuff.any')(unit, 'Touch of the Drowned')
+	or NeP.DSL:Get('debuff.any')(unit, 'Mental Assault')
+	-- or NeP.DSL:Get('debuff.any')(unit, 'Mind Rend')
+	or NeP.DSL:Get('debuff.any')(unit, 'Explosive Void')
+	or NeP.DSL:Get('debuff.any')(unit, 'Whispers of Power')
+	
+	-- The MOTHERLODE!!!
+	or NeP.DSL:Get('debuff.any')(unit, 'Brain Freeze')
+	-- or NeP.DSL:Get('debuff.any')(unit, 'Caustic Compound')
+	or NeP.DSL:Get('debuff.any')(unit, 'Transmute: Enemy to Goo')
+	or NeP.DSL:Get('debuff.any')(unit, 'Chemical Burn')
+	
+	-- Siege of Boralus
+	or NeP.DSL:Get('debuff.any')(unit, 'Choking Waters')
+	or NeP.DSL:Get('debuff.any')(unit, 'Putrid Waters')
+	
+	-- Temple of Sethraliss
+	or NeP.DSL:Get('debuff.any')(unit, 'Flame Shock')
+	or NeP.DSL:Get('debuff.any')(unit, 'Snake Charm')
+	
+	-- Tol Dagor
+	or NeP.DSL:Get('debuff.any')(unit, 'Debilitating Shout')
+	or NeP.DSL:Get('debuff.count')(unit, 'Torch Strike') >= 5
+	or NeP.DSL:Get('debuff.any')(unit, 'Suppression Fire')
+	or NeP.DSL:Get('debuff.any')(unit, 'Fuselighter')
+	
+	-- Underrot
+	or NeP.DSL:Get('debuff.any')(unit, 'Wicked Frenzy')
+	or NeP.DSL:Get('debuff.any')(unit, 'Death Bolt')
+	or NeP.DSL:Get('debuff.any')(unit, 'Maddening Gaze')
+	or NeP.DSL:Get('debuff.any')(unit, 'Putrid Blood')
+	
+	-- Waycrest Manor
+	or NeP.DSL:Get('debuff.any')(unit, 'Grasping Thorns')
+	or NeP.DSL:Get('debuff.any')(unit, 'Toad Blight')
+	or NeP.DSL:Get('debuff.any')(unit, 'Fragment Soul')
+end)
+
+NeP.DSL:Register("poisonDispel", function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('debuff.any')(unit, 'Venomfang Strike')
+	
+	-- Freehold
+	or NeP.DSL:Get('debuff.count')(unit, 'Poisoning Strike') >= 3
+	
+	-- King's Rest
+	or NeP.DSL:Get('debuff.any')(unit, 'Hidden Blade')
+	or NeP.DSL:Get('debuff.any')(unit, 'Embalming Fluid')
+	or NeP.DSL:Get('debuff.any')(unit, 'Poison Barrage')
+	
+	-- Shrine of the Storm
+	or NeP.DSL:Get('debuff.any')(unit, 'Stinging Venom Coating')
+	
+	-- The MOTHERLODE!!!
+	or NeP.DSL:Get('debuff.any')(unit, 'Widowmaker Toxin,')
+	
+	-- Siege of Boralus
+	or NeP.DSL:Get('debuff.count')(unit, 'Stinging Venom Coating') >= 4
+	
+	-- Temple of Sethraliss
+	or NeP.DSL:Get('debuff.any')(unit, 'Neurotoxin')
+	or NeP.DSL:Get('debuff.any')(unit, 'Noxious Breath')
+	or NeP.DSL:Get('debuff.count')(unit, 'Cytotoxin') >= 3
+	or NeP.DSL:Get('debuff.any')(unit, 'Venomous Spit')
+	
+	-- Tol Dagor
+	or NeP.DSL:Get('debuff.any')(unit, 'Crippling Shiv')
+end)
+
+NeP.DSL:Register("diseaseDispel", function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('debuff.any')(unit, 'Lingering Nausea')
+	
+	-- Freehold
+	or NeP.DSL:Get('debuff.count')(unit, 'Infected Wound') >= 4
+	or NeP.DSL:Get('debuff.any')(unit, 'Plague Step')
+	
+	-- King's Rest
+	or NeP.DSL:Get('debuff.any')(unit, 'Wretched Discharge')
+	
+	-- The MOTHERLODE!!!
+	or NeP.DSL:Get('debuff.any')(unit, 'Festering Bite')
+	
+	-- Temple of Sethraliss
+	or NeP.DSL:Get('debuff.any')(unit, 'Plague')
+	
+	-- Underrot
+	or NeP.DSL:Get('debuff.any')(unit, 'Decaying Mind')
+	or NeP.DSL:Get('debuff.count')(unit, 'Decaying Spores') >= 2
+	
+	-- Waycrest Manor
+	or NeP.DSL:Get('debuff.any')(unit, 'Infected Thorn')
+	or NeP.DSL:Get('debuff.any')(unit, 'Severing Serpent')
+	or NeP.DSL:Get('debuff.any')(unit, 'Virulent Pathogen')
 end)
 
 ---------------------------------------

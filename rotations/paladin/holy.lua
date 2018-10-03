@@ -1,10 +1,3 @@
---[[
-	TO DO:
-	Add Nighthold encounter support
-	Add mythic 5 man utility
-	Add support for all talents
---]]
-
 local GUI = {
 	{type = 'header', 	text = 'Generic', align = 'center'},
 	{type = 'spinner', 	text = 'DPS while lowest health%', 				key = 'G_DPS', 	default = 70},
@@ -72,6 +65,12 @@ local interrupts = {
 	{ 'Blinding Light', 'target.range <= 7' },
 }
 
+local dispel = {
+	{ 'Cleanse', 'magicDispel', { 'tank', 'player', 'lowest', 'friendly'}}, 
+	{ 'Cleanse', 'poisonDispel', { 'tank', 'player', 'lowest', 'friendly'}}, 
+	{ 'Cleanse', 'diseaseDispel', { 'tank', 'player', 'lowest', 'friendly'}}, 
+}
+
 local survival = {
 	{ '#127834', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Health Pot
 	--{ '#Healthstone', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'},
@@ -103,10 +102,10 @@ local DPS = {
 local tank = {
 	{ 'Beacon of Light', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3)', 'tank'},
 	{ 'Beacon of Faith', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3)', 'tank2'},
+	{ 'Beacon of Faith', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3) & !tank2.exists', 'player'},
 	
 	-- Bestow Faith
-	{ 'Bestow Faith', '!buff & talent(1,2) & health <= 90', 'tank'},
-	{ 'Bestow Faith', '!buff & talent(1,2) & health <= 90', 'tank2'},
+	{ 'Bestow Faith', '!buff & talent(1,2) & health <= 90', { 'tank', 'tank2'}},
 }
 
 local encounters = {
@@ -137,32 +136,27 @@ local healing = {
 	{ encounters, 'UI(ENC)'},
 
 	-- Infusion of Light
-	--{ 'Holy Light', 'player.buff(Infusion of Light).count >= 2', 'lowest'},
 	{ 'Flash of Light', 'lowest.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowest'},
-	--{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3', 'lowest'},
+	{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3 & player.buff(Infusion of Light)', 'lowest'},
 	
-	{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & player.health >= UI(P_LotM)', 'tank'},
-	{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & player.health >= UI(P_LotM)', 'tank2'},
+	{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
 	{ 'Light of the Martyr', '!player & health <= UI(L_LotM) & player.health >= UI(P_LotM)', 'lowest'},
 	
-	{ 'Holy Shock', 'health <= UI(T_HS)', 'tank'},
-	{ 'Holy Shock', 'health <= UI(T_HS)', 'tank2'},
+	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', 'lowest'},
 	
 	{ 'Light of the Martyr', '!player & health <= UI(L_FoL) & player.buff(Divine Shield)', 'lowest'},
-	{ 'Flash of Light', 'health <= UI(T_FoL)', 'tank'},
-	{ 'Flash of Light', 'health <= UI(T_FoL)', 'tank2'},
+	{ 'Flash of Light', 'health <= UI(T_FoL)', { 'tank', 'tank2'}},
 	{ 'Flash of Light', 'health <= UI(L_FoL)', 'lowest'},
 		
-	{ 'Holy Light', 'health <= UI(T_HL)', 'tank'},
-	{ 'Holy Light', 'health <= UI(T_HL)', 'tank2'},
+	{ 'Holy Light', 'health <= UI(T_HL)', { 'tank', 'tank2'}},
 	{ 'Holy Light', 'health <= UI(L_HL)', 'lowest'},
 }
 
 local emergency = {
 	{ '!Holy Shock', '!player.casting(200652)', 'lowest'},
 	{ '!Flash of Light', '!player.moving & !player.casting(200652)', 'lowest'},
-	{ '!Light of the Martyr', '!player.casting(Flash of Light) & !player.casting(200652)', 'lowest'},
+	{ '!Light of the Martyr', '!player & !player.casting(Flash of Light) & !player.casting(200652)', 'lowest'},
 }
 
 local cooldowns = {
@@ -170,6 +164,7 @@ local cooldowns = {
 	{ 'Lay on Hands', 'UI(LoH) & lowest.health <= UI(L_LoH) & !lowest.debuff(Forbearance).any', 'lowest'},
 	{ 'Aura Mastery', 'UI(AM) & player.area(40,40).heal >= 4'},
 	{ 'Avenging Wrath', 'UI(AW) & player.area(35,65).heal >= 4 & player.spell(Holy Shock).cooldown = 0'},
+	{ 'Avenging Crusader', 'player.spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)'},
 	{ 'Holy Avenger', 'UI(HA) & player.area(40,75).heal >= 3 & player.spell(Holy Shock).cooldown = 0'},
 	
 	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS) & !debuff(Spirit Realm).any', 'tank'}, 
@@ -215,11 +210,12 @@ local inCombat = {
 	{ topUp, 'keybind(lcontrol)'},
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
-	{ '%dispelall', 'toggle(disp)'},
+	{ dispel}, 
+	{ '%dispelall(Cleanse)', 'toggle(disp)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ emergency, 'lowest.health <= UI(G_CHP) & !player.casting(200652)'},
 	{ tank},
-	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowest.health >= UI(G_DPS)'},
+	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowest.health >= UI(G_DPS) || player.buff(Avenging Crusader) & toggle(dps) & target.enemy & target.infront'},
 	{ moving, 'player.moving'},
 	{ manaRestore, 'player.pmana < UI(P_MR)'},
 	{ healing, '!player.moving & player.pmana >= UI(P_MR)'},
@@ -232,14 +228,10 @@ local outCombat = {
 	{ topUp, 'keybind(lcontrol)'},
 	
 	-- Precombat
-	{ 'Bestow Faith', 'pull_timer <= 3', 'tank'},
-	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
+	--{ 'Bestow Faith', 'pull_timer <= 3', 'tank'},
+	--{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 	
 	{ oocTopUp},
-	
-	{ '%ressdead(Redemption)', 'UI(rezz)'},
-	
-	--{ 'Flash of Light', nil, 'ldebuff(Forbearance)'},
 }
 
 NeP.CR:Add(65, {
