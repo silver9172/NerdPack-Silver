@@ -4,6 +4,8 @@ local GUI = {
 	{type = 'spinner', 	text = 'Critical health%', 						key = 'G_CHP', 	default = 30},
 	{type = 'spinner', 	text = 'Mana Restore', 							key = 'P_MR', 	default = 20},
 	{type = 'checkbox',	text = 'Offensive Holy Shock',					key = 'O_HS', 	default = false},
+	{type = 'checkbox',	text = 'Auto Dispel',							key = 'G_Disp', default = true},
+	{type = 'checkbox',	text = 'Top Up Out of Combat',					key = 'G_OOC',  default = true},
 	{type = 'ruler'}, {type = 'spacer'},
 	
 	--------------------------------
@@ -14,11 +16,10 @@ local GUI = {
 	{type = 'checkbox',	text = 'Aura Mastery',							key = 'AM', 	default = false},
 	{type = 'checkbox',	text = 'Holy Avenger',							key = 'HA', 	default = false},
 	{type = 'checkbox',	text = 'Lay on Hands',							key = 'LoH', 	default = false},
-	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
+	--{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
 	{type = 'checkspin',text = 'Healing Potion/Healthstone',			key = 'P_HP', 	default = false},
 	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
 	{type = 'spinner',	text = 'Health for LotM',						key = 'P_LotM', default = 40},
-	{type = 'checkbox', text = 'Auto Ress out of combat', 				key = 'rezz', 	default = false},
 	{type = 'ruler'}, {type = 'spacer'},
 		
 	--------------------------------
@@ -51,18 +52,11 @@ local exeOnLoad = function()
 		text = 'DPS while healing',
 		icon = 'Interface\\Icons\\spell_holy_crusaderstrike',
 	})
-	NeP.Interface:AddToggle({
-		key = 'disp',
-		name = 'Dispell',
-		text = 'ON/OFF Dispel All',
-		icon = 'Interface\\ICONS\\spell_holy_purify', 
-	})
 end
 
 -- Cast that should be interrupted
 local interrupts = {
 	{ 'Hammer of Justice', nil, 'target'},
-	{ 'Blinding Light', 'target.range <= 7' },
 }
 
 local dispel = {
@@ -72,10 +66,10 @@ local dispel = {
 }
 
 local survival = {
-	{ '#127834', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Health Pot
+	--{ '#127834', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Health Pot
 	--{ '#Healthstone', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'},
 	{ '#127835', 'UI(P_MP_check) & player.pmana <= UI(P_MP_spin)'}, -- Mana Pot
-	{ 'Divine Protection', 'player.buff(Blessing of Sacrifice)'},
+	{ 'Divine Protection', 'buff(Blessing of Sacrifice) || incdmg(5) >= { health.max * 0.40 }', 'player'},
 }
 
 local topUp = { 
@@ -92,11 +86,11 @@ local oocTopUp = {
 
 local DPS = {
 	{ '/startattack', '!isattacking'},
-	{ 'Consecration', 'target.range <= 6 & target.enemy & !player.moving'},
-	{ 'Holy Shock', 'UI(O_HS)', 'target'},
+	{ 'Consecration', 'target.range <= 8 & target.enemy & !player.moving'},
+	{ 'Holy Shock', 'UI(O_HS) & infront', 'target'},
 	{ 'Holy Prism', nil, 'target'},
 	{ 'Judgment', 'infront', 'target'},
-	{ 'Crusader Strike', 'target.inmelee'},
+	{ 'Crusader Strike', 'infront & inmelee'},
 }
 
 local tank = {
@@ -132,8 +126,6 @@ local healing = {
 	}, 'player.buff(Aura Mastery) & talent(5,2)'},
 		
 	{ aoeHealing},
-	
-	{ encounters, 'UI(ENC)'},
 
 	-- Infusion of Light
 	{ 'Flash of Light', 'lowest.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowest'},
@@ -141,6 +133,8 @@ local healing = {
 	
 	{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
 	{ 'Light of the Martyr', '!player & health <= UI(L_LotM) & player.health >= UI(P_LotM)', 'lowest'},
+	
+	{ 'Judgment', 'infront & enemy & talent(5,1)', 'target'},
 	
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', 'lowest'},
@@ -167,42 +161,37 @@ local cooldowns = {
 	{ 'Avenging Crusader', 'player.spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)'},
 	{ 'Holy Avenger', 'UI(HA) & player.area(40,75).heal >= 3 & player.spell(Holy Shock).cooldown = 0'},
 	
-	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS) & !debuff(Spirit Realm).any', 'tank'}, 
-	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS) & !debuff(Spirit Realm).any', 'tank2'}, 
+	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS)', { 'tank', 'tank2'}}, 
 }
 
 local moving = {
 	{ aoeHealing},
 	
 	{{
-		{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & !debuff(Spirit Realm).any', 'tank'},
-		{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & !debuff(Spirit Realm).any', 'tank2'},
-		{ 'Light of the Martyr', '!player & health <= UI(L_LotM) & !debuff(Spirit Realm).any', 'lowest'},
-	}, 'player.health >= 40 || player.buff(Divine Shield)'},
+		{ 'Light of the Martyr', '!player & health <= UI(T_LotM)', { 'tank', 'tank2'}},
+		{ 'Light of the Martyr', '!player & health <= UI(L_LotM)', 'lowest'},
+	}, 'player.health >= UI(P_LotM) || player.buff(Divine Shield)'},
 	
-	{ 'Holy Shock', 'health <= UI(T_HS) & !debuff(Spirit Realm).any', 'tank'},
-	{ 'Holy Shock', 'health <= UI(L_HS) & !debuff(Spirit Realm).any', 'lowest'},
+	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
+	{ 'Holy Shock', 'health <= UI(L_HS)', 'lowest'},
 	
-	{ 'Judgment', 'target.enemy'},
+	{ 'Judgment', 'target.enemy & talent(5,1)', 'target'},
 }
 
 local manaRestore = {
 	{ aoeHealing},
 	
 	-- Holy Shock
-	{ 'Holy Shock', 'health <= UI(T_HS) / 2 & !debuff(Spirit Realm).any', 'tank'},
-	{ 'Holy Shock', 'health <= UI(T_HS) / 2 & !debuff(Spirit Realm).any', 'tank2'},
-	{ 'Holy Shock', 'health <= UI(L_HS) / 2 & !debuff(Spirit Realm).any', 'lowest'},
+	{ 'Holy Shock', 'health <= UI(T_HS) / 2', { 'tank', 'tank2'}},
+	{ 'Holy Shock', 'health <= UI(L_HS) / 2', 'lowest'},
 	
 	-- Flash of Light
-	{ 'Flash of Light', 'health <= UI(T_FoL) / 2 & !debuff(Spirit Realm).any', 'tank'},
-	{ 'Flash of Light', 'health <= UI(T_FoL) / 2 & !debuff(Spirit Realm).any', 'tank2'},
-	{ 'Flash of Light', 'health <= UI(L_FoL) / 2 & !debuff(Spirit Realm).any', 'lowest'},
+	{ 'Flash of Light', 'health <= UI(T_FoL) / 2', { 'tank', 'tank2'}},
+	{ 'Flash of Light', 'health <= UI(L_FoL) / 2', 'lowest'},
 	
 	-- Holy Light
-	{ 'Holy Light', 'health <= UI(T_HL) / 2 & !debuff(Spirit Realm).any', 'tank'},
-	{ 'Holy Light', 'health <= UI(T_HL) / 2 & !debuff(Spirit Realm).any', 'tank2'},
-	{ 'Holy Light', 'health <= UI(L_HL) / 2 & !debuff(Spirit Realm).any', 'lowest'},
+	{ 'Holy Light', 'health <= UI(T_HL) / 2', { 'tank', 'tank2'}},
+	{ 'Holy Light', 'health <= UI(L_HL) / 2', 'lowest'},
 }
 
 local inCombat = {
@@ -210,8 +199,8 @@ local inCombat = {
 	{ topUp, 'keybind(lcontrol)'},
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
-	{ dispel}, 
-	{ '%dispelall(Cleanse)', 'toggle(disp)'},
+	{ dispel, 'UI(G_Disp)'}, 
+	-- { '%dispelall(Cleanse)', 'toggle(disp)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ emergency, 'lowest.health <= UI(G_CHP) & !player.casting(200652)'},
 	{ tank},
@@ -223,15 +212,15 @@ local inCombat = {
 }
 
 local outCombat = {
-	-- Need to prevent this while eatingw
+	-- Need to prevent this while eating
 	{ tank},
 	{ topUp, 'keybind(lcontrol)'},
 	
 	-- Precombat
-	--{ 'Bestow Faith', 'pull_timer <= 3', 'tank'},
+	{ 'Bestow Faith', 'dbm(Pull in) <= 3', 'tank'},
 	--{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 	
-	{ oocTopUp},
+	{ oocTopUp, 'UI(G_OOC)'},
 }
 
 NeP.CR:Add(65, {

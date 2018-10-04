@@ -1,5 +1,6 @@
 local _, Silver = ...
 local _G = _G
+local NeP = NeP
 
 ---------------------------------------
 --------------- General ---------------
@@ -78,7 +79,7 @@ local castingEventSpellsAOE = {
 
 NeP.DSL:Register('castingeventAOE', function()
     for i=1, #castingEventSpellsAOE do
-        if NeP.DSL:Get("casting")("target", castingEventSpellsAOE[i]) then return true end
+        if NeP.DSL:Get('casting')('target', castingEventSpellsAOE[i]) then return true end
     end
 end)
 
@@ -99,23 +100,23 @@ end)
 
 NeP.DSL:Register('bosscheck', function()
 		local check = 0
-		if ( UnitClassification("target") == "boss" ) then
+		if ( UnitClassification('target') == 'boss' ) then
 			check = 1
 			return check
-		elseif ( UnitClassification("target") == "worldboss" ) then
+		elseif ( UnitClassification('target') == 'worldboss' ) then
 			check = 1
 			return check
-		elseif ( UnitClassification("target") == "rareelite" ) then
+		elseif ( UnitClassification('target') == 'rareelite' ) then
 			check = 1
 			return check
-		elseif ( UnitClassification("target") == "rare" ) then
+		elseif ( UnitClassification('target') == 'rare' ) then
 			check = 1
 			return check
 		-- This is for dungeon bosses
-		elseif UnitLevel("target") >= UnitLevel("player") + 2 and not IsInRaid() then
+		elseif UnitLevel('target') >= UnitLevel('player') + 2 and not IsInRaid() then
 			check = 1
 			return check
-		elseif UnitLevel("target") < 0 then
+		elseif UnitLevel('target') < 0 then
 			check = 1
 			return check
 		else
@@ -123,19 +124,9 @@ NeP.DSL:Register('bosscheck', function()
 		end
 end)
 
--- Needs to stop rotation when target has a buff/debuff preventing dmg
-NeP.DSL:Register('immunitycheck', function ()
-	for i=1,40 do
-		local name,_,_,_,_,expires = UnitDebuff('target',i)
-		if name == 'Rend' then
-			local endTime = expires - GetTime()
-			return endTime
-		end
-	end
-	return 0
-end)
+-- Need Immunity Check
 
-NeP.DSL:Register("magicDispel", function(unit)
+NeP.DSL:Register('magicDispel', function(unit)
 	------------------
 	-- BFA Dungeons --
 	------------------
@@ -176,7 +167,7 @@ NeP.DSL:Register("magicDispel", function(unit)
 	
 	-- Tol Dagor
 	or NeP.DSL:Get('debuff.any')(unit, 'Debilitating Shout')
-	or NeP.DSL:Get('debuff.count')(unit, 'Torch Strike') >= 5
+	or NeP.DSL:Get('debuff.count.any')(unit, 'Torch Strike') >= 2
 	or NeP.DSL:Get('debuff.any')(unit, 'Suppression Fire')
 	or NeP.DSL:Get('debuff.any')(unit, 'Fuselighter')
 	
@@ -192,7 +183,7 @@ NeP.DSL:Register("magicDispel", function(unit)
 	or NeP.DSL:Get('debuff.any')(unit, 'Fragment Soul')
 end)
 
-NeP.DSL:Register("poisonDispel", function(unit)
+NeP.DSL:Register('poisonDispel', function(unit)
 	------------------
 	-- BFA Dungeons --
 	------------------
@@ -200,7 +191,7 @@ NeP.DSL:Register("poisonDispel", function(unit)
 	return NeP.DSL:Get('debuff.any')(unit, 'Venomfang Strike')
 	
 	-- Freehold
-	or NeP.DSL:Get('debuff.count')(unit, 'Poisoning Strike') >= 3
+	or NeP.DSL:Get('debuff.count.any')(unit, 'Poisoning Strike') >= 3
 	
 	-- King's Rest
 	or NeP.DSL:Get('debuff.any')(unit, 'Hidden Blade')
@@ -214,19 +205,19 @@ NeP.DSL:Register("poisonDispel", function(unit)
 	or NeP.DSL:Get('debuff.any')(unit, 'Widowmaker Toxin,')
 	
 	-- Siege of Boralus
-	or NeP.DSL:Get('debuff.count')(unit, 'Stinging Venom Coating') >= 4
+	or NeP.DSL:Get('debuff.count.any')(unit, 'Stinging Venom Coating') >= 4
 	
 	-- Temple of Sethraliss
 	or NeP.DSL:Get('debuff.any')(unit, 'Neurotoxin')
 	or NeP.DSL:Get('debuff.any')(unit, 'Noxious Breath')
-	or NeP.DSL:Get('debuff.count')(unit, 'Cytotoxin') >= 3
+	or NeP.DSL:Get('debuff.count.any')(unit, 'Cytotoxin') >= 3
 	or NeP.DSL:Get('debuff.any')(unit, 'Venomous Spit')
 	
 	-- Tol Dagor
 	or NeP.DSL:Get('debuff.any')(unit, 'Crippling Shiv')
 end)
 
-NeP.DSL:Register("diseaseDispel", function(unit)
+NeP.DSL:Register('diseaseDispel', function(unit)
 	------------------
 	-- BFA Dungeons --
 	------------------
@@ -234,7 +225,7 @@ NeP.DSL:Register("diseaseDispel", function(unit)
 	return NeP.DSL:Get('debuff.any')(unit, 'Lingering Nausea')
 	
 	-- Freehold
-	or NeP.DSL:Get('debuff.count')(unit, 'Infected Wound') >= 4
+	or NeP.DSL:Get('debuff.count.any')(unit, 'Infected Wound') >= 4
 	or NeP.DSL:Get('debuff.any')(unit, 'Plague Step')
 	
 	-- King's Rest
@@ -248,7 +239,7 @@ NeP.DSL:Register("diseaseDispel", function(unit)
 	
 	-- Underrot
 	or NeP.DSL:Get('debuff.any')(unit, 'Decaying Mind')
-	or NeP.DSL:Get('debuff.count')(unit, 'Decaying Spores') >= 2
+	or NeP.DSL:Get('debuff.count.any')(unit, 'Decaying Spores') >= 2
 	
 	-- Waycrest Manor
 	or NeP.DSL:Get('debuff.any')(unit, 'Infected Thorn')
@@ -382,26 +373,25 @@ NeP.DSL:Register('rupture.exsanguinated', function()
 	end
 end)
 
-NeP.DSL:Register("rtb_buffs", function()
+NeP.DSL:Register('rtb_buffs', function()
   local roll = 0
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193357)) > 1.5 then  roll = roll + 1 end -- Shark Infested Waters
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193359)) > 1.5 then  roll = roll + 1 end -- True Bearing
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199603)) > 1.5 then  roll = roll + 1 end -- Jolly Roger
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193358)) > 1.5 then  roll = roll + 1 end -- Grand Melee
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199600)) > 1.5 then  roll = roll + 1 end -- Buried Treasure
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193356)) > 1.5 then  roll = roll + 1 end -- Broadsides
-    if NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(202665)) > 1.5 then  roll = roll + 1 end -- Curse of the Dreadblades
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193357)) > 1.5 then  roll = roll + 1 end -- Shark Infested Waters
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193359)) > 1.5 then  roll = roll + 1 end -- True Bearing
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(199603)) > 1.5 then  roll = roll + 1 end -- Jolly Roger
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193358)) > 1.5 then  roll = roll + 1 end -- Grand Melee
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(199600)) > 1.5 then  roll = roll + 1 end -- Buried Treasure
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193356)) > 1.5 then  roll = roll + 1 end -- Broadsides
+    if NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(202665)) > 1.5 then  roll = roll + 1 end -- Curse of the Dreadblades
     return roll
 end)
 
-NeP.DSL:Register("rtb_buffs.duration", function()
-	local dur = 0
-	local x = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193357))
-	local y = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193359))
-	local z = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199603))
-	local a = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(199600))
-	local b = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(193356))
-	local c = NeP.DSL:Get("buff.duration")("player", _G.GetSpellInfo(202665))
+NeP.DSL:Register('rtb_buffs.duration', function()
+	local x = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193357))
+	local y = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193359))
+	local z = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(199603))
+	local a = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(199600))
+	local b = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193356))
+	local c = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(202665))
 	if x > 0 then 
 		dur = x
 		return x
@@ -429,7 +419,7 @@ NeP.DSL:Register("rtb_buffs.duration", function()
 end)
 
 	--rtb_buffs<2&(buff.loaded_dice.up|!buff.grand_melee.up&!buff.ruthless_precision.up)
-NeP.DSL:Register("rtb_reroll", function()
+NeP.DSL:Register('rtb_reroll', function()
 	if NeP.DSL:Get('rtb_buffs')('player') < 2 and ( NeP.DSL:Get('buff')('player', 'Loaded Dice') or not NeP.DSL:Get('buff')('player', 'Grand Melee') or not NeP.DSL:Get('buff')('player', 'Ruthless Precision')) then	
 		return 1
 	else 
@@ -464,7 +454,7 @@ end)
 ---------------------------------------
 
 NeP.DSL:Register('shards', function ()
-	local shards = WarlockPowerBar_UnitPower("player")
+	local shards = WarlockPowerBar_UnitPower('player')
 	return shards
 end)
 
@@ -472,7 +462,7 @@ NeP.DSL:Register('unstableaffliction', function ()
     local count = 0
     for i = 1, 40, 1 do
 	
-        if (UnitAura("target", i, "PLAYER|HARMFUL") == "Unstable Affliction") then
+        if (UnitAura('target', i, 'PLAYER|HARMFUL') == 'Unstable Affliction') then
             count = count + 1
         end
     end
