@@ -78,8 +78,8 @@ local topUp = {
 }
 
 local oocTopUp = {
-	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & player.buff(Rule of Law)'},
-	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3'},
+	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & player.buff(Rule of Law)', 'player'},
+	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3', 'player'},
 	{ 'Holy Shock', 'health < 90', 'lowest'},
 	{ 'Holy Light', 'health < 90 & !player.moving', 'lowest'},
 }
