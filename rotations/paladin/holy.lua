@@ -107,13 +107,12 @@ local encounters = {
 }
 
 local aoeHealing = {
-	{ 'Beacon of Virtue', 'area(30,95).heal >= 3 & talent(7,3)', 'lowest'},
-	{ 'Beacon of Virtue', 'player.lastcast(Light of Dawn)', 'lowest'},
-	{ 'Rule of Law', 'area(22,90).heal.infront >= 3 & !player.buff & spell(Light of Dawn).cooldown = 0'},
-	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & player.buff(Rule of Law)'},
-	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3'},
+	{ 'Beacon of Virtue', 'area(30,95).heal >= 3 & talent(7,3)', { 'tank', 'lowest', 'friendly'}},
+	{ 'Rule of Law', 'area(22,90).heal.infront >= 3 & !buff & spell(Light of Dawn).cooldown = 0', 'player'},
+	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & buff(Rule of Law)', 'player'},
+	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3', 'player'},
 	-- { 'Light of Dawn', 'player.buff(Divine Purpose)'}, -- Needs rewritten. I think there are two buffs
-	{ 'Holy Prism', 'target.area(15,80).heal >= 3'},
+	{ 'Holy Prism', 'area(15,80).heal >= 3', { 'tank', 'lowest', 'friendly'}},
 }
 
 local healing = {
@@ -127,9 +126,10 @@ local healing = {
 		
 	{ aoeHealing},
 
-	-- Infusion of Light
+	-- Infusion of Light --
 	{ 'Flash of Light', 'lowest.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowest'},
 	{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3 & player.buff(Infusion of Light)', 'lowest'},
+	-----------------------
 	
 	{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
 	{ 'Light of the Martyr', '!player & health <= UI(L_LotM) & player.health >= UI(P_LotM)', 'lowest'},
@@ -148,18 +148,22 @@ local healing = {
 }
 
 local emergency = {
-	{ '!Holy Shock', '!player.casting(200652)', 'lowest'},
-	{ '!Flash of Light', '!player.moving & !player.casting(200652)', 'lowest'},
-	{ '!Light of the Martyr', '!player & !player.casting(Flash of Light) & !player.casting(200652)', 'lowest'},
+	{ '!Holy Shock', '!player.casting(Flash of Light)', 'lowest'},
+	{ '!Flash of Light', '!player.moving & !player.casting(Flash of Light)', 'lowest'},
+	{ '!Light of the Martyr', '!player & !player.casting(Flash of Light) & !player.casting(Flash of Light)', 'lowest'},
 }
 
 local cooldowns = {
 	-- Need to rewrite for Raid and 5 Man
-	{ 'Lay on Hands', 'UI(LoH) & lowest.health <= UI(L_LoH) & !lowest.debuff(Forbearance).any', 'lowest'},
-	{ 'Aura Mastery', 'UI(AM) & player.area(40,40).heal >= 4'},
-	{ 'Avenging Wrath', 'UI(AW) & player.area(35,65).heal >= 4 & player.spell(Holy Shock).cooldown = 0'},
-	{ 'Avenging Crusader', 'player.spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)'},
-	{ 'Holy Avenger', 'UI(HA) & player.area(40,75).heal >= 3 & player.spell(Holy Shock).cooldown = 0'},
+	{ 'Lay on Hands', 'UI(LoH) & health <= UI(L_LoH) & !debuff(Forbearance).any', { 'tank', 'lowest', 'friendly'}},
+	
+	{ 'Aura Mastery', 'UI(AM) & area(40,40).heal >= 4', 'player'},
+	
+	{ 'Avenging Wrath', 'UI(AW) & area(35,65).heal >= 4 & spell(Holy Shock).cooldown = 0', 'player'},
+	{ 'Avenging Crusader', 'spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)', 'player'},
+	
+	
+	{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & player.spell(Holy Shock).cooldown = 0', 'player'},
 	
 	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS)', { 'tank', 'tank2'}}, 
 }
