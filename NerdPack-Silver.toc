@@ -1,6 +1,6 @@
 ## Title: |r[|cffADFF2FSilver|r] Combat Routines
 ## Notes: Custom Combat Routines for NerdPack
-## Interface: 70300
+## Interface: 80000
 ## Author: Silver
 ## Dependencies: NerdPack
 

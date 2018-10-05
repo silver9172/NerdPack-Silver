@@ -163,7 +163,7 @@ local cooldowns = {
 	{ 'Avenging Crusader', 'spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)', 'player'},
 	
 	
-	{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & player.spell(Holy Shock).cooldown = 0', 'player'},
+	{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
 	
 	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS)', { 'tank', 'tank2'}}, 
 }
@@ -179,7 +179,7 @@ local moving = {
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', 'lowest'},
 	
-	{ 'Judgment', 'target.enemy & talent(5,1)', 'target'},
+	{ 'Judgment', 'enemy & talent(5,1)', 'target'},
 }
 
 local manaRestore = {
