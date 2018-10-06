@@ -90,24 +90,47 @@ local DPS = {
 	{ 'Holy Shock', 'UI(O_HS) & infront', 'target'},
 	{ 'Holy Prism', nil, 'target'},
 	{ 'Judgment', 'infront', 'target'},
-	{ 'Crusader Strike', 'infront & inmelee'},
+	{ 'Crusader Strike', 'infront & inRange.spell'},
+}
+
+local cooldowns = {
+	-- Need to rewrite for Raid and 5 Man
+	{ 'Lay on Hands', 'UI(LoH) & health <= UI(L_LoH) & !debuff(Forbearance).any', { 'tank', 'lowest', 'friendly'}},
+	
+	-----------
+	-- 5 man --
+	-----------
+	{{
+		{ 'Aura Mastery', 'UI(AM) & area(40,40).heal >= 3', 'player'},
+		{ 'Avenging Wrath', 'UI(AW) & area(35,65).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
+		{ 'Avenging Crusader', 'UI(AW) & area(35,65).heal >= 3 & spell(Holy Shock).cooldown = 0 & inRange.spell(Crusader Strike) & talent(6,2)'},
+		{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
+	}, 'partycheck = 2'}, 
+	
+	----------
+	-- Raid --
+	----------
+	{{
+		{ 'Aura Mastery', 'UI(AM) & area(40,40).heal >= 4', 'player'},
+		{ 'Avenging Wrath', 'UI(AW) & area(35,65).heal >= 4 & spell(Holy Shock).cooldown = 0', 'player'},
+		{ 'Avenging Crusader', 'spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)', 'player'},
+		{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
+	}, 'partycheck = 3'}, 
+	
+	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS) & incdmg(5) >= { health.actual * 0.50 }', { 'tank', 'tank2'}}, 
 }
 
 local tank = {
 	{ 'Beacon of Light', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3)', 'tank'},
 	{ 'Beacon of Faith', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3)', 'tank2'},
-	{ 'Beacon of Faith', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3) & !tank2.exists', 'player'},
+	{ 'Beacon of Faith', '!buff(Beacon of Faith) & !buff(Beacon of Light) & !talent(7,3) & !tank2.exists & partycheck < 3', 'player'},
 	
 	-- Bestow Faith
 	{ 'Bestow Faith', '!buff & talent(1,2) & health <= 90', { 'tank', 'tank2'}},
 }
 
-local encounters = {
-
-}
-
 local aoeHealing = {
-	{ 'Beacon of Virtue', 'area(30,95).heal >= 3 & talent(7,3)', { 'tank', 'lowest', 'friendly'}},
+	{ 'Beacon of Virtue', 'area(30,90).heal >= 3 & talent(7,3)', { 'tank', 'lowest', 'friendly'}},
 	{ 'Rule of Law', 'area(22,90).heal.infront >= 3 & !buff & spell(Light of Dawn).cooldown = 0', 'player'},
 	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & buff(Rule of Law)', 'player'},
 	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3', 'player'},
@@ -133,13 +156,23 @@ local healing = {
 	
 	{ 'Light of the Martyr', '!player & health <= UI(T_LotM) & player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
 	{ 'Light of the Martyr', '!player & health <= UI(L_LotM) & player.health >= UI(P_LotM)', 'lowest'},
-	
-	{ 'Judgment', 'infront & enemy & talent(5,1)', 'target'},
+	{ 'Light of the Martyr', '!player & health <= UI(L_FoL) & player.buff(Divine Shield)', 'lowest'},
 	
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', 'lowest'},
 	
-	{ 'Light of the Martyr', '!player & health <= UI(L_FoL) & player.buff(Divine Shield)', 'lowest'},
+	{ 'Judgment', 'infront & enemy & talent(5,1)', 'target'},
+	
+	-- Mana < 40
+	{ '!/stopcasting','target(lowest) & casting.percent > 30 & casting(Flash of Light) & {{ lowest.health > { UI(L_FoL) * 0.5} & mana < 40} ||{  UI(L_FoL) * 0.75} & mana < 80}}}', 'player'},
+	{ 'Flash of Light', 'player.mana < 40 & health <= { UI(T_FoL) * 0.5}', { 'tank', 'tank2'}},
+	{ 'Flash of Light', 'player.mana < 40 & health <= { UI(L_FoL) * 0.5}', 'lowest'},
+	
+	-- Mana < 80
+	{ 'Flash of Light', 'player.mana < 80 & health <= { UI(T_FoL) * 0.75}', { 'tank', 'tank2'}},
+	{ 'Flash of Light', 'player.mana < 80 & health <= { UI(L_FoL) * 0.75}', 'lowest'},
+	
+	-- Mana < 100
 	{ 'Flash of Light', 'health <= UI(T_FoL)', { 'tank', 'tank2'}},
 	{ 'Flash of Light', 'health <= UI(L_FoL)', 'lowest'},
 		
@@ -151,21 +184,6 @@ local emergency = {
 	{ '!Holy Shock', '!player.casting(Flash of Light)', 'lowest'},
 	{ '!Flash of Light', '!player.moving & !player.casting(Flash of Light)', 'lowest'},
 	{ '!Light of the Martyr', '!player & !player.casting(Flash of Light) & !player.casting(Flash of Light)', 'lowest'},
-}
-
-local cooldowns = {
-	-- Need to rewrite for Raid and 5 Man
-	{ 'Lay on Hands', 'UI(LoH) & health <= UI(L_LoH) & !debuff(Forbearance).any', { 'tank', 'lowest', 'friendly'}},
-	
-	{ 'Aura Mastery', 'UI(AM) & area(40,40).heal >= 4', 'player'},
-	
-	{ 'Avenging Wrath', 'UI(AW) & area(35,65).heal >= 4 & spell(Holy Shock).cooldown = 0', 'player'},
-	{ 'Avenging Crusader', 'spell(Holy Shock).cooldown = 0 & target.range <= 8 & talent(6,2)', 'player'},
-	
-	
-	{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
-	
-	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS)', { 'tank', 'tank2'}}, 
 }
 
 local moving = {
@@ -204,9 +222,8 @@ local inCombat = {
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
 	{ dispel, 'UI(G_Disp)'}, 
-	-- { '%dispelall(Cleanse)', 'toggle(disp)'},
 	{ cooldowns, 'toggle(cooldowns)'},
-	{ emergency, 'lowest.health <= UI(G_CHP) & !player.casting(200652)'},
+	{ emergency, 'lowest.health <= UI(G_CHP) & !player.casting(Flash of Light)'},
 	{ tank},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowest.health >= UI(G_DPS) || player.buff(Avenging Crusader) & toggle(dps) & target.enemy & target.infront'},
 	{ moving, 'player.moving'},

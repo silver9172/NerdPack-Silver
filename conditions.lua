@@ -49,6 +49,18 @@ NeP.DSL:Register('pmana', function()
 	return (mana)
 end)
 
+-- NeP.DSL:Register("inRange.spell",function(target,spell)
+	-- local spellIndex,spellBook = NeP.Core:GetSpellBookIndex(spell)
+	-- return  spellIndex and _G.IsSpellInRange(spellIndex,spellBook,target) == 1
+-- end)
+
+NeP.DSL:Register("inRange.spell",function(target,spell)
+local spellIndex,spellBook = NeP.Core:GetSpellBookIndex(spell)
+if not spellIndex then return false end
+if spellIndex and _G.IsSpellInRange(spellIndex,spellBook,target) == 1 then
+return true end
+end)
+
 -- Need enemy last cast event
 
 local castingEventSpellsAOE = { 
@@ -167,7 +179,7 @@ NeP.DSL:Register('magicDispel', function(unit)
 	
 	-- Tol Dagor
 	or NeP.DSL:Get('debuff.any')(unit, 'Debilitating Shout')
-	or NeP.DSL:Get('debuff.count.any')(unit, 'Torch Strike') >= 2
+	or NeP.DSL:Get('debuff.any')(unit, 'Torch Strike')
 	or NeP.DSL:Get('debuff.any')(unit, 'Suppression Fire')
 	or NeP.DSL:Get('debuff.any')(unit, 'Fuselighter')
 	
