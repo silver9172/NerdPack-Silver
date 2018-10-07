@@ -49,16 +49,27 @@ NeP.DSL:Register('pmana', function()
 	return (mana)
 end)
 
--- NeP.DSL:Register("inRange.spell",function(target,spell)
-	-- local spellIndex,spellBook = NeP.Core:GetSpellBookIndex(spell)
-	-- return  spellIndex and _G.IsSpellInRange(spellIndex,spellBook,target) == 1
--- end)
+NeP.DSL:Register('charges_fractional', function(_, spell)
+    if NeP.DSL:Get('spell.exists')(_, spell) then
+        return NeP.DSL:Get('spell.charges')(_, spell)
+    else
+        return 0
+    end
+end)
+
+NeP.DSL:Register('recharge_time', function(_, spell)
+    if NeP.DSL:Get('spell.exists')(_, spell) then
+        return NeP.DSL:Get('spell.recharge')(_, spell)
+    else
+        return 0
+    end
+end)
 
 NeP.DSL:Register("inRange.spell",function(target,spell)
-local spellIndex,spellBook = NeP.Core:GetSpellBookIndex(spell)
-if not spellIndex then return false end
-if spellIndex and _G.IsSpellInRange(spellIndex,spellBook,target) == 1 then
-return true end
+	local spellIndex,spellBook = NeP.Core:GetSpellBookIndex(spell)
+	if not spellIndex then return false end
+	if spellIndex and _G.IsSpellInRange(spellIndex,spellBook,target) == 1 then
+	return true end
 end)
 
 -- Need enemy last cast event
@@ -257,6 +268,20 @@ NeP.DSL:Register('diseaseDispel', function(unit)
 	or NeP.DSL:Get('debuff.any')(unit, 'Infected Thorn')
 	or NeP.DSL:Get('debuff.any')(unit, 'Severing Serpent')
 	or NeP.DSL:Get('debuff.any')(unit, 'Virulent Pathogen')
+end)
+
+---------------------------------------
+--------------- Hunter ----------------
+---------------------------------------
+NeP.DSL:Register('focus.regen', function()
+    local fregen = select(2, GetPowerRegen('player'))
+    return fregen
+end)
+
+NeP.DSL:Register('focus.time_to_max', function()
+    local deficit = NeP.DSL:Get('deficit')()
+    local fregen = NeP.DSL:Get('focus.regen')('player')
+    return deficit / fregen
 end)
 
 ---------------------------------------

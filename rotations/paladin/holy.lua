@@ -90,7 +90,7 @@ local DPS = {
 	{ 'Holy Shock', 'UI(O_HS) & infront', 'target'},
 	{ 'Holy Prism', nil, 'target'},
 	{ 'Judgment', 'infront', 'target'},
-	{ 'Crusader Strike', 'infront & inRange.spell'},
+	{ 'Crusader Strike', 'infront & inRange.spell', 'target'},
 }
 
 local cooldowns = {
@@ -103,7 +103,7 @@ local cooldowns = {
 	{{
 		{ 'Aura Mastery', 'UI(AM) & area(40,40).heal >= 3', 'player'},
 		{ 'Avenging Wrath', 'UI(AW) & area(35,65).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
-		{ 'Avenging Crusader', 'UI(AW) & area(35,65).heal >= 3 & spell(Holy Shock).cooldown = 0 & inRange.spell(Crusader Strike) & talent(6,2)'},
+		{ 'Avenging Crusader', 'UI(AW) & area(35,65).heal >= 3 & player.spell(Holy Shock).cooldown = 0 & inRange.spell(Crusader Strike) & talent(6,2)', 'target'},
 		{ 'Holy Avenger', 'UI(HA) & area(40,75).heal >= 3 & spell(Holy Shock).cooldown = 0', 'player'},
 	}, 'partycheck = 2'}, 
 	

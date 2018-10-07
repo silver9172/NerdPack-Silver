@@ -21,3 +21,7 @@ rotations\warlock\affliction.lua
 rotations\warrior\protection.lua
 rotations\warrior\fury.lua
 rotations\warrior\arms.lua
+
+rotations\hunter\beast_mastery.lua
+rotations\hunter\survival.lua
+rotations\hunter\marksmanship.lua
