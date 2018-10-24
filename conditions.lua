@@ -72,6 +72,26 @@ NeP.DSL:Register("inRange.spell",function(target,spell)
 	return true end
 end)
 
+-- /dump NeP.DSL:Get('execute_time')('player','Pyroblast')
+NeP.DSL:Register('execute_time', function(_, spell)
+    if NeP.DSL:Get('spell.exists')(_, spell) then
+        local GCD = NeP.DSL:Get('gcd')()
+        local CTT = NeP.DSL:Get('spell.casttime')(_, spell)
+        if CTT > GCD then
+            return CTT
+        else
+            return GCD
+        end
+    end
+    return false
+end)
+
+-- Spell in range. Credit to Kleei
+NeP.DSL:Register("inRange.spell", function(unit, spell)
+   local spellIndex, spellBook = NeP.Core:GetSpellBookIndex(spell)
+   return spellIndex and _G.IsSpellInRange(spellIndex, spellBook, unit) == 1
+end)
+
 -- Need enemy last cast event
 
 local castingEventSpellsAOE = { 
@@ -211,33 +231,31 @@ NeP.DSL:Register('poisonDispel', function(unit)
 	-- BFA Dungeons --
 	------------------
 	-- Atal'Dazar
-	return NeP.DSL:Get('debuff.any')(unit, 'Venomfang Strike')
+	return NeP.DSL:Get('debuff.duration.any')(unit, 'Venomfang Strike') <= 7 and NeP.DSL:Get('debuff.any')(unit, 'Venomfang Strike')
 	
 	-- Freehold
-	or NeP.DSL:Get('debuff.count.any')(unit, 'Poisoning Strike') >= 3
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Poisoning Strike') >= 11 and NeP.DSL:Get('debuff.any')(unit, 'Poisoning Strike')
 	
 	-- King's Rest
-	or NeP.DSL:Get('debuff.any')(unit, 'Hidden Blade')
-	or NeP.DSL:Get('debuff.any')(unit, 'Embalming Fluid')
-	or NeP.DSL:Get('debuff.any')(unit, 'Poison Barrage')
-	
-	-- Shrine of the Storm
-	or NeP.DSL:Get('debuff.any')(unit, 'Stinging Venom Coating')
-	
-	-- The MOTHERLODE!!!
-	or NeP.DSL:Get('debuff.any')(unit, 'Widowmaker Toxin,')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Hidden Blade') >= 7 and NeP.DSL:Get('debuff.any')(unit, 'Hidden Blade')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Embalming Fluid') >= 19 and NeP.DSL:Get('debuff.any')(unit, 'Embalming Fluid')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Poison Barrage') >= 19 and NeP.DSL:Get('debuff.any')(unit, 'Poison Barrage')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Poison Nova') >= 19 and NeP.DSL:Get('debuff.any')(unit, 'Poison Nova')
 	
 	-- Siege of Boralus
-	or NeP.DSL:Get('debuff.count.any')(unit, 'Stinging Venom Coating') >= 4
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Stinging Venom Coating') >= 9 and NeP.DSL:Get('debuff.any')(unit, 'Stinging Venom Coating')
+	
+	-- The MOTHERLODE!!!
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Toxic Blades,') >= 5 and NeP.DSL:Get('debuff.any')(unit, 'Toxic Blades')
 	
 	-- Temple of Sethraliss
-	or NeP.DSL:Get('debuff.any')(unit, 'Neurotoxin')
-	or NeP.DSL:Get('debuff.any')(unit, 'Noxious Breath')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Neurotoxin') >= 7 and NeP.DSL:Get('debuff.any')(unit, 'Neurotoxin')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Noxious Breath') >= 9 and NeP.DSL:Get('debuff.any')(unit, 'Noxious Breath')
 	or NeP.DSL:Get('debuff.count.any')(unit, 'Cytotoxin') >= 3
-	or NeP.DSL:Get('debuff.any')(unit, 'Venomous Spit')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Venomous Spit') >= 8 and NeP.DSL:Get('debuff.any')(unit, 'Venomous Spit')
 	
 	-- Tol Dagor
-	or NeP.DSL:Get('debuff.any')(unit, 'Crippling Shiv')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Crippling Shiv') >= 11 and NeP.DSL:Get('debuff.any')(unit, 'Crippling Shiv')
 end)
 
 NeP.DSL:Register('diseaseDispel', function(unit)
@@ -270,6 +288,111 @@ NeP.DSL:Register('diseaseDispel', function(unit)
 	or NeP.DSL:Get('debuff.any')(unit, 'Virulent Pathogen')
 end)
 
+NeP.DSL:Register('curseDispel', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('debuff.duration.any')(unit, 'Unstable Hex') <= 4 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Hex')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Wracking Pain') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Wracking Pain')
+	
+	-- King's Rest
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Hex') <= 9 and NeP.DSL:Get('debuff.any')(unit, 'Hex')
+	
+	-- Underrot
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Withering Curse') <= 11 and NeP.DSL:Get('debuff.any')(unit, 'Withering Curse')
+	
+	-- Siege of Boralus
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Cursed Slash') <= 9 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Hex')
+	
+	-- Waycrest Manor
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Unstable Runic Mark') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Runic Mark')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Marking Cleave') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Marking Cleave')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Dread Mark') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Dread Mark')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Lingering Dread') <= 4 and NeP.DSL:Get('debuff.any')(unit, 'Lingering Dread')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Runic Mark') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Runic Mark')
+end)
+
+NeP.DSL:Register('purgeEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('buff.any')(unit, 'Gilded Claws')
+
+end)
+
+NeP.DSL:Register('tankEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('buff.any')(unit, 'Gilded Claws')
+	or NeP.DSL:Get('casting')(unit, 'Serrated Teeth')
+	or NeP.DSL:Get('casting')(unit, 'Skewer')
+	or NeP.DSL:Get('casting')(unit, 'Venomfang Strike')
+	
+	-- Kings Rest
+	or NeP.DSL:Get('casting')(unit, 'Tail Thrash')
+	
+	-- Testing
+	or NeP.DSL:Get('casting')(unit, 'Uber Strike')
+end)
+
+NeP.DSL:Register('immuneCheck', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+
+end)
+
+NeP.DSL:Register('bopEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('debuff.any')(unit, 'Pursuit')
+	or NeP.DSL:Get('debuff.any')(unit, 'Devour')
+
+end)
+
+NeP.DSL:Register('freedomEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('debuff.any')(unit, 'Pursuit')
+	or NeP.DSL:Get('debuff.any')(unit, 'Devour')
+
+end)
+
+NeP.DSL:Register('stunEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('name')(unit,'Spirit of Gold')
+	or NeP.DSL:Get('name')(unit,'Shieldbearer of Zul') and NeP.DSL:Get('channeling')(unit,'Bulwark of Juju')
+	
+	or NeP.DSL:Get('name')(unit,'Orb Guardian')
+
+end)
+
+NeP.DSL:Register('priorityTarget', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------a
+	return NeP.DSL:Get('name')(unit,'Explosive Orb')
+	-- Atal'Dazar
+	or NeP.DSL:Get('name')(unit,'Spirit of Gold')
+end)
+
+---------------------------------------
+---------------- Mage -----------------
+---------------------------------------
+
+
 ---------------------------------------
 --------------- Hunter ----------------
 ---------------------------------------
@@ -282,6 +405,28 @@ NeP.DSL:Register('focus.time_to_max', function()
     local deficit = NeP.DSL:Get('deficit')()
     local fregen = NeP.DSL:Get('focus.regen')('player')
     return deficit / fregen
+end)
+
+-- /dump NeP.DSL:Get('isshooting')()
+NeP.DSL:Register('isshooting', function()
+	return IsCurrentSpell('Auto Shot')
+	or IsCurrentSpell(75)
+	or IsCurrentSpell(145759)
+	or IsCurrentSpell(219676)
+	or IsCurrentSpell(246353)
+	or IsCurrentSpell(262545)
+	or IsCurrentSpell(266452)
+	or IsCurrentSpell(280637)
+	or IsCurrentAction(57)
+end)
+
+NeP.DSL:Register('test2', function()
+	return IsCurrentSpell('Auto Attack')
+end)
+
+NeP.DSL:Register('test', function()
+	local _, _, _, _, _, _, spellID = GetSpellInfo('Auto Shot')
+	return spellID
 end)
 
 ---------------------------------------
@@ -470,6 +615,27 @@ end)
 	-- # With multiple targets, this variable is checked to decide whether some CDs should be synced with Blade Flurry
 	-- actions+=/variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
 
+NeP.DSL:Register("health.missing", function(target)
+	return NeP.DSL:Get('health.max')(target) - NeP.DSL:Get('health.actual')(target)
+end)
+
+---------------------------------------
+------------ Death Knight -------------
+---------------------------------------
+
+NeP.DSL:Register('deathstrike', function ()
+	return NeP.DSL:Get('incdmg')('player', 8) * 0.25
+end)
+
+NeP.DSL:Register('rune.time_to_4', function ()
+	local runeAmount = 0
+	for i=1,6 do
+	  local start, duration, runeReady = GetRuneCooldown(2)
+	  --if runeReady == false then
+		return (start + duration - _G.GetTime()) or 0
+	  --end
+	end
+end)
 
 ---------------------------------------
 -------------- Warrior ----------------

@@ -28,12 +28,26 @@ local interrupts = {
 
 }
 
+local standard = {
+	{ 'Remorseless Winter'}, 
+	{ 'Frost Strike', 'player.spell(Remorseless Winter).cooldown <= 2 * gcd & talent(6,1)', 'target'}, 
+	{ 'Howling Blast', 'player.buff(Rime)', 'target'}, 
+	{ 'Obliterate', '!player.buff(Frozen Pulse) & talent(4,2)', 'target'}, 
+	{ 'Frost Strike', 'deficit < { 15 + talent(2,1) * 3}', 'target'},
+		
+}
+
 local preCombat = {
 
 }
 
 local inCombat = {
 	{ '/startattack', '!isattacking & target.enemy'},
+	
+	
+	
+	
+	{ standard}, 
 }
 
 local outCombat = {

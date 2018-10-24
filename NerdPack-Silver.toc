@@ -22,6 +22,14 @@ rotations\warrior\protection.lua
 rotations\warrior\fury.lua
 rotations\warrior\arms.lua
 
+rotations\deathknight\blood.lua
+rotations\deathknight\frost.lua
+rotations\deathknight\unholy.lua
+
+rotations\mage\frost.lua
+rotations\mage\fire.lua
+rotations\mage\arcane.lua
+
 rotations\hunter\beast_mastery.lua
 rotations\hunter\survival.lua
 rotations\hunter\marksmanship.lua

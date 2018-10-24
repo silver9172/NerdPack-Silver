@@ -22,37 +22,45 @@ local exeOnLoad = function()
 	print('|cffADFF2F --- |rMost Talents Supported')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
-	
-local events = {
-	----------------
-	---- 5 Mans ----
-	----------------
-	-- Tank Dummy
-	{ 'Shield of the Righteous', 'player.buff.duration <= 2.5 & casting(Uber Strike) & !player.lastcast', 'target'},
+
+local dispel = {
+	{ 'Cleanse Toxins', 'poisonDispel', { 'lowest', 'friendly'}}, 
+	{ 'Cleanse Toxins', 'diseaseDispel', { 'lowest', 'friendly'}}, 
 }
 
+local priorityTarget = {
+	{ 'Avenger\'s Shield', 'priorityTarget & inRange.spell & area(10).enemies 12>= 2', 'enemies'},
+	{ 'Judgment', 'priorityTarget & inRange.spell & { talent(2,2) & player.spell.charges >= 2} || priorityTarget & inRange.spell & !talent(2,2)', 'enemies' },
+	{ 'Consecration', 'priorityTarget & inRange.spell(Hammer of the Righteous) & !player.buff', 'enemies'}, 
+	{ 'Judgment', 'priorityTarget & inRange.spell', 'enemies'}, 
+	{ 'Avenger\'s Shield', 'priorityTarget & inRange.spell', 'enemies'}, 
+	{ 'Hammer of the Righteous', 'priorityTarget & inRange.spell', 'enemies'},
+	{ 'Consecration', 'priorityTarget & inRange.spell(Hammer of the Righteous)', 'enemies'},
+}
+
+local utility = {
+	-- Use charge of SotR for events that need AM up 
+	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & tankEvent & player.buff.duration < 2', 'enemies'}, 
+	{ 'Arcane Torrent', 'inRange.spell(Hammer of the Righteous) & purgeEvent', 'enemies'}, 
+	{ 'Hammer of Justice', 'stunEvent', 'enemies'}, 
+	{ 'Blessing of Protection', 'bopEvent & !debuff(Forbearance).any', 'friendly'}, 
+}
 
 local interrupts = {
-	{ 'Rebuke'},
-	{ 'Hammer of Justice', 'spell(Rebuke).cooldown > gcd'},
+	{ 'Rebuke', 'inRange.spell & interruptAt(35)', 'enemies'},
+	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35)', 'enemies'},
+	{ 'Hammer of Justice', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35)', 'enemies'},
 }
 
-local activeMitigation = {
+local cooldowns = {	
 	-- Shield of the Righteous
-	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & range <= 8 & threat == 100 & !talent(7,2)', 'target'},
-	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & target.range <= 8 & target.threat == 100 & talent(7,2) & !player.spell(Seraphim).cooldown = 0'},
+	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & !talent(7,3)', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & target.threat == 100 & talent(7,3) & !player.spell(Seraphim).cooldown > 0', 'target'},
 	-- Use 2nd charge
-	{ 'Shield of the Righteous', '!player.buff & player.incdmg(5) >= { player.health.max * 0.25 } & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
+	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & !player.buff & player.incdmg(5) >= { player.health.max * 0.25 } & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
 	
 	-- Light of the Protector
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'player'},
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'tank'},
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'tank2'},
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'lowest'},
-}
-
-local cooldowns = {
-	{ events},
+	{ 'Light of the Protector', 'health <= UI(lotp)', { 'player', 'tank', 'tank2', 'lowest'}},
 	
 	{ 'Bastion of Light', 'player.spell(Shield of the Righteous).charges < 1'},
 	
@@ -60,35 +68,37 @@ local cooldowns = {
 	{ 'Ardent Defender', 'UI(ad_check) & player.health <= UI(ad_spin) & !target.debuff(Eye of Tyr) & !player.buff(Guardian of Ancient Kings)'},
 	{ 'Guardian of Ancient Kings', 'UI(ak_check) & player.health <= UI(ak_spin) & !target.debuff(Eye of Tyr) & !player.buff(Ardent Defender)'},
 
-	{ 'Seraphim', 'player.spell(Shield of the Righteous).charges > 2'},
+	{ 'Seraphim', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges > 2'},
 	
-	{ 'Avenging Wrath', '!talent(7,2) & target.range <= 10'},
-	{ 'Avenging Wrath', 'talent(7,2) & player.buff(Seraphim) & target.range <= 10'},
+	{ 'Avenging Wrath', 'inRange.spell(Hammer of the Righteous) & player.buff(Consecration) & !talent(7,3) & target.range <= 10'},
+	{ 'Avenging Wrath', 'inRange.spell(Hammer of the Righteous) & player.buff(Consecration) & talent(7,3) & player.buff(Seraphim) & target.range <= 10'},
 
 	-- Add UI toggle for LoH
-	{ 'Lay on Hands', 'player.health < 15'},
-	--{ 'Lay on Hands', 'lowest.health < 15'},
+	{ 'Lay on Hands', 'health < 15', { 'player', 'tank', 'tank2', 'lowest'}},
 }
 
 local rotation = {
-	{ 'Judgment'},
-	{ 'Consecration', 'player.area(8).enemies > 0 & !buff', 'target'}, 
-	{ 'Avenger\'s Shield'}, 
-	{ 'Hammer of the Righteous'},
-	{ 'Consecration', 'player.area(8).enemies > 0', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell & area(10).enemies 12>= 2', 'target'},
+	{ 'Judgment', 'inRange.spell & { talent(2,2) & player.spell.charges >= 2} || inRange.spell & !talent(2,2)', 'target' },
+	{ 'Consecration', 'inRange.spell(Hammer of the Righteous) & !player.buff', 'target'}, 
+	{ 'Judgment', 'inRange.spell', 'target'}, 
+	{ 'Avenger\'s Shield', 'inRange.spell', 'target'}, 
+	{ 'Hammer of the Righteous', 'inRange.spell', 'target'},
+	{ 'Consecration', 'inRange.spell(Hammer of the Righteous)', 'target'},
 }
 
 local inCombat = {
 	{ '/startattack', '!isattacking & target.exists'},
-	{ target},
-	{ interrupts, 'target.interruptAt(50)'},
-	{ activeMitigation},
-	{ cooldowns, 'toggle(cooldowns) & target.range <= 10'},
+	{ interrupts}, 
+	{ utility}, 
+	{ dispel}, 
+	{ cooldowns, 'toggle(cooldowns) & target.range <= 5'},
+	{ priorityTarget},
 	{ rotation, 'target.infront'}
 }
 
 local outCombat = {
-	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
+	
 }
 
 NeP.CR:Add(66, {
@@ -96,5 +106,7 @@ NeP.CR:Add(66, {
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,
-	load = exeOnLoad
+	load = exeOnLoad,
+ wow_ver = '8.0.1',
+ nep_ver = '1.11',	
 })
