@@ -331,6 +331,7 @@ NeP.DSL:Register('tankEvent', function(unit)
 	or NeP.DSL:Get('casting')(unit, 'Serrated Teeth')
 	or NeP.DSL:Get('casting')(unit, 'Skewer')
 	or NeP.DSL:Get('casting')(unit, 'Venomfang Strike')
+	or NeP.DSL:Get('debuff.any')('player', 'Venomfang Strike')
 	
 	-- Kings Rest
 	or NeP.DSL:Get('casting')(unit, 'Tail Thrash')
@@ -377,21 +378,47 @@ NeP.DSL:Register('stunEvent', function(unit)
 	
 	or NeP.DSL:Get('name')(unit,'Orb Guardian')
 
+	------------------
+	---- BFA Raids ---
+	------------------
+	or NeP.DSL:Get('name')(unit,'Colatile Droplet')
+end)
+
+NeP.DSL:Register('cancelCastingEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('name')(unit,'Spirit of Gold')
+
+	------------------
+	---- BFA Raids ---
+	------------------
+	or NeP.DSL:Get('casting')(unit,'Mind-Numbing Chatter')
 end)
 
 NeP.DSL:Register('priorityTarget', function(unit)
 	------------------
 	-- BFA Dungeons --
-	------------------a
+	------------------
 	return NeP.DSL:Get('name')(unit,'Explosive Orb')
 	-- Atal'Dazar
 	or NeP.DSL:Get('name')(unit,'Spirit of Gold')
+	
+	------------------
+	---- BFA Raids ---
+	------------------
+	or NeP.DSL:Get('name')(unit,'Coalesced Blood')
 end)
 
 ---------------------------------------
 ---------------- Mage -----------------
 ---------------------------------------
 
+-- /dump NeP.DSL:Get('firestarter.active')('target')
+NeP.DSL:Register('firestarter.active', function(unit)
+    return NeP.DSL:Get('talent.enabled')(nil, '1,1') == 1 and NeP.DSL:Get('health')(unit) > 90
+end)
 
 ---------------------------------------
 --------------- Hunter ----------------
@@ -671,4 +698,12 @@ NeP.DSL:Register('unstableaffliction', function ()
     end
 	--print('Unstable Afflictions: '..count)
 	return count
+end)
+
+NeP.DSL:Register('spammable_seed', function ()
+	-- spammable_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5|spell_targets.seed_of_corruption>=8
+	if NeP.DSL:Get('talent.enabled')(nil, '4,1') and NeP.DSL:Get('area.enemies')('target', '10') >= 3 or NeP.DSL:Get('talent.enabled')(nil, '2,3') and NeP.DSL:Get('area.enemies')('target', '10') >= 5 or NeP.DSL:Get('area.enemies')('target', '10') >= 8 then
+		return true
+	end
+	return false
 end)

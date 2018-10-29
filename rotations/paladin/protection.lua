@@ -55,7 +55,7 @@ local interrupts = {
 local cooldowns = {	
 	-- Shield of the Righteous
 	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & !talent(7,3)', 'target'},
-	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & target.threat == 100 & talent(7,3) & !player.spell(Seraphim).cooldown > 0', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & talent(7,3) & player.spell(Seraphim).cooldown > 0', 'target'},
 	-- Use 2nd charge
 	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & !player.buff & player.incdmg(5) >= { player.health.max * 0.25 } & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
 	
@@ -68,7 +68,7 @@ local cooldowns = {
 	{ 'Ardent Defender', 'UI(ad_check) & player.health <= UI(ad_spin) & !target.debuff(Eye of Tyr) & !player.buff(Guardian of Ancient Kings)'},
 	{ 'Guardian of Ancient Kings', 'UI(ak_check) & player.health <= UI(ak_spin) & !target.debuff(Eye of Tyr) & !player.buff(Ardent Defender)'},
 
-	{ 'Seraphim', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges > 2'},
+	{ 'Seraphim', 'inRange.spell(Hammer of the Righteous) & player.spell(Shield of the Righteous).charges > 2', 'target'},
 	
 	{ 'Avenging Wrath', 'inRange.spell(Hammer of the Righteous) & player.buff(Consecration) & !talent(7,3) & target.range <= 10'},
 	{ 'Avenging Wrath', 'inRange.spell(Hammer of the Righteous) & player.buff(Consecration) & talent(7,3) & player.buff(Seraphim) & target.range <= 10'},

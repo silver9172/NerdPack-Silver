@@ -209,7 +209,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(103, {
-	name = '[|cff'..Xeer.addonColor..'Xeer|r] DRUID - Feral',
+	name = 'DRUID - Feral',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

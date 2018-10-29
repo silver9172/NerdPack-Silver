@@ -14,6 +14,11 @@ rotations\paladin\protection.lua
 rotations\paladin\holy.lua
 rotations\paladin\retribution.lua
 
+rotations\druid\balance.lua
+rotations\druid\restoration.lua
+rotations\druid\feral.lua
+rotations\druid\guardian.lua
+
 rotations\warlock\demonology.lua
 rotations\warlock\destruction.lua
 rotations\warlock\affliction.lua
