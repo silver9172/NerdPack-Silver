@@ -8,21 +8,19 @@ local dispel = {
 	{ 'Remove Curse', 'curseDispel', { 'lowest', 'friendly'}}, 
 }
 
-local buff = {
-	{ 'Arcane Intellect', 'buff.duration <= 900', { 'lowest', 'friendly'}}, 
-}
-
 local interrupts = {
-	{ 'Counterspell'},
+	{ 'Counterspell', 'inRange.spell & interruptAt(75)', 'enemies'},
 }
 
 local utility = {
+	{ 'Arcane Intellect', 'buff.duration <= 900', { 'lowest', 'friendly'}}, 
 	{ '/stopcasting', 'cancelCastingEvent', 'enemies'}, 
+	{ 'Spellsteal', 'spellstealEvent', 'enemies'}, 
 }
 
 local survival = {
 	{ 'Blazing Barrier', 'buff.duration <= 15 & !buff(Replenishment) & incdmg(5) >= { player.health.max * 0.15 }', 'player'}, 
-	{ '#Healthstone', 'health <= 40', 'player'}, 
+	--{ '#Healthstone', 'health <= 40', 'player'}, 
 }
 
 local activeTalents = {
@@ -40,11 +38,13 @@ local combustion = {
 	-- actions.combustion_phase=lights_judgment,if=buff.combustion.down
 	{ 'Light\'s Judgment', '!player.buff(Combustion)', 'target'}, 
 	-- actions.combustion_phase+=/rune_of_power,if=buff.combustion.down
+	{ 'Rune of Power', '!buff(Combustion)', 'player'}, 
 	--{ 'Rune of Power', '!player.buff(Combustion) & { player.spell(Fire Blast).charges >= 1 & { talent(4,3) & player.spell(Phoenix Flames).charges >= 2 || !talent(4,3)} & { talent(3,3) & player.spell(Rune of Power).charges >= 1 || !talent(3,3)} & player.buff(Heating Up)}', 'target'}, 
 	-- actions.combustion_phase+=/call_action_list,name=active_talents
 	{ activeTalents}, 
 	-- actions.combustion_phase+=/combustion
-	{ 'Combustion', 'player.spell(Fire Blast).charges >= 1 & { talent(4,3) & player.spell(Phoenix Flames).charges >= 2 || !talent(4,3)} & { talent(3,3) & player.lastcast(Rune of Power) || !talent(3,3)} & player.buff(Heating Up)', 'target'}, 
+	{ 'Combustion', '{ talent(3,3) & totem(Rune of Power)} || !talent(3,3) & !buff', 'player'}, 
+	--{ 'Combustion', 'player.spell(Fire Blast).charges >= 1 & { talent(4,3) & player.spell(Phoenix Flames).charges >= 2 || !talent(4,3)} & { talent(3,3) & player.lastcast(Rune of Power) || !talent(3,3)} & player.buff(Heating Up)', 'target'}, 
 	-- actions.combustion_phase+=/potion
 	-- actions.combustion_phase+=/blood_fury
 	-- actions.combustion_phase+=/berserking
@@ -56,7 +56,7 @@ local combustion = {
 	-- actions.combustion_phase+=/pyroblast,if=buff.pyroclasm.react&buff.combustion.remains>execute_time
 	{ 'Pyroblast', '!player.moving & player.buff(Pyroclasm) & player.buff(Combustion).duration > player.execute_time', 'target'},
 	-- actions.combustion_phase+=/pyroblast,if=buff.hot_streak.react
-	{ '&Pyroblast', 'player.buff(Hot Streak!)', 'target'}, 
+	{ 'Pyroblast', 'player.buff(Hot Streak!)', 'target'}, 
 	-- actions.combustion_phase+=/fire_blast,if=buff.heating_up.react
 	{ '&Fire Blast', 'player.buff(Heating Up) & inRange.spell', 'target'}, 
 	-- actions.combustion_phase+=/phoenix_flames
@@ -74,7 +74,7 @@ local rop = {
 	-- actions.rop_phase+=/flamestrike,if=((talent.flame_patch.enabled&active_enemies>1)|active_enemies>4)&buff.hot_streak.react
 	{ 'Flamestrike', '{{ talent(6,1) & area(8).enemies > 1} || area(8).enemies > 4} & player.buff(Hot Streak!)', 'target.ground'}, 
 	-- actions.rop_phase+=/pyroblast,if=buff.hot_streak.react
-	{ '&Pyroblast', 'player.buff(Hot Streak!) & inRange.spell', 'target'}, 
+	{ 'Pyroblast', 'player.buff(Hot Streak!) & inRange.spell', 'target'}, 
 	-- actions.rop_phase+=/call_action_list,name=active_talents
 	{ activeTalents}, 
 	-- actions.rop_phase+=/pyroblast,if=buff.pyroclasm.react&execute_time<buff.pyroclasm.remains&buff.rune_of_power.remains>cast_time
@@ -90,7 +90,7 @@ local rop = {
 	-- actions.rop_phase+=/scorch,if=target.health.pct<=30&talent.searing_touch.enabled
 	{ 'Scorch', 'health <= 30 & talent(1,3) & inRange.spell', 'target'}, 
 	-- actions.rop_phase+=/dragons_breath,if=active_enemies>2
-	{ 'Dragon\'s Breath', 'area(8).enemies > 2', 'target'}, 
+	{ 'Dragon\'s Breath', 'player.area(8).enemies > 2', 'target'}, 
 	-- actions.rop_phase+=/flamestrike,if=(talent.flame_patch.enabled&active_enemies>2)|active_enemies>5
 	{ 'Flamestrike', '{ talent(6,1) & area(8).enemies > 2} || area(8).enemies > 5', 'target.ground'}, 
 	-- actions.rop_phase+=/fireball
@@ -133,18 +133,16 @@ local standard = {
 local rotation = {
 	-- # Executed every time the actor is available.
 	-- actions=counterspell,if=target.debuff.casting.react
-	{ interrupts, 'target.interruptAt(50)'},
+	{ interrupts},
 	-- actions+=/time_warp,if=time=0&buff.bloodlust.down
 	-- actions+=/mirror_image,if=buff.combustion.down
 	{ 'Mirror Image', '!player.buff(Combustion)', 'target'}, 
 	-- # Standard Talent RoP Logic.
 	-- actions+=/rune_of_power,if=firestarter.active&action.rune_of_power.charges=2|cooldown.combustion.remains>40&buff.combustion.down&!talent.kindling.enabled|target.time_to_die<11|talent.kindling.enabled&(charges_fractional>1.8|time<40)&cooldown.combustion.remains>40
-	{ 'Rune of Power', 'firestarter.active & player.spell.charges = 2 || player.spell(Combustion).cooldown > 40 & !player.buff(Combustion) & !talent(7,1) || ttd < 11 || talent(7,1) & { player.spell.charges > 1.8 || combat.time < 40} & player.spell(Combustion).cooldown > 40', 'target'}, 
+	{ 'Rune of Power', 'firestarter.active & player.spell.charges = 2 || player.spell(Combustion).cooldown > 40 & !player.buff(Combustion) & !talent(7,1) || talent(7,1) & { player.spell.charges > 1.8 || combat.time < 40} & player.spell(Combustion).cooldown > 40', 'target'}, 
 	-- # RoP use while using Pyroclasm.
 	-- actions+=/rune_of_power,if=buff.pyroclasm.react&(cooldown.combustion.remains>40|action.rune_of_power.charges>1)
 	-- actions+=/call_action_list,name=combustion_phase,if=cooldown.combustion.remains<=action.rune_of_power.cast_time+(!talent.kindling.enabled*gcd)&(!talent.firestarter.enabled|!firestarter.active|active_enemies>=4|active_enemies>=2&talent.flame_patch.enabled)|buff.combustion.up
-	--{ 'Combustion', 'player.spell(Fire Blast).charges >= 2 & { talent(4,3) & player.spell(Phoenix Flames).charges >= 2 || !talent(4,3)} & { talent(3,3) & player.spell(Rune of Power).charges >= 1 || !talent(3,3)} & player.buff(Heating Up)', 'target'}, 
-	--{ 'Combustion', 'player.spell(Combustion).cooldown <= player.spell(Rune of Power).casttime + { !talent(1,1) * gcd} & { !talent(1,1) || { talent(1,1) & target.health < 90} || target.area(8).enemies >= 4 || target.area(8).enemies >= 2 & talent(6,1)} || player.buff(Combustion)'}, 
 	{ combustion, 'player.spell(Combustion).cooldown <= player.spell(Rune of Power).casttime + { !talent(1,1) * gcd} & { !talent(1,1) || { talent(1,1) & target.health < 90} || target.area(8).enemies >= 4 || target.area(8).enemies >= 2 & talent(6,1)} || player.buff(Combustion)'},  
 	-- actions+=/call_action_list,name=rop_phase,if=buff.rune_of_power.up&buff.combustion.down
 	{ rop, 'totem(Rune of Power) & !player.buff(Combustion)'}, 
@@ -158,7 +156,6 @@ local preCombat = {
 }
 
 local inCombat = {
-	{ buff}, 
 	{ dispel, 'UI(G_Curse)'},
 	{ utility}, 
 	{ survival}, 
@@ -166,8 +163,8 @@ local inCombat = {
 }
 
 local outCombat = {
-	{'%pause', 'player.buff(Replenishment)'},
-	{ buff}, 
+	{ '%pause', 'player.buff(Replenishment)'},
+	{ utility}, 
 	{ preCombat}, 
 }
 

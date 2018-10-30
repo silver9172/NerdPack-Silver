@@ -318,8 +318,55 @@ NeP.DSL:Register('purgeEvent', function(unit)
 	-- BFA Dungeons --
 	------------------
 	-- Atal'Dazar
-	return NeP.DSL:Get('buff.any')(unit, 'Gilded Claws')
-
+	return NeP.DSL:Get('buff.any')(unit,'Gilded Claws')
+	or NeP.DSL:Get('buff.any')(unit,'Gathered Souls')
+	or NeP.DSL:Get('buff.any')(unit,'Dino Might')
+	
+	-- Freehold
+	or NeP.DSL:Get('buff.any')(unit,'Healing Balm')
+	
+	-- King's Rest
+	or NeP.DSL:Get('buff.any')(unit,'Bound by Shadow')
+	or NeP.DSL:Get('buff.any')(unit,'Seduction')
+	or NeP.DSL:Get('buff.any')(unit,'Induce Regeneration')
+	
+	-- Shrine of the Storm
+	or NeP.DSL:Get('buff.any')(unit,'Tidal Surge')
+	or NeP.DSL:Get('buff.any')(unit,'Spirit\'s Swiftness')
+	or NeP.DSL:Get('buff.any')(unit,'Mending Rapids')
+	or NeP.DSL:Get('buff.any')(unit,'Reanimated Bones')
+	or NeP.DSL:Get('buff.any')(unit,'Detect Thoughts')
+	or NeP.DSL:Get('buff.any')(unit,'Consuming Void')
+	
+	-- Siege of Boralus
+	or NeP.DSL:Get('buff.any')(unit,'Watertight Shell')
+	or NeP.DSL:Get('buff.any')(unit,'Bolstering Shout')
+	
+	-- Temple of Sethraliss
+	or NeP.DSL:Get('buff.any')(unit,'Electrified Scales')
+	or NeP.DSL:Get('buff.any')(unit,'Embryonic Vigor')
+	or NeP.DSL:Get('buff.any')(unit,'Accumulate Charge')
+	
+	-- The MOTHERLODE!!
+	or NeP.DSL:Get('buff.any')(unit,'Earth Shield')
+	or NeP.DSL:Get('buff.any')(unit,'Tectonic Barrier')
+	or NeP.DSL:Get('buff.any')(unit,'Azerite Injection')
+	or NeP.DSL:Get('buff.any')(unit,'Overcharge')
+	
+	-- Tol Dagor
+	or NeP.DSL:Get('buff.any')(unit,'Watery Dome')
+	or NeP.DSL:Get('buff.any')(unit,'Darkstep')
+	or NeP.DSL:Get('buff.any')(unit,'Motivating Cry')
+	or NeP.DSL:Get('buff.any')(unit,'Inner Flames')
+	
+	-- Underrot
+	or NeP.DSL:Get('buff.any')(unit,'Gift of G\'huun')
+	or NeP.DSL:Get('buff.any')(unit,'Bone Shield')
+	
+	-- Waycrest Manor
+	or NeP.DSL:Get('buff.any')(unit,'Soul Fetish')
+	or NeP.DSL:Get('buff.any')(unit,'Spirited Defense')
+	or NeP.DSL:Get('buff.any')(unit,'Consume Fragments')
 end)
 
 NeP.DSL:Register('tankEvent', function(unit)
@@ -384,12 +431,72 @@ NeP.DSL:Register('stunEvent', function(unit)
 	or NeP.DSL:Get('name')(unit,'Colatile Droplet')
 end)
 
+NeP.DSL:Register('spellstealEvent', function(unit)
+	------------------
+	-- BFA Dungeons --
+	------------------
+	-- Atal'Dazar
+	return NeP.DSL:Get('buff.any')(unit,'Gilded Claws')
+	or NeP.DSL:Get('buff.any')(unit,'Gathered Souls')
+	or NeP.DSL:Get('buff.any')(unit,'Dino Might')
+	
+	-- Freehold
+	or NeP.DSL:Get('buff.any')(unit,'Healing Balm')
+	
+	-- King's Rest
+	or NeP.DSL:Get('buff.any')(unit,'Induce Regeneration')
+	
+	-- Shrine of the Storm
+	or NeP.DSL:Get('buff.any')(unit,'Tidal Surge')
+	or NeP.DSL:Get('buff.any')(unit,'Spirit\'s Swiftness')
+	or NeP.DSL:Get('buff.any')(unit,'Mending Rapids')
+	or NeP.DSL:Get('buff.any')(unit,'Reanimated Bones')
+	or NeP.DSL:Get('buff.any')(unit,'Detect Thoughts')
+	or NeP.DSL:Get('buff.any')(unit,'Consuming Void')
+	
+	-- Siege of Boralus
+	or NeP.DSL:Get('buff.any')(unit,'Watertight Shell')
+	or NeP.DSL:Get('buff.any')(unit,'Bolstering Shout')
+	
+	-- Temple of Sethraliss
+	or NeP.DSL:Get('buff.any')(unit,'Electrified Scales')
+	or NeP.DSL:Get('buff.any')(unit,'Embryonic Vigor')
+	or NeP.DSL:Get('buff.any')(unit,'Accumulate Charge')
+	
+	-- The MOTHERLODE!!
+	or NeP.DSL:Get('buff.any')(unit,'Earth Shield')
+	or NeP.DSL:Get('buff.any')(unit,'Tectonic Barrier')
+	or NeP.DSL:Get('buff.any')(unit,'Azerite Injection')
+	or NeP.DSL:Get('buff.any')(unit,'Overcharge')
+	
+	-- Tol Dagor
+	or NeP.DSL:Get('buff.any')(unit,'Watery Dome')
+	or NeP.DSL:Get('buff.any')(unit,'Darkstep')
+	or NeP.DSL:Get('buff.any')(unit,'Motivating Cry')
+	or NeP.DSL:Get('buff.any')(unit,'Inner Flames')
+	
+	-- Underrot
+	or NeP.DSL:Get('buff.any')(unit,'Gift of G\'huun')
+	or NeP.DSL:Get('buff.any')(unit,'Bone Shield')
+	
+	-- Waycrest Manor
+	or NeP.DSL:Get('buff.any')(unit,'Soul Fetish')
+	or NeP.DSL:Get('buff.any')(unit,'Spirited Defense')
+	or NeP.DSL:Get('buff.any')(unit,'Consume Fragments')
+
+	------------------
+	---- BFA Raids ---
+	------------------
+	
+end)
+
+
 NeP.DSL:Register('cancelCastingEvent', function(unit)
 	------------------
 	-- BFA Dungeons --
 	------------------
 	-- Atal'Dazar
-	return NeP.DSL:Get('name')(unit,'Spirit of Gold')
+	return NeP.DSL:Get('casting')(unit,'Shattering Bellow')
 
 	------------------
 	---- BFA Raids ---
