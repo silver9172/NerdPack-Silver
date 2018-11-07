@@ -293,7 +293,7 @@ NeP.DSL:Register('curseDispel', function(unit)
 	-- BFA Dungeons --
 	------------------
 	-- Atal'Dazar
-	return NeP.DSL:Get('debuff.duration.any')(unit, 'Unstable Hex') <= 4 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Hex')
+	return NeP.DSL:Get('debuff.duration.any')(unit, 'Unstable Hex') <= 4 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Hex') and NeP.DSL:Get('area.friendly')(unit,'8') == 0
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Wracking Pain') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Wracking Pain')
 	
 	-- King's Rest

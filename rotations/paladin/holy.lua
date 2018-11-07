@@ -163,14 +163,14 @@ local healing = {
 	
 	{ 'Judgment', 'infront & enemy & talent(5,1)', 'target'},
 	
-	-- Mana < 40
-	{ '!/stopcasting','target(lowest) & casting.percent > 30 & casting(Flash of Light) & {{ lowest.health > { UI(L_FoL) * 0.5} & mana < 40} ||{  UI(L_FoL) * 0.75} & mana < 80}}}', 'player'},
-	{ 'Flash of Light', 'player.mana < 40 & health <= { UI(T_FoL) * 0.5}', { 'tank', 'tank2'}},
-	{ 'Flash of Light', 'player.mana < 40 & health <= { UI(L_FoL) * 0.5}', 'lowest'},
+	-- -- Mana < 40
+	-- { '!/stopcasting','target(lowest) & casting.percent > 30 & casting(Flash of Light) & {{ lowest.health > { UI(L_FoL) * 0.5} & mana < 40} ||{  UI(L_FoL) * 0.75} & mana < 80}}}', 'player'},
+	-- { 'Flash of Light', 'player.mana < 40 & health <= { UI(T_FoL) * 0.5}', { 'tank', 'tank2'}},
+	-- { 'Flash of Light', 'player.mana < 40 & health <= { UI(L_FoL) * 0.5}', 'lowest'},
 	
-	-- Mana < 80
-	{ 'Flash of Light', 'player.mana < 80 & health <= { UI(T_FoL) * 0.75}', { 'tank', 'tank2'}},
-	{ 'Flash of Light', 'player.mana < 80 & health <= { UI(L_FoL) * 0.75}', 'lowest'},
+	-- -- Mana < 80
+	-- { 'Flash of Light', 'player.mana < 80 & health <= { UI(T_FoL) * 0.75}', { 'tank', 'tank2'}},
+	-- { 'Flash of Light', 'player.mana < 80 & health <= { UI(L_FoL) * 0.75}', 'lowest'},
 	
 	-- Mana < 100
 	{ 'Flash of Light', 'health <= UI(T_FoL)', { 'tank', 'tank2'}},

@@ -35,6 +35,11 @@ rotations\mage\frost.lua
 rotations\mage\fire.lua
 rotations\mage\arcane.lua
 
+rotations\shaman\elemental.lua
+rotations\shaman\enhancement.lua
+rotations\shaman\restoration.lua
+
+
 rotations\hunter\beast_mastery.lua
 rotations\hunter\survival.lua
 rotations\hunter\marksmanship.lua
