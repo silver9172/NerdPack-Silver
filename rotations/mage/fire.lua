@@ -42,7 +42,7 @@ local combustion = {
 	-- actions.combustion_phase+=/call_action_list,name=active_talents
 	{ activeTalents}, 
 	-- actions.combustion_phase+=/combustion
-	{ '!Combustion', '{{ talent(3,3) & totem(Rune of Power)} || !talent(3,3) & !buff}', 'player'}, 
+	{ '*Combustion', '{{ talent(3,3) & totem(Rune of Power)} || !talent(3,3) & !buff}', 'player'}, 
 	-- actions.combustion_phase+=/potion
 	-- actions.combustion_phase+=/blood_fury
 	-- actions.combustion_phase+=/berserking
@@ -56,7 +56,7 @@ local combustion = {
 	-- actions.combustion_phase+=/pyroblast,if=buff.hot_streak.react
 	{ 'Pyroblast', 'inRange.spell & player.buff(Hot Streak!)', 'target'}, 
 	-- actions.combustion_phase+=/fire_blast,if=buff.heating_up.react
-	{ '!Fire Blast', 'player.buff(Heating Up) & !player.buff(Hot Streak!) & inRange.spell', 'target'}, 
+	{ '*Fire Blast', 'player.buff(Heating Up) & !player.buff(Hot Streak!) & inRange.spell', 'target'}, 
 	-- actions.combustion_phase+=/phoenix_flames
 	{ 'Phoenix Flames', 'inRange.spell', 'target'},
 	-- actions.combustion_phase+=/scorch,if=buff.combustion.remains>cast_time
@@ -78,11 +78,11 @@ local rop = {
 	-- actions.rop_phase+=/pyroblast,if=buff.pyroclasm.react&execute_time<buff.pyroclasm.remains&buff.rune_of_power.remains>cast_time
 	{ 'Pyroblast', 'player.buff(Pyroclasm) & player.spell.casttime < player.buff(Pyroclasm).duration & totem(Rune of Power).duration > player.spell.casttime & inRange.spell', 'target'},
 	-- actions.rop_phase+=/fire_blast,if=!prev_off_gcd.fire_blast&buff.heating_up.react&firestarter.active&charges_fractional>1.7
-	{ '!Fire Blast', 'player.buff(Heating Up) & !player.buff(Hot Streak!) & firestarter.active & player.spell.charges > 1.7 & inRange.spell', 'target'}, 
+	{ '*Fire Blast', 'player.buff(Heating Up) & !player.buff(Hot Streak!) & firestarter.active & player.spell.charges > 1.7 & inRange.spell', 'target'}, 
 	-- actions.rop_phase+=/phoenix_flames,if=!prev_gcd.1.phoenix_flames&charges_fractional>2.7&firestarter.active
 	{ 'Phoenix Flames', '!lastgcd & inRange.spell & player.spell.charges > 2.7 & firestarter.active', 'target'}, 
 	-- actions.rop_phase+=/fire_blast,if=!prev_off_gcd.fire_blast&!firestarter.active
-	{ '!Fire Blast', '!player.buff(Heating Up) & !player.buff(Hot Streak!) & !firestarter.active & inRange.spell', 'target'},  
+	{ '*Fire Blast', '!player.buff(Heating Up) & !player.buff(Hot Streak!) & !firestarter.active & inRange.spell', 'target'},  
 	-- actions.rop_phase+=/phoenix_flames,if=!prev_gcd.1.phoenix_flames
 	{ 'Phoenix Flames', '!lastgcd & inRange.spell', 'target'}, 
 	-- actions.rop_phase+=/scorch,if=target.health.pct<=30&talent.searing_touch.enabled
@@ -112,7 +112,7 @@ local standard = {
 	{ 'Pyroblast', 'inRange.spell & !player.moving & player.buff(Pyroclasm) & player.buff(Pyroclasm).duration > player.execute_time', 'target'},
 	-- actions.standard_rotation+=/call_action_list,name=active_talents
 	{ activeTalents}, 
-	{ '!Fire Blast', 'player.buff(Heating Up) & !player.buff(Hot Streak!) & inRange.spell', 'target'}, 
+	{ '*Fire Blast', 'player.buff(Heating Up) & !player.buff(Hot Streak!) & inRange.spell', 'target'}, 
 	-- actions.standard_rotation+=/fire_blast,if=!talent.kindling.enabled&buff.heating_up.react&(!talent.rune_of_power.enabled|charges_fractional>1.4|cooldown.combustion.remains<40)&(3-charges_fractional)*(12*spell_haste)<cooldown.combustion.remains+3|target.time_to_die<4
 	--{ 'Fire Blast', 'inRange.spell & !talent(7,1) & player.buff(Heating Up) & { !talent(3,3) || player.spell.charges > 1.4 || player.spell(Combustion).cooldown < 40} & { 3 - player.spell.charges } * { 12 * player.haste} < player.spell(Combustion).cooldown + 3 || ttd < 4', 'target'}, 
 	-- actions.standard_rotation+=/fire_blast,if=talent.kindling.enabled&buff.heating_up.react&(!talent.rune_of_power.enabled|charges_fractional>1.5|cooldown.combustion.remains<40)&(3-charges_fractional)*(18*spell_haste)<cooldown.combustion.remains+3|target.time_to_die<4
