@@ -13,6 +13,15 @@ NeP.DSL:Register('sated', function()
     end
 end)
 
+NeP.DSL:Register('lust', function()
+    if NeP.DSL:Get('buff')('player', 'Bloodlust') or NeP.DSL:Get('buff')('player', 'Heroism') or NeP.DSL:Get('buff')('player', 'Timewarp') then
+        return true
+    else
+        return false
+    end
+end)
+
+-- /dump NeP.DSL:Get('xequipped')('Ward of Envelopment')
 NeP.DSL:Register('xequipped', function(item)
     if IsEquippedItem(item) then
         return 1
@@ -84,6 +93,10 @@ NeP.DSL:Register('execute_time', function(_, spell)
         end
     end
     return false
+end)
+
+NeP.DSL:Register('self', function(unit)
+	return UnitIsUnit(unit, 'player');
 end)
 
 -- Spell in range. Credit to Kleei
@@ -508,14 +521,33 @@ NeP.DSL:Register('priorityTarget', function(unit)
 	------------------
 	-- BFA Dungeons --
 	------------------
-	return NeP.DSL:Get('name')(unit,'Explosive Orb')
+	return NeP.DSL:Get('name')(unit,'Explosives')
 	-- Atal'Dazar
 	or NeP.DSL:Get('name')(unit,'Spirit of Gold')
-	
+	-- Kings Rest
+	or NeP.DSL:Get('name')(unit,'Healing Tide Totem')
 	------------------
 	---- BFA Raids ---
 	------------------
 	or NeP.DSL:Get('name')(unit,'Coalesced Blood')
+end)
+
+---------------------------------------
+---------------- Pally ----------------
+---------------------------------------
+
+NeP.DSL:Register('graceOfJusticar', function()
+	return C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(1), 393)
+	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(3), 393)
+	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(5), 393)
+end)
+
+NeP.DSL:Register('wardOfEnvelopment', function()
+    if IsEquippedItem('165569') then
+        return 1
+    else
+        return 0
+    end
 end)
 
 ---------------------------------------
@@ -542,16 +574,8 @@ NeP.DSL:Register('focus.time_to_max', function()
 end)
 
 -- /dump NeP.DSL:Get('isshooting')()
-NeP.DSL:Register('isshooting', function()
-	return IsCurrentSpell('Auto Shot')
-	or IsCurrentSpell(75)
-	or IsCurrentSpell(145759)
-	or IsCurrentSpell(219676)
-	or IsCurrentSpell(246353)
-	or IsCurrentSpell(262545)
-	or IsCurrentSpell(266452)
-	or IsCurrentSpell(280637)
-	or IsCurrentAction(57)
+NeP.DSL:Register("isshooting", function(target)
+  return _G.IsCurrentSpell(75)
 end)
 
 NeP.DSL:Register('test2', function()
@@ -808,6 +832,7 @@ NeP.DSL:Register('unstableaffliction', function ()
 end)
 
 NeP.DSL:Register('spammable_seed', function ()
+	-- use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
 	-- spammable_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5|spell_targets.seed_of_corruption>=8
 	if NeP.DSL:Get('talent.enabled')(nil, '4,1') and NeP.DSL:Get('area.enemies')('target', '10') >= 3 or NeP.DSL:Get('talent.enabled')(nil, '2,3') and NeP.DSL:Get('area.enemies')('target', '10') >= 5 or NeP.DSL:Get('area.enemies')('target', '10') >= 8 then
 		return true

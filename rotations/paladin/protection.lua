@@ -48,7 +48,7 @@ local utility = {
 
 local interrupts = {
 	{ 'Rebuke', 'inRange.spell & interruptAt(35)', 'enemies'},
-	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35)', 'enemies'},
+	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35) && infront', 'enemies'},
 	{ 'Hammer of Justice', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35)', 'enemies'},
 }
 
@@ -78,12 +78,13 @@ local cooldowns = {
 }
 
 local rotation = {
-	{ 'Avenger\'s Shield', 'inRange.spell & area(10).enemies 12>= 2', 'target'},
-	{ 'Judgment', 'inRange.spell & { talent(2,2) & player.spell.charges >= 2} || inRange.spell & !talent(2,2)', 'target' },
-	{ 'Consecration', 'inRange.spell(Hammer of the Righteous) & !player.buff', 'target'}, 
-	{ 'Judgment', 'inRange.spell', 'target'}, 
-	{ 'Avenger\'s Shield', 'inRange.spell', 'target'}, 
-	{ 'Hammer of the Righteous', 'inRange.spell', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell & area(10).enemies 12 >= 2 && infront', 'target'},
+	{ 'Judgment', 'inRange.spell && talent(2,2) && player.spell.charges >= 2 && infront || inRange.spell && !talent(2,2) && infront', 'target' },
+	{ 'Consecration', 'inRange.spell(Hammer of the Righteous) && !player.buff', 'target'}, 
+	{ 'Consecration', 'inRange.spell(Hammer of the Righteous) && player.totem.duration <= 2 && player.buff', 'target'}, 
+	{ 'Judgment', 'inRange.spell && infront', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell && infront', 'target'}, 
+	{ 'Hammer of the Righteous', 'inRange.spell && infront', 'target'},
 	{ 'Consecration', 'inRange.spell(Hammer of the Righteous)', 'target'},
 }
 

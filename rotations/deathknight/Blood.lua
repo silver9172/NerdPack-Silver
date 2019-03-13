@@ -43,15 +43,15 @@ local rotation = {
 	{ 'Death Strike', 'player.health.missing > player.deathstrike || player.runicpower >= 115', 'target'}, 
 	-- Need more
 	{ 'Blooddrinker', '!player.buff(Dancing Rune Weapon)', 'target'},
-	{ 'Blood Boil', 'player.spell.charges >= 2', 'target'},
-	{ 'Blood Boil', '!debuff(Blood Plague)', 'enemies'},
+	{ 'Blood Boil', 'player.spell.charges >= 2 && inRange.spell(Death Strike)', 'target'},
+	{ 'Blood Boil', '!debuff(Blood Plague) && inRange.spell(Death Strike)', 'enemies'},
 	{ 'Marrowrend', 'player.buff(Bone Shield).count <= 6', 'target'},
 	{ 'Rune Strike', 'talent(1,3) & player.spell.charges >= 2 & runes <= 3', 'target'}, 
 	{ 'Death and Decay', 'target.area(8).enemies >= 3 & runes >= 3', 'target.ground'}, 
 	{ 'Heart Strike', 'runes >= 3', 'target'},
 	{ 'Blood Boil', 'player.buff(Dancing Rune Weapon)', 'target'}, 
 	{ 'Death and Decay', 'player.buff(Crimson Scourge)', 'target.ground'},
-	{ 'Blood Boil', nil, 'target'},
+	{ 'Blood Boil', 'inRange.spell(Death Strike)', 'target'},
 	{ 'Rune Strike', 'talent(1,3)', 'target'},
 }
 

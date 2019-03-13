@@ -42,7 +42,7 @@ local keybinds = {
 
 local rotation = {
 	-- actions=auto_shot
-	{ '/startattack', '!isshooting'}, 
+	{"*/startattack", "distance <= 40 & targettimeout(autoshot, 10)", "target"},
 	-- actions+=/use_items
 	-- actions+=/berserking,if=cooldown.bestial_wrath.remains>30
 	-- actions+=/blood_fury,if=cooldown.bestial_wrath.remains>30

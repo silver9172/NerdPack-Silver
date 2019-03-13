@@ -57,7 +57,7 @@ local rotation = {
 	{ 'Demonic Strength',},
 	{ 'Summon Vilefiend', 'player.spell(Summon Demonic Tyrant).cooldown >= 45'},
 	{ 'Hand of Gul\'dan', 'player.shards >= 4 & !player.moving', 'target'},
-	{ 'Demonbolt', 'player.buff(Demonic Core).count >= 2 & player.shards <= 3'},
+	{ 'Demonbolt', 'player.buff(Demonic Core) & player.shards <= 3'},
 	{ 'Hand of Gul\'dan', 'player.shards >= 3 & !player.moving', 'target'},
 	{ 'Shadow Bolt', '!player.moving', 'target'}
 }

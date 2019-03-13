@@ -28,51 +28,21 @@ local keybinds = {
 }
 
 local interrupts = {
-	{ 'Pummel'},
+	{ 'Pummel', 'interruptAt(35)', { 'target', 'enemies'}},
 }
 
 local utility = {
-	-- Check player
-	{ 'Battle Shout', '!buff.any', 'player'},
-	
-	-- Check party/raid
-	{ 'Battle Shout', '!buff.any', 'lowest'},
-	{ 'Battle Shout', '!buff.any', 'lowest2'},
-	{ 'Battle Shout', '!buff.any', 'lowest3'},
-	{ 'Battle Shout', '!buff.any', 'lowest4'},
-	{ 'Battle Shout', '!buff.any', 'lowest5'},
-	{ 'Battle Shout', '!buff.any', 'lowest6'},
-	{ 'Battle Shout', '!buff.any', 'lowest7'},
-	{ 'Battle Shout', '!buff.any', 'lowest8'},
-	{ 'Battle Shout', '!buff.any', 'lowest9'},
-	{ 'Battle Shout', '!buff.any', 'lowest10'},
-	{ 'Battle Shout', '!buff.any', 'lowest11'},
-	{ 'Battle Shout', '!buff.any', 'lowest12'},
-	{ 'Battle Shout', '!buff.any', 'lowest13'},
-	{ 'Battle Shout', '!buff.any', 'lowest14'},
-	{ 'Battle Shout', '!buff.any', 'lowest15'},
-	{ 'Battle Shout', '!buff.any', 'lowest16'},
-	{ 'Battle Shout', '!buff.any', 'lowest17'},
-	{ 'Battle Shout', '!buff.any', 'lowest18'},
-	{ 'Battle Shout', '!buff.any', 'lowest19'},
-	{ 'Battle Shout', '!buff.any', 'lowest20'},
-	{ 'Battle Shout', '!buff.any', 'lowest21'},
-	{ 'Battle Shout', '!buff.any', 'lowest22'},
-	{ 'Battle Shout', '!buff.any', 'lowest23'},
-	{ 'Battle Shout', '!buff.any', 'lowest24'},
-	{ 'Battle Shout', '!buff.any', 'lowest25'},
-}
-
-local interrupts = {
-	{ 'Pummel'},
-	{ 'Arcane Torrent', 'target.range <=8 & spell(Pummel).cooldown > gcd & !prev_gcd(Pummel)'},
+	{ 'Battle Shout', '!buff(Battle Shout).any', 'friendly'},
 }
 
 local activeMitigation = {
 	{ 'Victory Rush', 'player.health <= 70'},
 	
-	{ 'Shield Block', 'player.spell.charges >= 2', 'target'}, -- Prevent cap
+	{ 'Shield Block', 'player.spell.charges >= 1.9', 'target'}, -- Prevent cap
+	{ 'Ignore Pain', 'player.rage >= 70'},
 	--{ 'Shield Block', '!player.buff & player.incdmg.phys(4) >= { player.health.max * 0.2 }'},
+	
+	{ 'Demoralizing Shout', 'talent(6,1) && player.rage < 60 && inRange.spell(Shield Slam) && infront', 'target'},
 	
 	{ 'Demoralizing Shout', 'player.health <= 75 & player.incdmg(4) >= { player.health.max * 0.3 }', 'target'}, 
 	{ 'Last Stand', 'player.health <= 50 & player.incdmg(4) >= { player.health.max * 0.6 }'}, 
@@ -85,43 +55,40 @@ local cooldowns = {
 }
 
 local avatarRotation = {
-	{ 'Shield Slam'},
-	{ 'Thunder Clap', 'range <= 8'},
-	{ 'Revenge', 'player.buff(Revenge!)'},
-	{ 'Ignore Pain', 'ignorepain < { player.health.max * 0.2 }'},
-	{ 'Devastate'},	
+	{ 'Shield Slam', 'inRange.spell && infront', 'target'},
+	{ 'Thunder Clap', 'inRange.spell(Shield Slam) && infront', 'target'},
+	{ 'Revenge', 'player.buff(Revenge!) && inRange.spell && infront', 'target'},
+	{ 'Devastate', 'inRange.spell && infront', 'target'},	
 }
 
 local aoeRotation = {
-	{ 'Thunder Clap', 'range < 8', 'target'},
-	{ 'Revenge'},
-	{ 'Shield Slam'},
-	{ 'Ignore Pain', 'ignorepain < { player.health.max * 0.2 }'},
-	{ 'Devastate'},
+	{ 'Thunder Clap', 'inRange.spell(Shield Slam) && infront', 'target'},
+	{ 'Revenge', 'inRange.spell(Shield Slam) && infront', 'target'},	
+	{ 'Shield Slam', 'inRange.spell && infront', 'target'},
+	{ 'Devastate', 'inRange.spell && infront', 'target'},	
 }
 
 local rotation = {
-	{ 'Shield Slam'},
-	{ 'Thunder Clap', 'range <= 8'},
-	{ 'Revenge', 'player.buff(Revenge!)'},
-	{ 'Ignore Pain', 'ignorepain < { player.health.max * 0.2 }'},
-	{ 'Devastate'},
+	{ 'Shield Slam', 'inRange.spell && infront', 'target'},
+	{ 'Thunder Clap', 'inRange.spell(Shield Slam) && infront', 'target'},
+	{ 'Revenge', 'player.buff(Revenge!) && inRange.spell(Shield Slam) && infront', 'target'},
+	{ 'Devastate', 'inRange.spell && infront', 'target'},	
 }
 
 local inCombat = {
 	{ '/startattack', '!isattacking & target.exists'},
-	{ interrupts, 'target.interruptAt(75)'},
+	{ utility}, 
+	{ interrupts, 'target.interruptAt(35)'},
 	{ activeMitigation},
-	{ cooldowns, 'toggle(cooldowns) & target.inmelee'},
-	{ 'Heroic Throw', '!inmelee', 'target'}, 
-	{ 'Ignore Pain', 'rage >= 90', 'player'}, -- Prevent rage cap
+	{ cooldowns, 'toggle(cooldowns)'},
 	{ avatarRotation, 'player.buff(Avatar) & talent(3,2)'},
-	{ aoeRotation, 'player.area(8).enemies >= 2 & target.infront'},
-	{ rotation, 'player.area(8).enemies < 2 & target.infront'},
+	{ aoeRotation, 'player.area(8).enemies >= 2'},
+	{ rotation, 'player.area(8).enemies < 2'},
+	{ 'Heroic Throw', 'inRange.spell && infront', 'target'}, 
 }
 
 local outCombat = {
-
+	{ utility}, 
 }
 
 NeP.CR:Add(73, {
