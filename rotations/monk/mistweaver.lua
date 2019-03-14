@@ -1,49 +1,33 @@
 local GUI = {
 	{type = 'header', 	text = 'Generic', align = 'center'},
-	{type = 'spinner', 	text = 'DPS while lowest health%', 				key = 'G_DPS', 	default = 70},
-	{type = 'spinner', 	text = 'Critical health%', 						key = 'G_CHP', 	default = 30},
-	{type = 'spinner', 	text = 'Mana Restore', 							key = 'P_MR', 	default = 20},
-	{type = 'checkbox',	text = 'Offensive Holy Shock',					key = 'O_HS', 	default = false},
+	{type = 'checkbox', 	text = 'Auto Dispel', 					key = 'Disp', 	default = false},
+	--{type = 'spinner', 	text = 'DPS while lowest health%', 				key = 'G_DPS', 	default = 70},
+	--{type = 'spinner', 	text = 'Critical health%', 						key = 'G_CHP', 	default = 30},
+	--{type = 'spinner', 	text = 'Mana Restore', 							key = 'P_MR', 	default = 20},
 	{type = 'ruler'}, {type = 'spacer'},
 	
 	--------------------------------
 	-- Toggles
 	--------------------------------
-	{type = 'header', 	text = 'Toggles', align = 'center'},
-	{type = 'checkbox',	text = 'Avenging Wrath',						key = 'AW', 	default = false},
-	{type = 'checkbox',	text = 'Aura Mastery',							key = 'AM', 	default = false},
-	{type = 'checkbox',	text = 'Holy Avenger',							key = 'HA', 	default = false},
-	{type = 'checkbox',	text = 'Lay on Hands',							key = 'LoH', 	default = false},
-	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
-	{type = 'checkspin',text = 'Healing Potion/Healthstone',			key = 'P_HP', 	default = false},
-	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
-	{type = 'spinner',	text = 'Health for LotM',						key = 'P_LotM', default = 40},
-	{type = 'checkbox', text = 'Auto Ress out of combat', 				key = 'rezz', 	default = false},
+	{type = 'header', 		text = 'Cooldowns', align = 'center'},
+	{type = 'checkspin', 	text = 'Life Cocoon', 					key = 'LC', 	default_check = true, default_spin = 25},
+	--{type = 'checkbox', 	text = 'Auto Ress out of combat', 				key = 'rezz', 	default = false},
 	{type = 'ruler'}, {type = 'spacer'},
 		
 	--------------------------------
-	-- TANK
-	--------------------------------
-	{type = 'header', 	text = 'Tank', align = 'center'},
-	{type = 'spinner', 	text = 'Renewing Mist (Health %)', 				key = 'T_RM', 	default = 95},
-	{type = 'spinner', 	text = 'Enveloping Mist (Health %)', 			key = 'T_HS', 	default = 90},
-	{type = 'spinner', 	text = 'Effuse (Health %)', 					key = 'T_Ef', 	default = 75},
-	{type = 'ruler'}, {type = 'spacer'},
-	
-	--------------------------------
 	-- LOWEST
 	--------------------------------
-	{type = 'header', 	text = 'Lowest', align = 'center'},
-	{type = 'spinner', 	text = 'Soothing Mist (Health %)', 				key = 'L_SM',	default = 95},
-	{type = 'spinner', 	text = 'Renewing Mist (Health %)', 				key = 'L_RM',	default = 95},
-	{type = 'spinner', 	text = 'Enveloping Mist (Health %)', 			key = 'L_EM', 	default = 90},
-	{type = 'spinner', 	text = 'Vivify (Health %)', 					key = 'L_Vi', 	default = 70},
+	{type = 'header', 		text = 'Healing', align = 'center'},
+	{type = 'spinner', 		text = 'Soothing Mist (Health %)', 		key = 'L_SM',	default = 95},
+	{type = 'spinner', 		text = 'Renewing Mist (Health %)', 		key = 'L_RM',	default = 95},
+	{type = 'spinner', 		text = 'Enveloping Mist (Health %)', 	key = 'L_EM', 	default = 90},
+	{type = 'spinner', 		text = 'Vivify (Health %)', 			key = 'L_Vi', 	default = 70},
 }
 
 local exeOnLoad = function()
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
-	print('|cffADFF2F --- |rSilver Paladin |cffADFF2FProtection |r')
-	print('|cffADFF2F --- |rMost Talents Supported')
+	print('|cffADFF2F --- Silver Monk - Mistweaver')
+	print('|cffADFF2F --- Most Talents Supported')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 
 	NeP.Interface:AddToggle({
@@ -68,7 +52,14 @@ local interrupts = {
 
 }
 
+local dispel = {
+	{ 'Detox', 'magicDispel', { 'lowest', 'friendly'}},
+	{ 'Detox', 'poisonDispel', { 'lowest', 'friendly'}},
+	{ 'Detox', 'diseaseDispel', { 'lowest', 'friendly'}},
+}
+
 local cooldowns = {
+	{ 'Arcane Torrent', 'inRange.spell(Tiger Palm) & purgeEvent', 'enemies'}, 
 	{ '&Revival', 'toggle(cooldowns) & {area(40,50).heal > 7 || area(40,80).heal > 11 || area(40,85).heal > 15 || area(40,70).heal > 10 || area(40,60).heal>8||area(40,65).heal > 6 || area(40,30).heal > 4 || area(40,20).heal > 2}', 'player'},
 	{ 'Thunder Focus Tea'},
 	{ 'Chi Burst', 'area(15,90).heal.infront >= 3'},
@@ -77,7 +68,7 @@ local cooldowns = {
 local moving = {
 	{ 'Renewing Mist', 'health <= UI(L_RM) & !buff', { 'tank','tank2','lowest','lowest2','lowest3','lowest4','lowest5','lowest6','lowest7','lowest8','lowest9','lowest10','friendly'}},
 	
-	{ 'Essence Font', 'toggle(AOE) & player.area(30,85).heal >= 3', 'lowestp'},
+	{ 'Essence Font', 'toggle(AOE) & area(30,85).heal >= 3', 'player'},
 }
 
 local healing = {
@@ -90,13 +81,14 @@ local healing = {
 	{ '&Vivify', 'area(40,80).heal >= 3 & toggle(AOE) && !buff(Renewing Mists) && buff(Soothing Mist) && player.channeling(Soothing Mist)', { 'tank','tank2','lowest', 'friendly'}},
 	{ 'Vivify', 'area(40,80).heal >= 3 & toggle(AOE) && !buff(Renewing Mists)', { 'tank','tank2','lowest', 'friendly'}},
 
-	{ '!Soothing Mist', 'health <= UI(L_SM) && !buff(Soothing Mist) && { player.channeling(Soothing Mist) || player.channeling(Crackling Jade Lightning)} && { !talent(7,3) || talent(7,3) && !target.inRange.spell(Tiger Palm)}', { 'tank','tank2','lowest', 'friendly'}},
+	-- Needs adjusted so that it doesnt keep recasting to different people every GCD
+	{ '&Soothing Mist', 'health <= UI(L_SM) && !buff(Soothing Mist) && player.channeling(Soothing Mist).percent > 50 && { !talent(7,3) || talent(7,3) && !target.inRange.spell(Tiger Palm)}', { 'tank','tank2','lowest', 'friendly'}},
 	{ 'Soothing Mist', 'health <= UI(L_SM) && { !talent(7,3) || talent(7,3) && !target.inRange.spell(Tiger Palm)}', { 'tank','tank2','lowest','friendly'}},
 	
 	{ '&Enveloping Mist', 'health <= UI(L_EM) & !buff && buff(Soothing Mist) && player.channeling(Soothing Mist)', { 'tank','tank2','lowest','lowest2','lowest3','lowest4','lowest5','lowest6','lowest7','lowest8','lowest9','lowest10','friendly'}},
 	
 	{ '&Vivify', 'health <= UI(L_Vi) && buff(Soothing Mist) && player.channeling(Soothing Mist)', { 'tank','tank2','lowest', 'friendly'}},
-	{ '!Vivify', 'health <= UI(L_Vi) && !buff(Soothing Mist) && { player.channeling(Soothing Mist) || player.channeling(Crackling Jade Lightning)}', { 'tank','tank2','lowest', 'friendly'}},
+	{ '!Vivify', 'health <= UI(L_Vi) && !buff(Soothing Mist) && { player.channeling(Soothing Mist).percent > 25 || player.channeling(Crackling Jade Lightning)}', { 'tank','tank2','lowest', 'friendly'}},
 	{ 'Vivify', 'health <= UI(L_Vi)', { 'tank','tank2','lowest', 'friendly'}},
 }
 
@@ -105,7 +97,6 @@ local lowMana = {
 }
 
 local thunderFocusTea = {
-
 	{ '&Enveloping Mist', 'health <= UI(L_EM) & !buff && buff(Soothing Mist) && player.channeling(Soothing Mist)', { 'tank','tank2','lowest','lowest2','lowest3','lowest4','lowest5','lowest6','lowest7','lowest8','lowest9','lowest10','friendly'}},
 }
 
@@ -114,12 +105,12 @@ local dps = {
 	{ 'Rising Sun Kick', 'inRange.spell'}, 
 	{ 'Tiger Palm', 'inRange.spell && player.buff(Teachings of the Monastery).count <= 2', 'target'},
 	{ 'Blackout Kick', 'inRange.spell && player.buff(Teachings of the Monastery)', 'target'},
-	{ 'Crackling Jade Lightning', 'inRange.spell && player.moving', 'target'},                                                                                                                                                                                                          
+	{ 'Crackling Jade Lightning', 'inRange.spell && !player.moving', 'target'},                                                                                                                                                                                                          
 }
 
 local inCombat = {
 	{ keybinds},
-	--{ '%dispelall', 'toggle(disp) & spell(Detox).cooldown = 0'},
+	{ dispel, 'UI(Disp)'}, 
 	{ cooldowns, 'toggle(cooldowns)'}, 
 	{ moving, 'player.moving'}, 
 	--{ thunderFocusTea, 'player.buff(Thunder Focus Tea)'}, 
