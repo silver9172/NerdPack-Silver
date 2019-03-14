@@ -1,8 +1,8 @@
 local GUI = {
 	{type = 'header', 	text = 'Generic', align = 'center'},
-	{type = 'checkbox', 	text = 'Auto Dispel', 					key = 'Disp', 	default = false},
+	{type = 'checkbox', 	text = 'Auto Dispel (BFA Only)', 				key = 'Disp', 	default = false},
 	--{type = 'spinner', 	text = 'DPS while lowest health%', 				key = 'G_DPS', 	default = 70},
-	--{type = 'spinner', 	text = 'Critical health%', 						key = 'G_CHP', 	default = 30},
+	--{type = 'spinner', 	text = 'Critical health%', 						key = 'CHP', 	default = 30},
 	--{type = 'spinner', 	text = 'Mana Restore', 							key = 'P_MR', 	default = 20},
 	{type = 'ruler'}, {type = 'spacer'},
 	
@@ -15,7 +15,7 @@ local GUI = {
 	{type = 'ruler'}, {type = 'spacer'},
 		
 	--------------------------------
-	-- LOWEST
+	-- Healing Values
 	--------------------------------
 	{type = 'header', 		text = 'Healing', align = 'center'},
 	{type = 'spinner', 		text = 'Soothing Mist (Health %)', 		key = 'L_SM',	default = 95},
@@ -63,6 +63,9 @@ local cooldowns = {
 	{ '&Revival', 'toggle(cooldowns) & {area(40,50).heal > 7 || area(40,80).heal > 11 || area(40,85).heal > 15 || area(40,70).heal > 10 || area(40,60).heal>8||area(40,65).heal > 6 || area(40,30).heal > 4 || area(40,20).heal > 2}', 'player'},
 	{ 'Thunder Focus Tea'},
 	{ 'Chi Burst', 'area(15,90).heal.infront >= 3'},
+	
+	{ '&Life Cocoon', 'buff(buff(Soothing Mist) && health <= UI(LC) && UI(LC_check)', { 'tank','tank2','lowest', 'friendly'}},
+	{ 'Life Cocoon', 'health <= UI(LC) && UI(LC_check)', { 'tank','tank2','lowest', 'friendly'}},
 }
 
 local moving = {
@@ -85,6 +88,7 @@ local healing = {
 	{ '&Soothing Mist', 'health <= UI(L_SM) && !buff(Soothing Mist) && player.channeling(Soothing Mist).percent > 50 && { !talent(7,3) || talent(7,3) && !target.inRange.spell(Tiger Palm)}', { 'tank','tank2','lowest', 'friendly'}},
 	{ 'Soothing Mist', 'health <= UI(L_SM) && { !talent(7,3) || talent(7,3) && !target.inRange.spell(Tiger Palm)}', { 'tank','tank2','lowest','friendly'}},
 	
+	-- Never hard cast Enveloping Mist
 	{ '&Enveloping Mist', 'health <= UI(L_EM) & !buff && buff(Soothing Mist) && player.channeling(Soothing Mist)', { 'tank','tank2','lowest','lowest2','lowest3','lowest4','lowest5','lowest6','lowest7','lowest8','lowest9','lowest10','friendly'}},
 	
 	{ '&Vivify', 'health <= UI(L_Vi) && buff(Soothing Mist) && player.channeling(Soothing Mist)', { 'tank','tank2','lowest', 'friendly'}},
@@ -131,6 +135,6 @@ NeP.CR:Add(270, {
 	 ooc = outCombat,
 	 gui = GUI,
  wow_ver = '8.1',
- nep_ver = '1.11',
+ nep_ver = '1.12',
 	load = exeOnLoad
 })
