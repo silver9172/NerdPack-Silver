@@ -107,7 +107,7 @@ end)
 
 -- Need enemy last cast event
 
-local castingEventSpellsAOE = { 
+local castingEventSpellsAOE = {
 	-- Testing
 	'Hearthstone',
 ---------------------------------------
@@ -115,20 +115,20 @@ local castingEventSpellsAOE = {
 ---------------------------------------
 	-- Demonic Inquisition
 	'Anguished Outburst',
-	
+
 	-- Harjatan
 	'Unchecked Rage',
-	
+
 	-- The Desolate Host
 	'Sundering Doom',
-	
+
 	-- Maiden of Vigilance
-	'Hammer of Creation', 
+	'Hammer of Creation',
 	'Hammer of Obliteration',
-	
-	-- Fallen Avatar 
+
+	-- Fallen Avatar
 	'Sear',
-	
+
 	-- Kil'jaeden
 	'Hopelessness',
 }
@@ -191,13 +191,13 @@ NeP.DSL:Register('magicDispel', function(unit)
 	or NeP.DSL:Get('debuff.any')(unit, 'Molten Gold')
 	or NeP.DSL:Get('debuff.any')(unit, 'Terrifying Screech')
 	or NeP.DSL:Get('debuff.any')(unit, 'Terrifying Visage')
-	
+
 	-- Freehold
 	or NeP.DSL:Get('debuff.any')(unit, 'Oiled Blade')
-	
+
 	-- King's Rest
 	or NeP.DSL:Get('debuff.any')(unit, 'Frost Shock')
-	
+
 	-- Shrine of the Storm
 	or NeP.DSL:Get('debuff.any')(unit, 'Choking Brine')
 	or NeP.DSL:Get('debuff.any')(unit, 'Electrifying Shock')
@@ -206,33 +206,33 @@ NeP.DSL:Register('magicDispel', function(unit)
 	-- or NeP.DSL:Get('debuff.any')(unit, 'Mind Rend')
 	or NeP.DSL:Get('debuff.any')(unit, 'Explosive Void')
 	or NeP.DSL:Get('debuff.any')(unit, 'Whispers of Power')
-	
+
 	-- The MOTHERLODE!!!
 	or NeP.DSL:Get('debuff.any')(unit, 'Brain Freeze')
 	-- or NeP.DSL:Get('debuff.any')(unit, 'Caustic Compound')
 	or NeP.DSL:Get('debuff.any')(unit, 'Transmute: Enemy to Goo')
 	or NeP.DSL:Get('debuff.any')(unit, 'Chemical Burn')
-	
+
 	-- Siege of Boralus
 	or NeP.DSL:Get('debuff.any')(unit, 'Choking Waters')
 	or NeP.DSL:Get('debuff.any')(unit, 'Putrid Waters')
-	
+
 	-- Temple of Sethraliss
 	or NeP.DSL:Get('debuff.any')(unit, 'Flame Shock')
 	or NeP.DSL:Get('debuff.any')(unit, 'Snake Charm')
-	
+
 	-- Tol Dagor
 	or NeP.DSL:Get('debuff.any')(unit, 'Debilitating Shout')
 	or NeP.DSL:Get('debuff.any')(unit, 'Torch Strike')
 	or NeP.DSL:Get('debuff.any')(unit, 'Suppression Fire')
 	or NeP.DSL:Get('debuff.any')(unit, 'Fuselighter')
-	
+
 	-- Underrot
 	or NeP.DSL:Get('debuff.any')(unit, 'Wicked Frenzy')
 	or NeP.DSL:Get('debuff.any')(unit, 'Death Bolt')
 	or NeP.DSL:Get('debuff.any')(unit, 'Maddening Gaze')
 	or NeP.DSL:Get('debuff.any')(unit, 'Putrid Blood')
-	
+
 	-- Waycrest Manor
 	or NeP.DSL:Get('debuff.any')(unit, 'Grasping Thorns')
 	or NeP.DSL:Get('debuff.any')(unit, 'Toad Blight')
@@ -245,28 +245,28 @@ NeP.DSL:Register('poisonDispel', function(unit)
 	------------------
 	-- Atal'Dazar
 	return NeP.DSL:Get('debuff.duration.any')(unit, 'Venomfang Strike') <= 7 and NeP.DSL:Get('debuff.any')(unit, 'Venomfang Strike')
-	
+
 	-- Freehold
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Poisoning Strike') >= 11 and NeP.DSL:Get('debuff.any')(unit, 'Poisoning Strike')
-	
+
 	-- King's Rest
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Hidden Blade') >= 7 and NeP.DSL:Get('debuff.any')(unit, 'Hidden Blade')
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Embalming Fluid') >= 19 and NeP.DSL:Get('debuff.any')(unit, 'Embalming Fluid')
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Poison Barrage') >= 19 and NeP.DSL:Get('debuff.any')(unit, 'Poison Barrage')
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Poison Nova') >= 19 and NeP.DSL:Get('debuff.any')(unit, 'Poison Nova')
-	
+
 	-- Siege of Boralus
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Stinging Venom Coating') >= 9 and NeP.DSL:Get('debuff.any')(unit, 'Stinging Venom Coating')
-	
+
 	-- The MOTHERLODE!!!
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Toxic Blades,') >= 5 and NeP.DSL:Get('debuff.any')(unit, 'Toxic Blades')
-	
+
 	-- Temple of Sethraliss
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Neurotoxin') >= 7 and NeP.DSL:Get('debuff.any')(unit, 'Neurotoxin')
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Noxious Breath') >= 9 and NeP.DSL:Get('debuff.any')(unit, 'Noxious Breath')
 	or NeP.DSL:Get('debuff.count.any')(unit, 'Cytotoxin') >= 3
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Venomous Spit') >= 8 and NeP.DSL:Get('debuff.any')(unit, 'Venomous Spit')
-	
+
 	-- Tol Dagor
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Crippling Shiv') >= 11 and NeP.DSL:Get('debuff.any')(unit, 'Crippling Shiv')
 end)
@@ -277,24 +277,24 @@ NeP.DSL:Register('diseaseDispel', function(unit)
 	------------------
 	-- Atal'Dazar
 	return NeP.DSL:Get('debuff.any')(unit, 'Lingering Nausea')
-	
+
 	-- Freehold
 	or NeP.DSL:Get('debuff.count.any')(unit, 'Infected Wound') >= 4
 	or NeP.DSL:Get('debuff.any')(unit, 'Plague Step')
-	
+
 	-- King's Rest
 	or NeP.DSL:Get('debuff.any')(unit, 'Wretched Discharge')
-	
+
 	-- The MOTHERLODE!!!
 	or NeP.DSL:Get('debuff.any')(unit, 'Festering Bite')
-	
+
 	-- Temple of Sethraliss
 	or NeP.DSL:Get('debuff.any')(unit, 'Plague')
-	
+
 	-- Underrot
 	or NeP.DSL:Get('debuff.any')(unit, 'Decaying Mind')
 	or NeP.DSL:Get('debuff.count.any')(unit, 'Decaying Spores') >= 2
-	
+
 	-- Waycrest Manor
 	or NeP.DSL:Get('debuff.any')(unit, 'Infected Thorn')
 	or NeP.DSL:Get('debuff.any')(unit, 'Severing Serpent')
@@ -308,16 +308,16 @@ NeP.DSL:Register('curseDispel', function(unit)
 	-- Atal'Dazar
 	return NeP.DSL:Get('debuff.duration.any')(unit, 'Unstable Hex') <= 4 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Hex') and NeP.DSL:Get('area.friendly')(unit,'8') == 0
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Wracking Pain') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Wracking Pain')
-	
+
 	-- King's Rest
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Hex') <= 9 and NeP.DSL:Get('debuff.any')(unit, 'Hex')
-	
+
 	-- Underrot
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Withering Curse') <= 11 and NeP.DSL:Get('debuff.any')(unit, 'Withering Curse')
-	
+
 	-- Siege of Boralus
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Cursed Slash') <= 9 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Hex')
-	
+
 	-- Waycrest Manor
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Unstable Runic Mark') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Unstable Runic Mark')
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Marking Cleave') <= 5 and NeP.DSL:Get('debuff.any')(unit, 'Marking Cleave')
@@ -334,15 +334,15 @@ NeP.DSL:Register('purgeEvent', function(unit)
 	return NeP.DSL:Get('buff.any')(unit,'Gilded Claws')
 	or NeP.DSL:Get('buff.any')(unit,'Gathered Souls')
 	or NeP.DSL:Get('buff.any')(unit,'Dino Might')
-	
+
 	-- Freehold
 	or NeP.DSL:Get('buff.any')(unit,'Healing Balm')
-	
+
 	-- King's Rest
 	or NeP.DSL:Get('buff.any')(unit,'Bound by Shadow')
 	or NeP.DSL:Get('buff.any')(unit,'Seduction')
 	or NeP.DSL:Get('buff.any')(unit,'Induce Regeneration')
-	
+
 	-- Shrine of the Storm
 	or NeP.DSL:Get('buff.any')(unit,'Tidal Surge')
 	or NeP.DSL:Get('buff.any')(unit,'Spirit\'s Swiftness')
@@ -350,32 +350,32 @@ NeP.DSL:Register('purgeEvent', function(unit)
 	or NeP.DSL:Get('buff.any')(unit,'Reanimated Bones')
 	or NeP.DSL:Get('buff.any')(unit,'Detect Thoughts')
 	or NeP.DSL:Get('buff.any')(unit,'Consuming Void')
-	
+
 	-- Siege of Boralus
 	or NeP.DSL:Get('buff.any')(unit,'Watertight Shell')
 	or NeP.DSL:Get('buff.any')(unit,'Bolstering Shout')
-	
+
 	-- Temple of Sethraliss
 	or NeP.DSL:Get('buff.any')(unit,'Electrified Scales')
 	or NeP.DSL:Get('buff.any')(unit,'Embryonic Vigor')
 	or NeP.DSL:Get('buff.any')(unit,'Accumulate Charge')
-	
+
 	-- The MOTHERLODE!!
 	or NeP.DSL:Get('buff.any')(unit,'Earth Shield')
 	or NeP.DSL:Get('buff.any')(unit,'Tectonic Barrier')
 	or NeP.DSL:Get('buff.any')(unit,'Azerite Injection')
 	or NeP.DSL:Get('buff.any')(unit,'Overcharge')
-	
+
 	-- Tol Dagor
 	or NeP.DSL:Get('buff.any')(unit,'Watery Dome')
 	or NeP.DSL:Get('buff.any')(unit,'Darkstep')
 	or NeP.DSL:Get('buff.any')(unit,'Motivating Cry')
 	or NeP.DSL:Get('buff.any')(unit,'Inner Flames')
-	
+
 	-- Underrot
 	or NeP.DSL:Get('buff.any')(unit,'Gift of G\'huun')
 	or NeP.DSL:Get('buff.any')(unit,'Bone Shield')
-	
+
 	-- Waycrest Manor
 	or NeP.DSL:Get('buff.any')(unit,'Soul Fetish')
 	or NeP.DSL:Get('buff.any')(unit,'Spirited Defense')
@@ -392,10 +392,10 @@ NeP.DSL:Register('tankEvent', function(unit)
 	or NeP.DSL:Get('casting')(unit, 'Skewer')
 	or NeP.DSL:Get('casting')(unit, 'Venomfang Strike')
 	or NeP.DSL:Get('debuff.any')('player', 'Venomfang Strike')
-	
+
 	-- Kings Rest
 	or NeP.DSL:Get('casting')(unit, 'Tail Thrash')
-	
+
 	-- Testing
 	or NeP.DSL:Get('casting')(unit, 'Uber Strike')
 end)
@@ -435,7 +435,7 @@ NeP.DSL:Register('stunEvent', function(unit)
 	-- Atal'Dazar
 	return NeP.DSL:Get('name')(unit,'Spirit of Gold')
 	or NeP.DSL:Get('name')(unit,'Shieldbearer of Zul') and NeP.DSL:Get('channeling')(unit,'Bulwark of Juju')
-	
+
 	or NeP.DSL:Get('name')(unit,'Orb Guardian')
 
 	------------------
@@ -452,13 +452,13 @@ NeP.DSL:Register('spellstealEvent', function(unit)
 	return NeP.DSL:Get('buff.any')(unit,'Gilded Claws')
 	or NeP.DSL:Get('buff.any')(unit,'Gathered Souls')
 	or NeP.DSL:Get('buff.any')(unit,'Dino Might')
-	
+
 	-- Freehold
 	or NeP.DSL:Get('buff.any')(unit,'Healing Balm')
-	
+
 	-- King's Rest
 	or NeP.DSL:Get('buff.any')(unit,'Induce Regeneration')
-	
+
 	-- Shrine of the Storm
 	or NeP.DSL:Get('buff.any')(unit,'Tidal Surge')
 	or NeP.DSL:Get('buff.any')(unit,'Spirit\'s Swiftness')
@@ -466,32 +466,32 @@ NeP.DSL:Register('spellstealEvent', function(unit)
 	or NeP.DSL:Get('buff.any')(unit,'Reanimated Bones')
 	or NeP.DSL:Get('buff.any')(unit,'Detect Thoughts')
 	or NeP.DSL:Get('buff.any')(unit,'Consuming Void')
-	
+
 	-- Siege of Boralus
 	or NeP.DSL:Get('buff.any')(unit,'Watertight Shell')
 	or NeP.DSL:Get('buff.any')(unit,'Bolstering Shout')
-	
+
 	-- Temple of Sethraliss
 	or NeP.DSL:Get('buff.any')(unit,'Electrified Scales')
 	or NeP.DSL:Get('buff.any')(unit,'Embryonic Vigor')
 	or NeP.DSL:Get('buff.any')(unit,'Accumulate Charge')
-	
+
 	-- The MOTHERLODE!!
 	or NeP.DSL:Get('buff.any')(unit,'Earth Shield')
 	or NeP.DSL:Get('buff.any')(unit,'Tectonic Barrier')
 	or NeP.DSL:Get('buff.any')(unit,'Azerite Injection')
 	or NeP.DSL:Get('buff.any')(unit,'Overcharge')
-	
+
 	-- Tol Dagor
 	or NeP.DSL:Get('buff.any')(unit,'Watery Dome')
 	or NeP.DSL:Get('buff.any')(unit,'Darkstep')
 	or NeP.DSL:Get('buff.any')(unit,'Motivating Cry')
 	or NeP.DSL:Get('buff.any')(unit,'Inner Flames')
-	
+
 	-- Underrot
 	or NeP.DSL:Get('buff.any')(unit,'Gift of G\'huun')
 	or NeP.DSL:Get('buff.any')(unit,'Bone Shield')
-	
+
 	-- Waycrest Manor
 	or NeP.DSL:Get('buff.any')(unit,'Soul Fetish')
 	or NeP.DSL:Get('buff.any')(unit,'Spirited Defense')
@@ -500,7 +500,7 @@ NeP.DSL:Register('spellstealEvent', function(unit)
 	------------------
 	---- BFA Raids ---
 	------------------
-	
+
 end)
 
 
@@ -732,27 +732,27 @@ NeP.DSL:Register('rtb_buffs.duration', function()
 	local a = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(199600))
 	local b = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(193356))
 	local c = NeP.DSL:Get('buff.duration')('player', _G.GetSpellInfo(202665))
-	if x > 0 then 
+	if x > 0 then
 		dur = x
 		return x
 	end
-	if y > 0 then 
+	if y > 0 then
 		dur = y
 		return y
 	end
-	if z > 0 then 
+	if z > 0 then
 		dur = z
 		return z
 	end
-	if a > 0 then 
+	if a > 0 then
 		dur = a
 		return a
 	end
-	if b > 0 then 
+	if b > 0 then
 		dur = b
 		return b
 	end
-	if c > 0 then 
+	if c > 0 then
 		dur = c
 		return c
 	end
@@ -760,16 +760,16 @@ end)
 
 	--rtb_buffs<2&(buff.loaded_dice.up|!buff.grand_melee.up&!buff.ruthless_precision.up)
 NeP.DSL:Register('rtb_reroll', function()
-	if NeP.DSL:Get('rtb_buffs')('player') < 2 and ( NeP.DSL:Get('buff')('player', 'Loaded Dice') or not NeP.DSL:Get('buff')('player', 'Grand Melee') or not NeP.DSL:Get('buff')('player', 'Ruthless Precision')) then	
+	if NeP.DSL:Get('rtb_buffs')('player') < 2 and ( NeP.DSL:Get('buff')('player', 'Loaded Dice') or not NeP.DSL:Get('buff')('player', 'Grand Melee') or not NeP.DSL:Get('buff')('player', 'Ruthless Precision')) then
 		return 1
-	else 
+	else
 		return 0
 	end
 end)
 
 	-- combo_points.deficit>=2+2*(talent.ghostly_strike.enabled&cooldown.ghostly_strike.remains<1)+buff.broadside.up&energy>60&!buff.skull_and_crossbones.up
 
-	
+
 	-- # With multiple targets, this variable is checked to decide whether some CDs should be synced with Blade Flurry
 	-- actions+=/variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
 
@@ -819,10 +819,14 @@ NeP.DSL:Register('shards', function ()
 	return shards
 end)
 
+-- /dump NeP.DSL:Get('wildimps')()
+NeP.DSL:Register('wildimps', function()
+  return NeP.DSL:Get('warlock.minions.type')('Wild Imp')
+end)
+
 NeP.DSL:Register('unstableaffliction', function ()
     local count = 0
     for i = 1, 40, 1 do
-	
         if (UnitAura('target', i, 'PLAYER|HARMFUL') == 'Unstable Affliction') then
             count = count + 1
         end

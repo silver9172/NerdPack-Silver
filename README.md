@@ -4,7 +4,7 @@ Dontations appreciated! <a href="https://www.paypal.me/silver9172"><img src="htt
 
 Nerdpack required -- [Click Here](https://github.com/MrTheSoulz/NerdPack-Tool/raw/master/NeP-ToolBox_Release.zip) to download.
 
-Lua unlocker required, advanced recomended
+Lua unlocker required, advanced recommended
 
 Completed profiles:
 - [Paladin] - Holy, Protection - 8.0.1
