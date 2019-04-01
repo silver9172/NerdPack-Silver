@@ -813,6 +813,31 @@ end)
 ---------------------------------------
 -------------- Warlock ----------------
 ---------------------------------------
+local procReact = {
+  -- Versatillity
+  277179,
+
+  -- Intellect
+  277185, 268550, 273942, 273988, 278154,
+
+  -- Crit
+  289522, 273955,
+
+  -- Mastery
+  274431,
+}
+
+-- /dump NeP.DSL:Get('stackingProc')('player')
+NeP.DSL:Register('procReact', function (target)
+  for i = 1, #procReact do
+  local buffName = _G.GetSpellInfo(procReact[i])
+   if NeP.DSL:Get("buff")(target, buffName) and NeP.DSL:Get("buff.duration")(target, buffName) > NeP.DSL:Get("spell.casttime")('player', 'Chaos Bolt') then
+  --  print('We have a buff!')
+    return true
+   end
+  end
+end)
+
 
 NeP.DSL:Register('shards', function ()
 	local shards = WarlockPowerBar_UnitPower('player')
