@@ -2,23 +2,24 @@ local GUI = {
 	-- General
 	{type = 'header', 		text = 'General', align = 'center'},
 	{type = 'checkbox',		text = 'Multi-Dot',						key = 'multi', 	default = true},
+	{type = 'checkbox',		text = 'Auto Stealth',						key = 'stealth', 	default = true},
 	{type = 'checkbox',		text = 'Sinister Circulation',			key = 'sin', 	default = true},
 	{type = 'checkbox',		text = 'Mantle of the Master Assassin',	key = 'mantle', default = true},
 	{type = 'ruler'},{type = 'spacer'},
-	
+
 	-- Survival
 	{type = 'header', 		text = 'Survival', align = 'center'},
 	{type = 'spinner', 		text = 'Crimson Vial', 					key = 'cv', 	default_spin = 65},
 	{type = 'checkspin', 	text = 'Health Potion', 				key = 'hp', 	default_check = true, default_spin = 25},
 	{type = 'checkspin',	text = 'Healthstone', 					key = 'hs', 	default_check = true, default_spin = 25},
 	{type = 'ruler'},{type = 'spacer'},
-	
+
 	--Cooldowns
 	{type = 'header', 		text = 'Cooldowns when toggled on', align = 'center'},
 	{type = 'checkbox',		text = 'Vanish',						key = 'van', 	default = true},
 	{type = 'checkbox',		text = 'Vendetta',						key = 'ven', 	default = true},
 	{type = 'checkbox',		text = 'Potion of the Old War',			key = 'ow', 	default = true},
-	{type = 'ruler'},{type = 'spacer'},} 
+	{type = 'ruler'},{type = 'spacer'},}
 
 local exeOnLoad = function()
 	NeP.Interface:AddToggle({
@@ -38,158 +39,109 @@ local keybinds = {
 }
 
 local interrupts = {
-	{ 'Kick'},
+	{ 'Kick', 'inRange.spell && interruptAt(35)', { 'target', 'enemies'}},
+}
+
+local tricks = {
+	{ 'Tricks of the Trade', 'inRange.spell && !buff & !enemy', 'focus'},
+	{ 'Tricks of the Trade', 'inRange.spell && !buff', 'tank'},
 }
 
 local survival = {
-	{ 'Feint', 'boss1.buff(Blood of the Father) & !player.buff'},
-
 	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
-	
-	-- Health Pot
-	--{ '#Ancient Healing Potion', 'UI(hp_check) & player.health <= UI(hp_spin)'},
-	
-	-- Healthstones
-	--{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
 }
 
 local cooldowns = {
-	-- # Cooldowns
-	-- actions.cds=potion,if=buff.bloodlust.react|target.time_to_die<=60|debuff.vendetta.up&cooldown.vanish.remains<5
-	-- actions.cds+=/use_item,name=galecallers_boon
-	-- actions.cds+=/use_item,name=lustrous_golden_plumage
-	-- actions.cds+=/blood_fury,if=debuff.vendetta.up
-	{ 'Blood Fury', 'debuff(Vendetta)', 'target'},
-	-- actions.cds+=/berserking,if=debuff.vendetta.up
-	{ 'Beserking', 'debuff(Vendetta)', 'target'}, 
-	-- actions.cds+=/fireblood,if=debuff.vendetta.up
-	{ 'Fireblood', 'debuff(Vendetta)', 'target'}, 
-	-- actions.cds+=/ancestral_call,if=debuff.vendetta.up
-	{ 'Ancestral Call', 'debuff(Vendetta)', 'target'}, 
-	-- actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=target.time_to_die<combo_points.deficit*1.5|(raid_event.adds.in>40&combo_points.deficit>=cp_max_spend)
-	
-	-- actions.cds+=/vendetta,if=dot.rupture.ticking
-	{ 'Vendetta', 'target.bosscheck >= 1 & debuff(Rupture).duration > 6', 'target'}, 
+	-- actions.cds=potion,if=buff.bloodlust.react|debuff.vendetta.up
+	-- actions.cds+=/use_item,name=galecallers_boon,if=cooldown.vendetta.remains<=1&(!talent.subterfuge.enabled|dot.garrote.pmultiplier>1)|cooldown.vendetta.remains>45
+	{ 'Blood Fury', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
+	{ 'Berserking', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
+	{ 'Fireblood', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
+	{ 'Ancestral Call', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
+	-- # If adds are up, snipe the one with lowest TTD. Use when dying faster than CP deficit or without any CP.
+	-- actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
+	-- # If no adds will die within the next 30s, use MfD on boss without any CP.
+	-- actions.cds+=/marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&combo_points.deficit>=cp_max_spend
+	-- # Vendetta outside stealth with Rupture up. With Subterfuge talent and Shrouded Suffocation power always use with buffed Garrote. With Nightstalker and Exsanguinate use up to 5s (3s with DS) before Vanish combo.
+	-- actions.cds+=/vendetta,if=!stealthed.rogue&dot.rupture.ticking&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier>1)&(!talent.nightstalker.enabled|!talent.exsanguinate.enabled|cooldown.exsanguinate.remains<5-2*talent.deeper_stratagem.enabled)
+	{ 'Vendetta', 'inRange.spell(Mutilate) && !stealthed && bosscheck = 1 && debuff(Rupture).duration >= 7.2 && { !talent(2,2) || subGarrote } && { !talent(2,1) || !talent(6,3) || spell(Exsanguinate).cooldown < 5 }', 'target'},
+	-- # Extra Subterfuge Vanish condition: Use when Garrote dropped on Single Target
+	-- actions.cds+=/vanish,if=talent.subterfuge.enabled&!dot.garrote.ticking&variable.single_target
+	{ 'Vanish', 'inRange.spell(Mutilate) && !stealthed && talent(2,2) && debuff(Garrote).duration <= 5.2 && single_target && bosscheck = 1', 'target'},
 	-- # Vanish with Exsg + (Nightstalker, or Subterfuge only on 1T): Maximum CP and Exsg ready for next GCD
-	-- actions.cds+=/vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&spell_targets.fan_of_knives<2)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1
-	{ 'Vanish', 'bosscheck = 1 & partycheck > 1 & talent(6,3) & { talent(2,1) || talent(2,2) & player.area(10).enemies < 2} & combopoints >= cp_max_spend & player.spell(Exsanguinate).cooldown < 1', 'target'}, 
+	-- actions.cds+=/vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
 	-- # Vanish with Nightstalker + No Exsg: Maximum CP and Vendetta up
 	-- actions.cds+=/vanish,if=talent.nightstalker.enabled&!talent.exsanguinate.enabled&combo_points>=cp_max_spend&debuff.vendetta.up
-	{ 'Vanish', 'bosscheck = 1 & partycheck > 1 & !talent(2,1) & !talent(6,3) & combopoints.deficit <= 1 & debuff(Vendetta)', 'target'},
 	-- # Vanish with Subterfuge + (No Exsg or 2T+): No stealth/subterfuge, Garrote Refreshable, enough space for incoming Garrote CP
-	-- actions.cds+=/vanish,if=talent.subterfuge.enabled&(!talent.exsanguinate.enabled|spell_targets.fan_of_knives>=2)&!stealthed.rogue&cooldown.garrote.up&dot.garrote.refreshable&(spell_targets.fan_of_knives<=3&combo_points.deficit>=1+spell_targets.fan_of_knives|spell_targets.fan_of_knives>=4&combo_points.deficit>=4)
-	{ 'Vanish', 'bosscheck = 1 & partycheck > 1 & talent(2,2) & { !talent(6,3) || player.area(10).enemies >= 2 & toggle(aoe)} & !player.stealthed & player.spell(Garrote).cooldown = 0 & debuff(Garrote).duration <= 5.4 & { player.area(10).enemies <= 3 & combopoints.deficit >= 1 + player.area(10).enemies || player.area(10).enemies >= 4 & combopoints.deficit >=4 & toggle(aoe)', 'target'},
+	-- actions.cds+=/vanish,if=talent.subterfuge.enabled&(!talent.exsanguinate.enabled|!variable.single_target)&!stealthed.rogue&cooldown.garrote.up&dot.garrote.refreshable&(spell_targets.fan_of_knives<=3&combo_points.deficit>=1+spell_targets.fan_of_knives|spell_targets.fan_of_knives>=4&combo_points.deficit>=4)
 	-- # Vanish with Master Assasin: No stealth and no active MA buff, Rupture not in refresh range
 	-- actions.cds+=/vanish,if=talent.master_assassin.enabled&!stealthed.all&master_assassin_remains<=0&!dot.rupture.refreshable
-	{ 'Vanish', 'bosscheck = 1 & partycheck > 1 & talent(2,3) & player.stealthed & !player.buff(Master Assassin) & debuff(Rupture).duration >= 6', 'target'}, 
+	-- # Shadowmeld for Shrouded Suffocation
+	-- actions.cds+=/shadowmeld,if=!stealthed.all&azerite.shrouded_suffocation.enabled&dot.garrote.refreshable&dot.garrote.pmultiplier<=1&combo_points.deficit>=1
 	-- # Exsanguinate when both Rupture and Garrote are up for long enough
 	-- actions.cds+=/exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
-	{ 'Exsanguinate', 'debuff(Rupture).duration > 4 + 4 * cp_max_spend & debuff(Garrote).duration >= 5.4', 'target'}, 
 	-- actions.cds+=/toxic_blade,if=dot.rupture.ticking
-	{ 'Toxic Blade', 'debuff(Rupture).duration >= 6', 'target'},
+	{ 'Toxic Blade', 'inRange.spell && infront(player) && debuff(Rupture)', 'target'},
 }
 
-local direct = {
-	-- # Direct damage abilities
-	-- # Envenom at 4+ (5+ with DS) CP. Immediately on 2+ targets, with Vendetta, or with TB; otherwise wait for some energy. Also wait if Exsg combo is coming up.
-	-- actions.direct=envenom,if=combo_points>=4+talent.deeper_stratagem.enabled&(debuff.vendetta.up|debuff.toxic_blade.up|energy.deficit<=25+variable.energy_regen_combined|spell_targets.fan_of_knives>=2)&(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)
-	{ 'Envenom', 'combopoints.deficit <= 1 & { target.debuff(Vendetta) || target.debuff(Toxic Blade) || player.deficit <= 25 + energy_regen_combined || player.area(10).enemies >= 2 } & { !talent(6,3) || player.spell(Exsanguinate).cooldown > 2 }', 'target'}, 
-	-- actions.direct+=/variable,name=use_filler,value=combo_points.deficit>1|energy.deficit<=25+variable.energy_regen_combined|spell_targets.fan_of_knives>=2
-	-- # Poisoned Knife at 29+ stacks of Sharpened Blades. Up to 4 targets with Rank 1, more otherwise.
-	-- actions.direct+=/poisoned_knife,if=variable.use_filler&buff.sharpened_blades.stack>=29&(azerite.sharpened_blades.rank>=2|spell_targets.fan_of_knives<=4)
-	-- actions.direct+=/fan_of_knives,if=variable.use_filler&(buff.hidden_blades.stack>=19|spell_targets.fan_of_knives>=2+stealthed.rogue|buff.the_dreadlords_deceit.stack>=29)
-	-- actions.direct+=/blindside,if=variable.use_filler&(buff.blindside.up|!talent.venom_rush.enabled)
-	{ 'Blindside', 'use_filler & { player.buff(Blindside) || !talent(6,1)}', 'target'},
-	-- actions.direct+=/mutilate,if=variable.use_filler
-	{ 'Mutilate', 'use_filler', 'target'}, 
-}
-
-local dots = {
-	-- # Damage over time abilities
-	-- # Special Rupture setup for Exsg
-	-- actions.dot=rupture,if=talent.exsanguinate.enabled&((combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1)|(!ticking&(time>10|combo_points>=2)))
-	{ 'Rupture', 'talent(6,3) & {{ combopoints >= cp_max_spend & player.spell(Exsanguinate).cooldown < 1 } || { debuff.duration < 6 & { combat.time > 10 || combopoints >= 2 }}}', 'target'}, 
-	-- # Garrote upkeep, also tries to use it as a special generator for the last CP before a finisher
-	-- actions.dot+=/pool_resource,for_next=1
-	-- actions.dot+=/garrote,cycle_targets=1,if=(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1&refreshable&(pmultiplier<=1|remains<=tick_time)&(!exsanguinated|remains<=tick_time*2)&(target.time_to_die-remains>4&spell_targets.fan_of_knives<=1|target.time_to_die-remains>12)
-	{ 'Garrote', '{ !talent(2,2) || {{ player.spell(Vanish).cooldown > 0 & player.spell(Vendetta).cooldown >= 4 } || bosscheck = 0}} & combopoints.deficit >= 1 & debuff.duration <= 5.4 & { !garrote.exsanguinated || debuff.duration <= 5.4 } & { ttd > 4 & player.area(10).enemies <= 1 || ttd > 12}', 'target'}, 
-	-- # Crimson Tempest only on multiple targets at 4+ CP when running out in 2s (up to 4 targets) or 3s (5+ targets)
-	-- actions.dot+=/crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
-	{ 'Crimson Tempest', 'player.area(10).enemies >= 2 & debuff.duration < 2 + { player.area(10).enemies >= 5 } & combopoints >= 4', 'target'},
-	-- # Keep up Rupture at 4+ on all targets (when living long enough and not snapshot)
-	-- actions.dot+=/rupture,cycle_targets=1,if=combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time)&(!exsanguinated|remains<=tick_time*2)&target.time_to_die-remains>4
-	{ 'Rupture', 'player.combopoints >= 4 & debuff.duration <= 5.4 & rupture.exsanguinated = 0 & ttd > 4', 'target'}, 
-}
-
-local stealthed = {
-	-- # Stealthed Actions
-	-- # Nighstalker, or Subt+Exsg on 1T: Snapshot Rupture; Also use Rupture over Envenom if it's not applied (Opener)
-	-- actions.stealthed=rupture,if=combo_points>=4&(talent.nightstalker.enabled|talent.subterfuge.enabled&talent.exsanguinate.enabled&spell_targets.fan_of_knives<2|!ticking)&target.time_to_die-remains>6
-	-- actions.stealthed+=/envenom,if=combo_points>=cp_max_spend
-	{ 'Envenom', 'combopoints >= cp_max_spend', 'target'}, 
-	-- # Subterfuge: Apply or Refresh with buffed Garrotes
-	-- actions.stealthed+=/garrote,cycle_targets=1,if=talent.subterfuge.enabled&refreshable&(!exsanguinated|remains<=tick_time*2)&target.time_to_die-remains>2
-	-- # Subterfuge: Override normal Garrotes with snapshot versions
-	-- actions.stealthed+=/garrote,cycle_targets=1,if=talent.subterfuge.enabled&remains<=10&pmultiplier<=1&!exsanguinated&target.time_to_die-remains>2
-	-- # Subterfuge + Exsg: Even override a snapshot Garrote right after Rupture before Exsanguination
-	-- actions.stealthed+=/pool_resource,for_next=1
-	-- actions.stealthed+=/garrote,if=talent.subterfuge.enabled&talent.exsanguinate.enabled&cooldown.exsanguinate.remains<1&prev_gcd.1.rupture&dot.rupture.remains>5+4*cp_max_spend
-}
-	
-local simCraft = {
-	-- # Executed every time the actor is available.
-	-- actions+=/call_action_list,name=stealthed,if=stealthed.rogue
-	{ stealthed, 'player.stealthed'}, 
-	-- actions+=/call_action_list,name=cds
-	{ cooldowns}, 
-	-- actions+=/call_action_list,name=dot
-	{ dots}, 
-	-- actions+=/call_action_list,name=direct
-	{ direct}, 
-	-- actions+=/arcane_torrent,if=energy.deficit>=15+variable.energy_regen_combined
-	-- actions+=/arcane_pulse
-	-- actions+=/lights_judgment
-}
-	
-local utility = {
-	{ 'Tricks of the Trade', '!buff & !enemy', 'focus'},
-	{ 'Tricks of the Trade', '!buff', 'tank'},
+local wowhead = {
+	-- Use  Rupture at maximum combo points if  Exsanguinate is ready.
+	-- Keep up  Garrote on as many targets as possible. Let it fall off before reapplying, if it was snapshot with  Subterfuge or Exsanguinate.
+	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 21 && player.buff(Subterfuge) && !subGarrote && combopoints.deficit >= 1', { 'target', 'enemies'}},
+	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 5.4 && !subGarrote && combopoints.deficit >= 1', 'target'},
+	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 5.4 && !subGarrote && combopoints.deficit >= 1 && toggle(cleave)', { 'target', 'enemies'}},
+	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 21 && player.buff(Subterfuge) && subGarrote && combopoints.deficit >= 1', 'target'},
+	-- During  Subterfuge overwrite normal versions with empowered ones, no matter their remaining duration, but prefer targets without any or a shorter  Garrote up first.
+	-- Keep up  Crimson Tempest (if talented) against 2 or more targets with four or more combo points. Refresh it only during the last 2s.
+	-- Keep up  Rupture with four or more combo points on all targets. Let it fall off before reapplying, if it was snapshot with Nightstalker or  Exsanguinate.
+	{ 'Rupture', 'inRange.spell && infront(player) && debuff.duration <= 7.2 && combopoints.deficit <= 1', 'target'},
+	{ 'Rupture', 'inRange.spell && infront(player) && debuff.duration <= 7.2 && combopoints.deficit <= 1 && toggle(cleave)', { 'target', 'enemies'}},
+	-- If talented into  Internal Bleeding and your target is stunnable (e.g. in dungeons), you will ideally want to use  Kidney Shot at 4+ combo points (5+ with  Deeper Stratagem) when ready. Make sure you are still helping your group with your stuns though and consider situation / plan ahead.
+	-- Use  Envenom at four or more combo points (5+ with  Deeper Stratagem). Against a single target, with neither  Vendetta nor  Toxic Blade up, it is worth pooling to about 80% energy before using it.
+	{ 'Envenom', 'inRange.spell && infront(player) && combopoints.deficit <= 1 && { target.debuff(Vendetta) || target.debuff(Toxic Blade) || deficit <= 25 + energy_regen_combined || !single_target } && { !talent(6,3) || talent(6,3) && spell(Exsanguinate).cooldown > 2 }', 'target'},
+	-- Use  Fan of Knives at 4 or more targets.
+	{ 'Fan of Knives', 'inRange.spell(Mutilate) && player.area(15).enemies >= 4 && toggle(aoe)', { 'target', 'enemies'}},
+	-- Use  Fan of Knives at 3 targets if any of them has no  Deadly Poison ticking.
+	{ 'Fan of Knives', 'inRange.spell(Mutilate) && player.area(15).enemies >= 3 && !debuff(Deadly Poison) && toggle(cleave)', { 'target', 'enemies'}},
+	-- Use  Blindside (if talented) if you have the proc or your enemy has less than 35% health. With  Venom Rush it is only worth to use with the proc.
+	{ 'Blindside', 'inRange.spell && infront(player) && { player.buff(Blindside) || !talent(6,1) && target.health < 35 }', 'target'},
+	-- Use  Mutilate at 2 targets to re-apply  Deadly Poison to the second target.
+	{ 'Mutilate', 'inRange.spell && infront(player) && debuff(Deadly Poison).duration < 3.6 && use_filler && player.area(15).enemies = 2', 'enemies'},
+	-- Use  Mutilate on your main target.
+	{ 'Mutilate', 'inRange.spell && infront(player) && use_filler', { 'target', 'enemies'}},
 }
 
 local preCombat = {
+	-- Poisons --
+	{ 'Deadly Poison', 'buff.duration <= 600 && timeout(Poison, 2) && !moving', 'player'},
+	{ 'Crippling Poison', 'buff.duration <= 600 && timeout(Poison, 2) && !moving', 'player'},
 
+	{ tricks, 'dbm(Pull In) <= 4'}
 }
 
 local inCombat = {
 	{ '/startattack', '!isattacking & target.enemy'},
 	{ utility},
+	{ tricks},
 	{ keybinds},
-	{ interrupts, 'target.interruptAt(35)'},
+	{ interrupts},
 	{ survival},
-	{ simCraft}, 
-	--{ wowhead}, 
-	--{ aoeRotation, 'player.area(10).enemies >= 2 & toggle(aoe)'}, 
-	--{ rotation, 'target.enemy'},
-	--{ 'Poisoned Knife'}, 
+	{ cooldowns},
+	{ wowhead},
 }
 
 local outCombat = {
-	-- Poisons --
-	{ 'Deadly Poison', 'player.buff.duration <= 600 & !player.lastcast & !player.moving'},
-	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !player.moving'},
-	-------------
-
-	--{ 'Stealth', '!player.buff & !player.buff(Vanish) & !lastcast'},
+	{ 'Stealth', '!buff && !buff(Vanish) && timeout(stealth, 4) && UI(stealth)', 'player'},
 	{ keybinds},
 	{ preCombat}
 }
 
 NeP.CR:Add(259, {
-	name = '[Silver] Rogue - Assassination',
-	  ic = inCombat,
-	 ooc = outCombat,
-	 gui = GUI,
-	load = exeOnLoad,
+	  name = '[Silver] Rogue - Assassination',
+	    ic = inCombat,
+	   ooc = outCombat,
+	 	 gui = GUI,
+		load = exeOnLoad,
  wow_ver = '8.0.1',
  nep_ver = '1.11',
 })

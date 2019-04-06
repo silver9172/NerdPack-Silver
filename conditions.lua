@@ -640,6 +640,8 @@ NeP.DSL:Register('shd_threshold', function()
 	end
 end)
 
+
+
 NeP.DSL:Register('poisoned_bleeds', function()
 	local x = 0
 	local y = 0
@@ -658,6 +660,16 @@ NeP.DSL:Register('poisoned_bleeds', function()
 	return (x + y)
 end)
 
+-- actions+=/variable,name=single_target,value=spell_targets.fan_of_knives<2
+-- /dump NeP.DSL:Get('single_target')('player')
+NeP.DSL:Register('single_target', function()
+  return NeP.DSL:Get('area.enemies')('player','8') < 2
+end)
+
+-- combo_points.deficit>1|energy.deficit<=25+variable.energy_regen_combined|!variable.single_target
+
+
+
 -- energy.regen+poisoned_bleeds*7%(2*spell_haste)
 NeP.DSL:Register('energy_regen_combined', function()
 	local x = (NeP.DSL:Get('energy.regen')() + NeP.DSL:Get('poisoned_bleeds')() * 7 / (2 * NeP.DSL:Get('haste')('player')))
@@ -665,13 +677,38 @@ NeP.DSL:Register('energy_regen_combined', function()
 end)
 
 NeP.DSL:Register('use_filler', function()
-	--combo_points.deficit>1|energy.deficit<=25+variable.energy_regen_combined|spell_targets.fan_of_knives>=2
-	if NeP.DSL:Get('combopoints.deficit')('player') > 1 or NeP.DSL:Get('deficit')('player') <= 25 + NeP.DSL:Get('energy_regen_combined')('player') or NeP.DSL:Get('area.enemies')('player','10') >= 2 then
-		-- NeP.DSL:Get('area.enemies')('player','10')
+	--combo_points.deficit>1|energy.deficit<=25+variable.energy_regen_combined|!variable.single_target
+	if NeP.DSL:Get('combopoints.deficit')('player') > 1 or NeP.DSL:Get('deficit')('player') <= 25 + NeP.DSL:Get('energy_regen_combined')('player') or not NeP.DSL:Get('single_target')('player') then
 		return true
 	else
 		return false
 	end
+end)
+
+local garrote = false
+
+NeP.Listener:Add('rogueBleeds', 'COMBAT_LOG_EVENT_UNFILTERED', function()
+  local _, type, _,_, sName, _,_, dGUID, dName, _,_, spellId = CombatLogGetCurrentEventInfo()
+
+  if type == "SPELL_AURA_APPLIED" or type == "SPELL_CAST_SUCCESS" then
+    if spellId == 703 then
+      if NeP.DSL:Get('stealthed')('player') then
+        --print('Garrote is on and buffed')
+        garrote = true
+      else
+        --print('Garrote is on, not buffed')
+        garrote = false
+      end
+    end
+  elseif type == "SPELL_AURA_REMOVED" and spellId == 703 then
+        --print('Garrote is off')
+        garrote = false
+  end
+end)
+
+-- /dump NeP.DSL:Get('subGarrote')('player')
+NeP.DSL:Register('subGarrote', function()
+  return garrote
 end)
 
 --cp_max_spend
