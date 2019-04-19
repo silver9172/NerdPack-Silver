@@ -95,25 +95,29 @@ local emergency = {
 	{ 'Regrowth', '!los', 'lowest'},
 }
 
+local blanket = {
+	"tank1", "tank2", "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"
+}
+
 local rejuvSpam = {
 	-- Apply Rejuv to players with debuffs
-	{ 'Rejuvenation', '!los && magicDispel && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && magicDispel && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && poisonDispel && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && poisonDispel && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && curseDispel && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && curseDispel && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && diseaseDispel && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && diseaseDispel && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && tankEvent && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && tankEvent && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
+	{ 'Rejuvenation', '!los && magicDispel && !buff.any', blanket},
+	{ 'Rejuvenation', '!los && magicDispel && !buff', blanket},
+	{ 'Rejuvenation', '!los && poisonDispel && !buff.any', blanket},
+	{ 'Rejuvenation', '!los && poisonDispel && !buff', blanket},
+	{ 'Rejuvenation', '!los && curseDispel && !buff.any', blanket},
+	{ 'Rejuvenation', '!los && curseDispel && !buff', blanket},
+	{ 'Rejuvenation', '!los && diseaseDispel && !buff.any', blanket},
+	{ 'Rejuvenation', '!los && diseaseDispel && !buff', blanket},
+	{ 'Rejuvenation', '!los && tankEvent && !buff.any', blanket},
+	{ 'Rejuvenation', '!los && tankEvent && !buff', blanket},
 
 	-- Normal Spam
-	{ 'Rejuvenation', '!los && health <= UI(lrejuv) && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && health <= UI(lrejuv) && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
+	{ 'Rejuvenation', '!los && health <= UI(lrejuv) && !buff.any', blanket},
+	{ 'Rejuvenation', '!los && health <= UI(lrejuv) && !buff', blanket},
 
 	-- Germination
-	{ 'Rejuvenation', '!los && talent(6,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination))', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10'}},
+	{ 'Rejuvenation', '!los && talent(6,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination))', blanket},
 }
 
 local rejuvSpamLowMana = {
@@ -188,9 +192,13 @@ local healing = {
 
 local efflorescence = {
 	-- Place on a tank if it isnt up at all
-	{ 'Efflorescence', '!totem(Efflorescence)', { 'tank.ground', 'tank2.ground',}},
+	-- /dump NeP.DSL:Get('totem')('Efflorescence', 'player')
+	{ 'Efflorescence', 'mushrooms < 1', { 'tank.ground', 'tank2.ground'}},
 	-- Place on viable target when about to expire
 	{ 'Efflorescence', 'area(8,99).heal > 1 && totem(Efflorescence).duration <= 3', { 'target.ground', 'tank.ground', 'tank2.ground', 'friendly.ground'}},
+
+	-- Testing
+	{ 'Efflorescence', 'totem(Efflorescence).duration <= 3', 'friendly.ground'},
 }
 
 local inCombat = {

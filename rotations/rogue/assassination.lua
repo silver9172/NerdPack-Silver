@@ -29,8 +29,8 @@ local exeOnLoad = function()
 		icon = 'Interface\\ICONS\\ability_rogue_rupture',
 	})
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
-	print('|cffADFF2F --- Supported Talents')
-	print('|cffADFF2F --- 1,1 / 2,1 / 3,3 / any / any / 6,1 or 6,2 / 7,1')
+	print('|cffADFF2F --- ')
+	print('|cffADFF2F --- ')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
 
@@ -54,10 +54,10 @@ local survival = {
 local cooldowns = {
 	-- actions.cds=potion,if=buff.bloodlust.react|debuff.vendetta.up
 	-- actions.cds+=/use_item,name=galecallers_boon,if=cooldown.vendetta.remains<=1&(!talent.subterfuge.enabled|dot.garrote.pmultiplier>1)|cooldown.vendetta.remains>45
-	{ 'Blood Fury', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
-	{ 'Berserking', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
-	{ 'Fireblood', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
-	{ 'Ancestral Call', 'inRange.spell(Mutilate) && target.debuff(Vendetta)', 'player'},
+	{ 'Blood Fury', 'inRange.spell(Mutilate) && debuff(Vendetta)', 'target'},
+	{ 'Berserking', 'inRange.spell(Mutilate) && debuff(Vendetta)', 'target'},
+	{ 'Fireblood', 'inRange.spell(Mutilate) && debuff(Vendetta)', 'target'},
+	{ 'Ancestral Call', 'inRange.spell(Mutilate) && debuff(Vendetta)', 'target'},
 	-- # If adds are up, snipe the one with lowest TTD. Use when dying faster than CP deficit or without any CP.
 	-- actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
 	-- # If no adds will die within the next 30s, use MfD on boss without any CP.
@@ -67,7 +67,7 @@ local cooldowns = {
 	{ 'Vendetta', 'inRange.spell(Mutilate) && !stealthed && bosscheck = 1 && debuff(Rupture).duration >= 7.2 && { !talent(2,2) || subGarrote } && { !talent(2,1) || !talent(6,3) || spell(Exsanguinate).cooldown < 5 }', 'target'},
 	-- # Extra Subterfuge Vanish condition: Use when Garrote dropped on Single Target
 	-- actions.cds+=/vanish,if=talent.subterfuge.enabled&!dot.garrote.ticking&variable.single_target
-	{ 'Vanish', 'inRange.spell(Mutilate) && !stealthed && talent(2,2) && debuff(Garrote).duration <= 5.2 && single_target && bosscheck = 1', 'target'},
+	{ 'Vanish', 'inRange.spell(Mutilate) && !stealthed && partycheck > 1 && talent(2,2) && debuff(Garrote).duration <= 7 && single_target && bosscheck = 1', 'target'},
 	-- # Vanish with Exsg + (Nightstalker, or Subterfuge only on 1T): Maximum CP and Exsg ready for next GCD
 	-- actions.cds+=/vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
 	-- # Vanish with Nightstalker + No Exsg: Maximum CP and Vendetta up
@@ -84,15 +84,17 @@ local cooldowns = {
 	{ 'Toxic Blade', 'inRange.spell && infront(player) && debuff(Rupture)', 'target'},
 }
 
-local wowhead = {
+local rotation = {
 	-- Use  Rupture at maximum combo points if  Exsanguinate is ready.
 	-- Keep up  Garrote on as many targets as possible. Let it fall off before reapplying, if it was snapshot with  Subterfuge or Exsanguinate.
 	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 21 && player.buff(Subterfuge) && !subGarrote && combopoints.deficit >= 1', { 'target', 'enemies'}},
 	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 5.4 && !subGarrote && combopoints.deficit >= 1', 'target'},
 	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 5.4 && !subGarrote && combopoints.deficit >= 1 && toggle(cleave)', { 'target', 'enemies'}},
 	{ 'Garrote', 'inRange.spell && infront(player) && debuff.duration <= 21 && player.buff(Subterfuge) && subGarrote && combopoints.deficit >= 1', 'target'},
+	{ 'Garrote', 'inRange.spell && infront(player) && !debuff && combopoints.deficit >= 1 && toggle(cleave)', { 'target', 'enemies'}},
 	-- During  Subterfuge overwrite normal versions with empowered ones, no matter their remaining duration, but prefer targets without any or a shorter  Garrote up first.
 	-- Keep up  Crimson Tempest (if talented) against 2 or more targets with four or more combo points. Refresh it only during the last 2s.
+
 	-- Keep up  Rupture with four or more combo points on all targets. Let it fall off before reapplying, if it was snapshot with Nightstalker or  Exsanguinate.
 	{ 'Rupture', 'inRange.spell && infront(player) && debuff.duration <= 7.2 && combopoints.deficit <= 1', 'target'},
 	{ 'Rupture', 'inRange.spell && infront(player) && debuff.duration <= 7.2 && combopoints.deficit <= 1 && toggle(cleave)', { 'target', 'enemies'}},
@@ -127,7 +129,7 @@ local inCombat = {
 	{ interrupts},
 	{ survival},
 	{ cooldowns},
-	{ wowhead},
+	{ rotation},
 }
 
 local outCombat = {
@@ -142,6 +144,6 @@ NeP.CR:Add(259, {
 	   ooc = outCombat,
 	 	 gui = GUI,
 		load = exeOnLoad,
- wow_ver = '8.0.1',
- nep_ver = '1.11',
+ wow_ver = '8.1.5',
+ nep_ver = '1.12',
 })

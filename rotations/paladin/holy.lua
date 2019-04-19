@@ -7,7 +7,7 @@ local GUI = {
 	{type = 'checkbox',	text = 'Auto Dispel',							key = 'G_Disp', default = true},
 	{type = 'checkbox',	text = 'Top Up Out of Combat',					key = 'G_OOC',  default = true},
 	{type = 'ruler'}, {type = 'spacer'},
-	
+
 	--------------------------------
 	-- Toggles
 	--------------------------------
@@ -21,18 +21,18 @@ local GUI = {
 	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
 	{type = 'spinner',	text = 'Health for LotM',						key = 'P_LotM', default = 40},
 	{type = 'ruler'}, {type = 'spacer'},
-		
+
 	--------------------------------
 	-- TANK
 	--------------------------------
-	{type = 'header', 	text = 'Tank', align = 'center'},											
-	{type = 'spinner', 	text = 'Blessing of Sacrifice (Health %)', 		key = 'T_BoS', 	default = 30},	
+	{type = 'header', 	text = 'Tank', align = 'center'},
+	{type = 'spinner', 	text = 'Blessing of Sacrifice (Health %)', 		key = 'T_BoS', 	default = 30},
 	{type = 'spinner', 	text = 'Light of the Martyr (Health %)', 		key = 'T_LotM', default = 35},
 	{type = 'spinner', 	text = 'Holy Shock (Health %)', 				key = 'T_HS', 	default = 90},
 	{type = 'spinner', 	text = 'Flash of Light (Health %)', 			key = 'T_FoL', 	default = 75},
 	{type = 'spinner', 	text = 'Holy Light (Health %)', 				key = 'T_HL', 	default = 90},
 	{type = 'ruler'}, {type = 'spacer'},
-	
+
 	--------------------------------
 	-- LOWEST
 	--------------------------------
@@ -67,7 +67,7 @@ local survival = {
 	{ 'Divine Protection', 'buff(Blessing of Sacrifice) || incdmg(5) >= { health.max * 0.40 }', 'player'},
 }
 
-local topUp = { 
+local topUp = {
 	{ 'Holy Shock', nil, 'mouseover'},
 	{ 'Flash of Light', nil, 'mouseover'},
 }
@@ -82,16 +82,16 @@ local oocTopUp = {
 local DPS = {
 	{ '/startattack', '!isattacking'},
 	{ 'Consecration', 'player.area(8).enemies >= 1 && !player.moving', { 'target', 'enemies'}},
-	{ 'Holy Shock', '{UI(O_HS) || player.buff(Avenging Crusader) || partycheck = 1} && infront && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Holy Prism', 'infront && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Judgment', 'infront && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Crusader Strike', 'infront && inRange.spell && combat', { 'target', 'enemies'}},
+	{ 'Holy Shock', '{UI(O_HS) || player.buff(Avenging Crusader) || partycheck = 1} && infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
+	{ 'Holy Prism', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
+	{ 'Judgment', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
+	{ 'Crusader Strike', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
 }
 
 local cooldowns = {
 	-- Need to rewrite for Raid and 5 Man
 	{ 'Lay on Hands', 'UI(LoH) && health <= UI(L_LoH) && !debuff(Forbearance).any', { 'tank', 'lowest', 'friendly'}},
-	
+
 	-----------
 	-- 5 man --
 	-----------
@@ -100,8 +100,8 @@ local cooldowns = {
 		{ 'Avenging Wrath', 'UI(AW) && area(35,65).heal >= 3 && spell(Holy Shock).cooldown = 0 && !talent(6,2)', 'player'},
 		{ 'Avenging Crusader', 'UI(AW) && area(35,65).heal >= 3 && player.spell(Holy Shock).cooldown = 0 && inRange.spell(Crusader Strike) && talent(6,2) && talent(6,2)', 'target'},
 		{ 'Holy Avenger', 'UI(HA) && area(40,75).heal >= 3 && spell(Holy Shock).cooldown = 0', 'player'},
-	}, 'partycheck = 2'}, 
-	
+	}, 'partycheck = 2'},
+
 	----------
 	-- Raid --
 	----------
@@ -110,18 +110,18 @@ local cooldowns = {
 		{ 'Avenging Wrath', 'UI(AW) && area(35,65).heal >= 3 && spell(Holy Shock).cooldown = 0 && !talent(6,2)', 'player'},
 		{ 'Avenging Crusader', 'UI(AW) && area(35,65).heal >= 3 && player.spell(Holy Shock).cooldown = 0 && inRange.spell(Crusader Strike) && talent(6,2) && talent(6,2)', 'target'},
 		{ 'Holy Avenger', 'UI(HA) && area(40,75).heal >= 3 && spell(Holy Shock).cooldown = 0', 'player'},
-	}, 'partycheck = 3'}, 
-	
-	--{ '#trinket1', nil, 'mouseover.ground'}, 
-	
-	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS) && incdmg(5) >= { health.actual * 0.50 }', { 'tank', 'tank2'}}, 
+	}, 'partycheck = 3'},
+
+	--{ '#trinket1', nil, 'mouseover.ground'},
+
+	{ 'Blessing of Sacrifice', 'health <= UI(T_BoS) && incdmg(5) >= { health.actual * 0.50 }', { 'tank', 'tank2'}},
 }
 
 local tank = {
 	{ 'Beacon of Light', '!buff(Beacon of Faith) && !buff(Beacon of Light) && !talent(7,3)', 'tank'},
 	{ 'Beacon of Faith', '!buff(Beacon of Faith) && !buff(Beacon of Light) && !talent(7,3)', 'tank2'},
 	{ 'Beacon of Faith', '!buff(Beacon of Faith) && !buff(Beacon of Light) && !talent(7,3) && !tank2.exists && partycheck < 3', 'player'},
-	
+
 	-- Bestow Faith
 	{ 'Bestow Faith', '!buff && talent(1,2) && health <= 90', { 'tank', 'tank2'}},
 }
@@ -143,38 +143,38 @@ local healing = {
 		{ 'Light of Dawn'},
 		{ 'Flash of Light', nil, { 'lowest', 'friendly'}},
 	}, 'player.buff(Aura Mastery) && talent(5,2)'},
-		
+
 	{ aoeHealing},
 
 	-- Infusion of Light --
 	{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
 	{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
 	{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
-	
+
 	-- Dont waste buff
 	{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3 && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
 	-----------------------
-	
+
 	{ 'Light of the Martyr', '!self && health <= UI(T_LotM) && player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
 	{ 'Light of the Martyr', '!self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
 	{ 'Light of the Martyr', '!self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
-	
+
 	-- Cast on people without beacons first
 	{ 'Holy Shock', 'health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
 	{ 'Holy Shock', 'health <= UI(L_HS) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
-	
+
 	-- Ignore beacon checks (Heal members with beacon if no one else actually needs healed)
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', { 'lowest', 'friendly'}},
-	
-	{ 'Judgment', 'infront && enemy && talent(5,1) || infront && enemy && graceOfJusticar && area(8,95).heal >= 1', 'target'},
-	
+
+	{ 'Judgment', 'infront(player) && enemy && talent(5,1) || infront(player) && enemy && graceOfJusticar && area(8,95).heal >= 1', 'target'},
+
 	-- Cast on people without beacons first
 	{ 'Flash of Light', 'health <= UI(L_FoL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
 	{ 'Flash of Light', 'health <= UI(L_FoL) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
 	{ 'Holy Light', 'health <= UI(L_HL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
 	{ 'Holy Light', 'health <= UI(L_HL) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
-	
+
 	-- Ignore beacon checks (Heal members with beacon if no one else actually needs healed)
 	{ 'Flash of Light', 'health <= UI(T_FoL)', { 'tank', 'tank2'}},
 	{ 'Flash of Light', 'health <= UI(L_FoL)', { 'lowest', 'friendly'}},
@@ -190,45 +190,44 @@ local emergency = {
 
 local moving = {
 	{ aoeHealing},
-	
+
 	{{
 		{ 'Light of the Martyr', '!self && health <= UI(T_LotM)', { 'tank', 'tank2'}},
 		{ 'Light of the Martyr', '!self && health <= UI(L_LotM)', { 'lowest', 'friendly'}},
 	}, 'player.health >= UI(P_LotM) || player.buff(Divine Shield)'},
-	
+
 	-- Cast on people without beacons first
 	{ 'Holy Shock', 'health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
 	{ 'Holy Shock', 'health <= UI(L_HS) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
-	
+
 	-- Ignore beacon checks (Heal members with beacon if no one else actually needs healed)
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', { 'lowest', 'friendly'}},
-	
+
 	{ 'Judgment', 'enemy && talent(5,1)', 'target'},
 }
 
 local manaRestore = {
 	{ aoeHealing},
-	
+
 	-- Holy Shock
 	{ 'Holy Shock', 'health <= UI(T_HS) / 2', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS) / 2', { 'lowest', 'friendly'}},
-	
+
 	-- Flash of Light
 	{ 'Flash of Light', 'health <= UI(T_FoL) / 2', { 'tank', 'tank2'}},
 	{ 'Flash of Light', 'health <= UI(L_FoL) / 2', { 'lowest', 'friendly'}},
-	
+
 	-- Holy Light
 	{ 'Holy Light', 'health <= UI(T_HL) / 2', { 'tank', 'tank2'}},
 	{ 'Holy Light', 'health <= UI(L_HL) / 2', { 'lowest', 'friendly'}},
 }
 
 local inCombat = {
-	{ pause, 'keybind(lalt)'},
-	{ '/stopcasting', 'cancelCastingEvent', 'enemies'}, 
+	{ '/stopcasting', 'cancelCastingEvent', 'enemies'},
 	{ topUp, 'keybind(lcontrol)'},
 	{ survival},
-	{ dispel, 'UI(G_Disp)'}, 
+	{ dispel, 'UI(G_Disp)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ emergency, 'lowest.health <= UI(G_CHP) && !player.casting(Flash of Light)'},
 	{ tank},
@@ -243,10 +242,12 @@ local outCombat = {
 	-- Need to prevent this while eating
 	{ tank},
 	{ topUp, 'keybind(lcontrol)'},
-	
+
+	--{ '#trinket1', 'keybind(alt)', 'cursor.ground'},
+
 	-- Precombat
 	{ 'Bestow Faith', 'dbm(Pull in) <= 2', 'tank'},
-	
+
 	{ oocTopUp, 'UI(G_OOC)'},
 }
 
@@ -256,6 +257,6 @@ NeP.CR:Add(65, {
 	 ooc = outCombat,
 	 gui = GUI,
 	load = exeOnLoad,
- wow_ver = '8.1',
- nep_ver = '1.11',
+ wow_ver = '8.1.5',
+ nep_ver = '1.12',
 })

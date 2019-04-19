@@ -105,6 +105,14 @@ NeP.DSL:Register("inRange.spell", function(unit, spell)
    return spellIndex and _G.IsSpellInRange(spellIndex, spellBook, unit) == 1
 end)
 
+--USAGE in CR:
+--{"%target", "CONDITION", "UNIT"}
+NeP.Actions:Add('target', function(eval) eval.exe = function(eva) _G.TargetUnit(eva.target)
+    return true
+  end
+  return true
+end)
+
 -- Need enemy last cast event
 
 local castingEventSpellsAOE = {
@@ -503,7 +511,6 @@ NeP.DSL:Register('spellstealEvent', function(unit)
 
 end)
 
-
 NeP.DSL:Register('cancelCastingEvent', function(unit)
 	------------------
 	-- BFA Dungeons --
@@ -530,6 +537,11 @@ NeP.DSL:Register('priorityTarget', function(unit)
 	---- BFA Raids ---
 	------------------
 	or NeP.DSL:Get('name')(unit,'Coalesced Blood')
+
+  ------------------
+  ----- testing ----
+  ------------------
+  or NeP.DSL:Get('name')(unit,'Raider\'s Training Dummy')
 end)
 
 ---------------------------------------
@@ -562,6 +574,7 @@ end)
 ---------------------------------------
 --------------- Hunter ----------------
 ---------------------------------------
+-- /dump NeP.DSL:Get('focus.regen')()
 NeP.DSL:Register('focus.regen', function()
     local fregen = select(2, GetPowerRegen('player'))
     return fregen
@@ -573,18 +586,10 @@ NeP.DSL:Register('focus.time_to_max', function()
     return deficit / fregen
 end)
 
--- /dump NeP.DSL:Get('isshooting')()
-NeP.DSL:Register("isshooting", function(target)
-  return _G.IsCurrentSpell(75)
-end)
-
-NeP.DSL:Register('test2', function()
-	return IsCurrentSpell('Auto Attack')
-end)
-
-NeP.DSL:Register('test', function()
-	local _, _, _, _, _, _, spellID = GetSpellInfo('Auto Shot')
-	return spellID
+-- /dump NeP.DSL:Get('cobraReady')()
+--                   (active_enemies<2|                    cooldown.kill_command.remains                         >focus.time_to_max)                   &(focus-cost+focus.regen                                   *(cooldown.kill_command.remains-1)>action.kill_command.cost        |cooldown.kill_command.remains>1+gcd)                                                &cooldown.kill_command.remains>1
+NeP.DSL:Register("cobraReady", function(target)
+  return (NeP.DSL:Get('area.enemies')('player','8') < 2 or NeP.DSL:Get('spell.cooldown.duration')('Kill Command') > NeP.DSL:Get('focus.time_to_max')) and (NeP.DSL:Get('focus') - 35 + NeP.DSL:Get('focus.regen') * (NeP.DSL:Get('spell.cooldown.duration')('Kill Command') - 1) > 30 or NeP.DSL:Get('spell.cooldown.duration')('Kill Command') > 1 + NeP.DSL:Get('gcd')) and NeP.DSL:Get('spell.cooldown.duration')('Kill Command') > 1
 end)
 
 ---------------------------------------

@@ -78,13 +78,13 @@ local cooldowns = {
 }
 
 local rotation = {
-	{ 'Avenger\'s Shield', 'inRange.spell & area(10).enemies 12 >= 2 && infront', 'target'},
-	{ 'Judgment', 'inRange.spell && talent(2,2) && player.spell.charges >= 2 && infront || inRange.spell && !talent(2,2) && infront', 'target' },
+	{ 'Avenger\'s Shield', 'inRange.spell & area(10).enemies 12 >= 2 && infront(player)', 'target'},
+	{ 'Judgment', 'inRange.spell && talent(2,2) && player.spell.charges >= 2 && infront(player) || inRange.spell && !talent(2,2) && infront', 'target' },
 	{ 'Consecration', 'inRange.spell(Hammer of the Righteous) && !player.buff', 'target'},
 	{ 'Consecration', 'inRange.spell(Hammer of the Righteous) && player.totem.duration <= 2 && player.buff', 'target'},
-	{ 'Judgment', 'inRange.spell && infront', 'target'},
-	{ 'Avenger\'s Shield', 'inRange.spell && infront', 'target'},
-	{ 'Hammer of the Righteous', 'inRange.spell && infront', 'target'},
+	{ 'Judgment', 'inRange.spell && infront(player)', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell && infront(player)', 'target'},
+	{ 'Hammer of the Righteous', 'inRange.spell && infront(player)', 'target'},
 	{ 'Consecration', 'inRange.spell(Hammer of the Righteous)', 'target'},
 }
 
@@ -95,7 +95,7 @@ local inCombat = {
 	{ dispel},
 	{ cooldowns, 'toggle(cooldowns) & target.range <= 5'},
 	{ priorityTarget},
-	{ rotation, 'target.infront'}
+	{ rotation}
 }
 
 local outCombat = {
@@ -109,5 +109,5 @@ NeP.CR:Add(66, {
 	 gui = GUI,
 	load = exeOnLoad,
  wow_ver = '8.1.5',
- nep_ver = '1.12',	
+ nep_ver = '1.12',
 })
