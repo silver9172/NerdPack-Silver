@@ -88,7 +88,13 @@ local DPS = {
 	{ 'Crusader Strike', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
 }
 
+local items = {
+	{ '#trinket1', 'friendly.area(8,95) >= 2', 'friendly.ground'},
+}
+
 local cooldowns = {
+	{ items},
+
 	-- Need to rewrite for Raid and 5 Man
 	{ 'Lay on Hands', 'UI(LoH) && health <= UI(L_LoH) && !debuff(Forbearance).any', { 'tank', 'lowest', 'friendly'}},
 
@@ -167,7 +173,7 @@ local healing = {
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', { 'lowest', 'friendly'}},
 
-	{ 'Judgment', 'infront(player) && enemy && talent(5,1) || infront(player) && enemy && graceOfJusticar && area(8,95).heal >= 1', 'target'},
+	{ 'Judgment', 'infront(player) && inRange.spell && enemy && talent(5,1) || infront(player) && inRange.spell && enemy && graceOfJusticar && area(8,95).heal >= 1', 'target'},
 
 	-- Cast on people without beacons first
 	{ 'Flash of Light', 'health <= UI(L_FoL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
@@ -204,7 +210,7 @@ local moving = {
 	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
 	{ 'Holy Shock', 'health <= UI(L_HS)', { 'lowest', 'friendly'}},
 
-	{ 'Judgment', 'enemy && talent(5,1)', 'target'},
+	{ 'Judgment', 'infront(player) && inRange.spell && enemy && talent(5,1)', 'target'},
 }
 
 local manaRestore = {
@@ -243,12 +249,13 @@ local outCombat = {
 	{ tank},
 	{ topUp, 'keybind(lcontrol)'},
 
-	--{ '#trinket1', 'keybind(alt)', 'cursor.ground'},
-
 	-- Precombat
 	{ 'Bestow Faith', 'dbm(Pull in) <= 2', 'tank'},
 
 	{ oocTopUp, 'UI(G_OOC)'},
+
+	-- testing
+	--{ 'Holy Light', '!self && !player.moving', 'allFriendly'},
 }
 
 NeP.CR:Add(65, {

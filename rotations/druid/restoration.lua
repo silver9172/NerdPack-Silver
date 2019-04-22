@@ -19,25 +19,12 @@ local GUI = {
 	{type = 'ruler'}, {type = 'spacer'},
 
 	--------------------------------
-	-- TANK
-	--------------------------------
-	{type = 'header', 	text = 'Tank', align = 'center'},
-	{type = 'spinner', 	text = 'Rejuv', 								key = 'trejuv', default = 100},
-	{type = 'spinner', 	text = 'Germ', 									key = 'tgerm', 	default = 90},
-	{type = 'spinner', 	text = 'Swiftmend', 							key = 'tsm', 	default = 90},
-	{type = 'spinner', 	text = 'Healing Touch', 						key = 'tht',	default = 90},
-	{type = 'spinner', 	text = 'Regrowth', 								key = 'trg', 	default = 60},
-	{type = 'spinner', 	text = 'Ironbark', 								key = 'ib', 	default = 25},
-	{type = 'ruler'}, {type = 'spacer'},
-
-	--------------------------------
 	-- LOWEST
 	--------------------------------
 	{type = 'header', 	text = 'Lowest', align = 'center'},
 	{type = 'spinner', 	text = 'Rejuv', 								key = 'lrejuv', default = 90},
 	{type = 'spinner', 	text = 'Germ', 									key = 'lgerm', 	default = 75},
 	{type = 'spinner', 	text = 'Swiftmend', 							key = 'lsm', 	default = 90},
-	{type = 'spinner', 	text = 'Healing touch)', 						key = 'lht',	default = 90},
 	{type = 'spinner', 	text = 'Regrowth', 								key = 'lrg', 	default = 60},
 }
 
@@ -66,6 +53,10 @@ local keybinds = {
 	{ 'Ursol\'s Vortex', 'keybind(shift) && !player.lastcast', 'cursor.ground'},
 }
 
+local blanket = {
+	"tank1", "tank2", "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"
+}
+
 local potions = {
 	{ '#127834', 'UI(P_HP_check) && player.health <= UI(P_HP_spin)'}, -- Health Pot
 	{ '#5512', 'UI(P_HP_check) && player.health <= UI(P_HP_spin)'}, -- Healthstone
@@ -78,96 +69,108 @@ local dispel = {
 	{ 'Nature\'s Cure', 'curseDispel', 'friendly'},
 }
 
+local catDamage = {
+	{ 'Rip', 'inRange.spell && infront(player) && debuff.duration <= 7.2 && combopoints.deficit = 0', {'target', 'enemies'}},
+	{ 'Ferocious Bite', 'inRange.spell && infront(player) && combopoints.deficit = 0', 'target'},
+	{ 'Rake', 'inRange.spell && infront(player) && debuff.duration <= 4.5 && combopoints.deficit >= 1', {'target', 'enemies'}},
+	{ 'Swipe', 'inRange.spell(Shred) && infront(player) && combopoints.deficit >= 1', 'target'},
+	{ 'Shred', 'inRange.spell && infront(player) && combopoints.deficit >= 1', {'target', 'enemies'}},
+}
+
 local dps = {
-	{ 'Sunfire', '!los && debuff.duration <= 3.6 && player.mana >= 30 && inRange.spell && combat', 'enemies'},
-	{ 'Moonfire', '!los && debuff.duration <= 4.8 && player.mana >= 30 && inRange.spell && combat', 'enemies'},
-	{ 'Solar Wrath', '!los && !player.moving && inRange.spell', 'target'},
+	{ 'Sunfire', 'debuff.duration <= 3.6 && player.mana >= 30 && inRange.spell && combat', 'enemies'},
+	{ 'Moonfire', 'debuff.duration <= 4.8 && player.mana >= 30 && inRange.spell && combat', 'enemies'},
+	--{ 'Moonfire', 'inRange.spell && infront(player) && debuff.duration <= 4.8', 'target'},
+	--{ 'Sunfire', 'inRange.spell && infront(player) && debuff.duration <= 3.6', {'target', 'enemies'}},
+
+	{ 'Cat Form', '!buff && talent(3,2) && target.range <= 4.5', 'player'},
+	{ catDamage, 'player.buff(Cat Form)'},
+
+	{ 'Solar Wrath', 'inRange.spell && infront(player) && !player.moving && { !talent(3,2) || !inRange.spell(Shred) }', 'target'},
 }
 
 local cooldowns = {
 	{ 'Innervate', 'mana <= 65 && !spell(Wild Growth).cooldown', 'player'},
-	{ 'Ironbark', '!los && health <= UI(ib)', { 'tank', 'tank2'}},
+	{ 'Ironbark', 'health <= UI(ib)', { 'tank', 'tank2'}},
 	{ 'Barkskin', 'health <= 60', 'player'},
 }
 
 local emergency = {
-	{ 'Swiftmend', '!los', 'loweset'},
-	{ 'Regrowth', '!los', 'lowest'},
-}
-
-local blanket = {
-	"tank1", "tank2", "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"
+	{ 'Swiftmend', nil, 'loweset'},
+	{ 'Regrowth', nil, 'lowest'},
 }
 
 local rejuvSpam = {
 	-- Apply Rejuv to players with debuffs
-	{ 'Rejuvenation', '!los && magicDispel && !buff.any', blanket},
-	{ 'Rejuvenation', '!los && magicDispel && !buff', blanket},
-	{ 'Rejuvenation', '!los && poisonDispel && !buff.any', blanket},
-	{ 'Rejuvenation', '!los && poisonDispel && !buff', blanket},
-	{ 'Rejuvenation', '!los && curseDispel && !buff.any', blanket},
-	{ 'Rejuvenation', '!los && curseDispel && !buff', blanket},
-	{ 'Rejuvenation', '!los && diseaseDispel && !buff.any', blanket},
-	{ 'Rejuvenation', '!los && diseaseDispel && !buff', blanket},
-	{ 'Rejuvenation', '!los && tankEvent && !buff.any', blanket},
-	{ 'Rejuvenation', '!los && tankEvent && !buff', blanket},
+	{ 'Rejuvenation', 'magicDispel && !buff.any', blanket},
+	{ 'Rejuvenation', 'poisonDispel && !buff.any', blanket},
+	{ 'Rejuvenation', 'curseDispel && !buff.any', blanket},
+	{ 'Rejuvenation', 'diseaseDispel && !buff.any', blanket},
+	{ 'Rejuvenation', 'tankEvent && !buff.any', blanket},
+	{ 'Rejuvenation', 'magicDispel && !buff', blanket},
+	{ 'Rejuvenation', 'poisonDispel && !buff', blanket},
+	{ 'Rejuvenation', 'curseDispel && !buff', blanket},
+	{ 'Rejuvenation', 'diseaseDispel && !buff', blanket},
+	{ 'Rejuvenation', 'tankEvent && !buff', blanket},
 
 	-- Normal Spam
-	{ 'Rejuvenation', '!los && health <= UI(lrejuv) && !buff.any', blanket},
-	{ 'Rejuvenation', '!los && health <= UI(lrejuv) && !buff', blanket},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) && !buff.any', blanket},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) && !buff', blanket},
 
 	-- Germination
-	{ 'Rejuvenation', '!los && talent(6,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination))', blanket},
+	{ 'Rejuvenation', 'talent(7,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination)).any', blanket},
+	{ 'Rejuvenation', 'talent(7,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination))', blanket},
 }
 
 local rejuvSpamLowMana = {
-	{ 'Rejuvenation', '!los && health <= UI(trejuv) && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && health <= UI(trejuv) && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) && !buff.any', blanket},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) && !buff', blanket},
 
-	{ 'Rejuvenation', '!los && talent(6,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination))', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
+	{ 'Rejuvenation', 'talent(7,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination)).any', blanket},
+	{ 'Rejuvenation', 'talent(7,2) && buff(Rejuvenation) && health <= UI(lgerm) && !buff(Rejuvenation (Germination))', blanket},
 }
 
 local innervate = {
-	{ 'Wild Growth', '!los && toggle(AOE) && !player.moving', 'lowest'},
+	{ 'Wild Growth', 'toggle(AOE) && !player.moving', 'lowest'},
 	{ 'Flourish', 'talent(7,3) && player.lastcast(Wild Growth)', 'player'},
 
-	{ 'Rejuvenation', '!los && !buff.any', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
-	{ 'Rejuvenation', '!los && !buff', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
+	{ 'Rejuvenation', '!buff.any', blanket},
+	{ 'Rejuvenation', '!buff',  blanket},
 
-	{ 'Rejuvenation', '!los && talent(6,3) && buff(Rejuvenation) && health <= 85 && !buff(Rejuvenation (Germination))', { 'tank1', 'tank2', 'lowest', 'lowest2', 'lowest3', 'lowest4', 'lowest5', 'lowest6', 'lowest7', 'lowest8', 'lowest9', 'lowest10', 'friendly'}},
+	{ 'Rejuvenation', 'talent(7,2) && buff(Rejuvenation) && health <= 85 && !buff(Rejuvenation (Germination))',  blanket},
 
-	{ 'Regrowth', '!los && health <= UI(lrg) && !player.moving', 'lowest'},
-	{ 'Regrowth', '!los && !player.moving', 'lnbuff(Regrowth)'},
+	{ 'Regrowth', 'health <= UI(lrg) && !player.moving', 'lowest'},
+	{ 'Regrowth', '!player.moving', 'lnbuff(Regrowth)'},
 }
 
 local lifebloom = {
 	-- Solo
-	{ 'Lifebloom', '!los && buff.duration <= 4.5 && { partycheck = 1 || { partycheck = 2 && !tank1.exists } || { partycheck = 3 && !tank1.exists }}', 'player'},
+	{ 'Lifebloom', 'buff.duration <= 4.5 && { partycheck = 1 || { partycheck = 2 && !tank1.exists } || { partycheck = 3 && !tank1.exists }}', 'player'},
 	-- 5 man
-	{ 'Lifebloom', '!los && buff.duration <= 4.5 && partycheck = 2', 'tank'},
+	{ 'Lifebloom', 'buff.duration <= 4.5 && partycheck = 2', 'tank'},
 	-- Raid
 	-- Only one tank
-	{ 'Lifebloom', '!los && buff.duration <= 4.5 && partycheck = 3 && !tank2.exists', 'tank'},
+	{ 'Lifebloom', 'buff.duration <= 4.5 && partycheck = 3 && !tank2.exists', 'tank'},
 	-- If one tank is 20% lower than the other, swap LB
-	{ 'Lifebloom', '!los && partycheck = 3 && { !tank1.buff && { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
-	{ 'Lifebloom', '!los && partycheck = 3 && { !tank2.buff && { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
+	{ 'Lifebloom', 'partycheck = 3 && { !tank1.buff && { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
+	{ 'Lifebloom', 'partycheck = 3 && { !tank2.buff && { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
 	-- If neither tank has life bloom, apply it to the one with lower health
-	{ 'Lifebloom', '!los && partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank1.health <= tank2.health }}}', 'tank1'},
-	{ 'Lifebloom', '!los && partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank2.health < tank1.health }}}', 'tank2'},
+	{ 'Lifebloom', 'partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank1.health <= tank2.health }}}', 'tank1'},
+	{ 'Lifebloom', 'partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank2.health < tank1.health }}}', 'tank2'},
 	-- If either tank is at 4.5 seconds or lower, reapply LB on the tank with the lower health
-	{ 'Lifebloom', '!los && partycheck = 3 && tank1.buff.duration <= 4.5 && !tank2.buff && tank1.health <= tank2.health', 'tank1'},
-	{ 'Lifebloom', '!los && partycheck = 3 && tank2.buff.duration <= 4.5 && !tank1.buff && tank2.health < tank1.health', 'tank2'},
+	{ 'Lifebloom', 'partycheck = 3 && tank1.buff.duration <= 4.5 && !tank2.buff && tank1.health <= tank2.health', 'tank1'},
+	{ 'Lifebloom', 'partycheck = 3 && tank2.buff.duration <= 4.5 && !tank1.buff && tank2.health < tank1.health', 'tank2'},
 }
 
 local moving = {
 	{ lifebloom},
-	{ 'Cenarion Ward', '!los && { tank1.health <= tank2.health } || !los && !tank2.exists}', 'tank1'},
-	{ 'Cenarion Ward', '!los && { tank2.health < tank1.health }', 'tank2'},
+	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'},
+	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 
 	-- Rejuv
 	{ rejuvSpam},
 
-	{ 'Swiftmend', '!los && health <= UI(tsm)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
+	{ 'Swiftmend', 'health <= UI(tsm)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
 }
 
 local healing = {
@@ -175,34 +178,36 @@ local healing = {
 
 	{ innervate, 'player.buff(Innervate).any'},
 	-- AOE
-	{ 'Wild Growth', '!los && area(40,85).heal >= 3 && toggle(AOE)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
+	{ 'Wild Growth', 'area(40,85).heal >= 3 && toggle(AOE)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
 	{ 'Flourish', 'talent(7,3) && player.lastcast(Wild Growth)', 'player'},
 
-	{ 'Regrowth', '!los && health <= UI(lrg) && player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lnbuff(Regrowth)'},
+	{ 'Regrowth', 'health <= UI(lrg) && player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lnbuff(Regrowth)'},
 
-	{ 'Cenarion Ward', '!los && { tank1.health <= tank2.health } || !los && !tank2.exists', 'tank1'},
-	{ 'Cenarion Ward', '!los && { tank2.health < tank1.health }', 'tank2'},
+	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists', 'tank1'},
+	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 
 	{ rejuvSpam},
 
-	{ 'Swiftmend', '!los && health <= UI(tsm)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
+	{ 'Swiftmend', 'health <= UI(tsm)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
 
-	{ 'Regrowth', '!los && health <= UI(lrg)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
+	{ 'Regrowth', 'health <= UI(lrg)', { 'tank1', 'tank2', 'lowest', 'friendly'}},
 }
 
 local efflorescence = {
-	-- Place on a tank if it isnt up at all
-	-- /dump NeP.DSL:Get('totem')('Efflorescence', 'player')
-	{ 'Efflorescence', 'mushrooms < 1', { 'tank.ground', 'tank2.ground'}},
-	-- Place on viable target when about to expire
-	{ 'Efflorescence', 'area(8,99).heal > 1 && totem(Efflorescence).duration <= 3', { 'target.ground', 'tank.ground', 'tank2.ground', 'friendly.ground'}},
+	-- Place on viable target when about to expire, prefer melee target
+	{ 'Efflorescence', 'friendly.area(8,95).heal > 1 && totem(Efflorescence).duration <= 3', 'friendly.ground'},
+
+	-- Place on a melee if it isnt up at all
+	-- { 'Efflorescence', 'totem(Efflorescence).duration <= 3 && melee', 'target.ground'},
+	-- { 'Efflorescence', 'totem(Efflorescence).duration <= 3 && melee', 'friendly.ground'},
+	-- { 'Efflorescence', 'totem(Efflorescence).duration <= 3', 'tank.ground'},
 
 	-- Testing
-	{ 'Efflorescence', 'totem(Efflorescence).duration <= 3', 'friendly.ground'},
+	--{ 'Efflorescence', 'totem(Efflorescence).duration <= 3', 'friendly.ground'},
 }
 
 local inCombat = {
-	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
+	--{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds, 'keybind(shift) || keybind(control) || keybind(alt)'},
 	{ encounters},
 	{ dispel, 'toggle(disp)'},

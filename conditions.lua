@@ -113,6 +113,10 @@ NeP.Actions:Add('target', function(eval) eval.exe = function(eva) _G.TargetUnit(
   return true
 end)
 
+NeP.FakeUnits:Add('allFriendly', function()
+	return NeP.OM:Get('Friendly')
+end)
+
 -- Need enemy last cast event
 
 local castingEventSpellsAOE = {
@@ -611,9 +615,10 @@ end)NeP.DSL:Register('energy.time_to_max', function()
     return deficit / eregen
 end)
 
+-- /dump NeP.DSL:Get('combopoints.deficit')('player')
 NeP.DSL:Register('combopoints.deficit', function ()
 	local max = 5
-    if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 then
+    if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 and not NeP.DSL:Get('class')('player','Druid') then
         max = 6
     end
 	local curr = GetComboPoints('player','target')
