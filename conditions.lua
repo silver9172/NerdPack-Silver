@@ -249,6 +249,11 @@ NeP.DSL:Register('magicDispel', function(unit)
 	or NeP.DSL:Get('debuff.any')(unit, 'Grasping Thorns')
 	or NeP.DSL:Get('debuff.any')(unit, 'Toad Blight')
 	or NeP.DSL:Get('debuff.any')(unit, 'Fragment Soul')
+
+  -- BoD
+  or NeP.DSL:Get('debuff.any')(unit, 'Searing Embers')
+  or NeP.DSL:Get('debuff.any')(unit, 'Hex of Lethargy')
+
 end)
 
 NeP.DSL:Register('poisonDispel', function(unit)
@@ -553,6 +558,12 @@ end)
 ---------------------------------------
 
 NeP.DSL:Register('graceOfJusticar', function()
+	return C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(1), 393)
+	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(3), 393)
+	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(5), 393)
+end)
+
+NeP.DSL:Register('glimmerOfLight', function()
 	return C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(1), 393)
 	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(3), 393)
 	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(5), 393)
