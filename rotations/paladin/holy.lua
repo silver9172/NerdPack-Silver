@@ -91,7 +91,7 @@ local DPS = {
 	{ 'Holy Shock', '{UI(O_HS) || player.buff(Avenging Crusader) || partycheck = 1} && infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
 	{ 'Holy Prism', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
 	{ 'Judgment', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Crusader Strike', 'infront(player) && inRange.spell && combat && { talent(1,3) && spell(Holy Shock).cooldown >= 1.5 || !talent(1,3) }', { 'target', 'enemies'}},
+	{ 'Crusader Strike', 'infront(player) && inRange.spell && combat && { talent(1,1) && spell(Holy Shock).cooldown >= 1.5 || !talent(1,1) }', { 'target', 'enemies'}},
 }
 
 local items = {
