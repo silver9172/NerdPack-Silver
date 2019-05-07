@@ -168,18 +168,11 @@ NeP.DSL:Register('graceOfJusticar', function()
 	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(5), 393)
 end)
 
+-- Not working (Need ID)
 NeP.DSL:Register('glimmerOfLight', function()
 	return C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(1), 393)
 	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(3), 393)
 	or C_AzeriteEmpoweredItem.IsPowerSelected(ItemLocation:CreateFromEquipmentSlot(5), 393)
-end)
-
-NeP.DSL:Register('wardOfEnvelopment', function()
-    if IsEquippedItem('165569') then
-        return 1
-    else
-        return 0
-    end
 end)
 
 ---------------------------------------

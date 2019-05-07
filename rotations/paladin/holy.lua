@@ -53,6 +53,12 @@ local exeOnLoad = function()
 		text = 'DPS while healing',
 		icon = 'Interface\\Icons\\spell_holy_crusaderstrike',
 	})
+	print('|cffADFF2F ----------------------------------------------------------------------|r')
+	print('|cffADFF2F --- |rSilver |cffADFF2FHoly |r Paladin |r')
+	print('|cffADFF2F --- |rContact silver9172 on NeP Discord for support! |r')
+	print('|cffADFF2F --- |rDonations always appreciated if you like my work! |r')
+	print('|cffADFF2F --- |rhttps://www.paypal.me/silver9172 |r')
+	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
 
 local dispel = {
