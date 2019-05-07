@@ -5,6 +5,7 @@
 ## Dependencies: NerdPack
 
 conditions.lua
+unitconditions.lua
 
 rotations\rogue\assassination.lua
 rotations\rogue\subtley.lua

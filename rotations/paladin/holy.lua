@@ -65,6 +65,7 @@ local survival = {
 	--{ '#127834', 'UI(P_HP_check) && player.health <= UI(P_HP_spin)'}, -- Health Pot
 	--{ '#Healthstone', 'UI(P_HP_check) && player.health <= UI(P_HP_spin)'},
 	--{ '#127835', 'UI(P_MP_check) && player.pmana <= UI(P_MP_spin)'}, -- Mana Pot
+	{ 'Divine Protection', 'buff(Blessing of Sacrifice) || incdmg(5) >= { health.max * 0.40 }', 'player'},
 }
 
 local topUp = {
@@ -88,10 +89,10 @@ local oocTopUp = {
 local DPS = {
 	{ '/startattack', '!isattacking'},
 	{ 'Consecration', 'player.area(8).enemies >= 1 && !player.moving', 'enemies'},
-	{ 'Holy Shock', '{UI(O_HS) || player.buff(Avenging Crusader) || partycheck = 1} && infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Holy Prism', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Judgment', 'infront(player) && inRange.spell && combat', { 'target', 'enemies'}},
-	{ 'Crusader Strike', 'infront(player) && inRange.spell && combat && { talent(1,1) && spell(Holy Shock).cooldown >= 1.5 || !talent(1,1) }', { 'target', 'enemies'}},
+	{ 'Holy Shock', '{UI(O_HS) || player.buff(Avenging Crusader) || partycheck = 1} && infront(player) && inRange.spell && { combat || isdummy }', { 'target', 'enemies'}},
+	{ 'Holy Prism', 'infront(player) && inRange.spell && { combat || isdummy }', { 'target', 'enemies'}},
+	{ 'Judgment', 'infront(player) && inRange.spell && { combat || isdummy }', { 'target', 'enemies'}},
+	{ 'Crusader Strike', 'infront(player) && inRange.spell && { combat || isdummy } && { talent(1,3) && spell(Holy Shock).cooldown >= 1.5 || !talent(1,3) }', { 'target', 'enemies'}},
 }
 
 local items = {
@@ -136,6 +137,8 @@ local tank = {
 		{ 'Beacon of Faith', '!buff(Beacon of Faith) && !buff(Beacon of Light) && !talent(7,3) && !tank2.exists && partycheck < 3', 'player'},
 	}, 'talent(7,2)'},
 
+	{ 'Beacon of Light', '!buff && !dead', 'focus'},
+
 	{{
 		-- 5 man
 		{ 'Beacon of Light', '!buff && partycheck = 2', 'tank'},
@@ -151,7 +154,7 @@ local tank = {
 		-- If either tank is at 4.5 seconds or lower, reapply LB on the tank with the lower health
 		{ 'Beacon of Light', 'partycheck = 3 && !tank1.buff && !tank2.buff && tank1.health <= tank2.health', 'tank1'},
 		{ 'Beacon of Light', 'partycheck = 3 && !tank2.buff && !tank1.buff && tank2.health < tank1.health', 'tank2'},
-	}, 'talent(7,1)'},
+	}, 'talent(7,1) && !focus.buff(Beacon of Light)'},
 
 	-- Bestow Faith
 	{ 'Bestow Faith', '!buff && talent(1,2) && health <= 90', { 'tank', 'tank2'}},
@@ -166,13 +169,35 @@ local aoeHealing = {
 }
 
 local healing = {
-	{{ -- Aura of Sacrifice Rotation
-		{ 'Avenging Wrath'},
-		{ 'Holy Avenger'},
-		{ 'Holy Shock', nil, { 'lowest', 'friendly'}},
-		{ 'Light of Dawn'},
-		{ 'Flash of Light', nil, { 'lowest', 'friendly'}},
-	}, 'player.buff(Aura Mastery) && talent(5,2)'},
+	{{
+		{ 'Light of the Martyr', '!self && health <= UI(T_LotM) && player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
+		{ 'Light of the Martyr', '!self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
+		{ 'Light of the Martyr', '!self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
+	}, 'player.health >= UI(P_LotM)'},
+
+	-- Glimmer of Light
+	{{
+		{ 'Holy Shock', 'ttd <= 3', 'friendly'},
+		{ 'Holy Shock', 'health <= UI(L_HS) && !buff(Beacon of Light) && !buff(Glimmer of Light)', {'tank', 'tank2'}},
+		{ 'Holy Shock', 'health <= UI(L_HS) && buff(Beacon of Light) && !buff(Glimmer of Light)', {'tank', 'tank2'}},
+		{ 'Holy Shock', 'health <= UI(L_HS) && !buff(Glimmer of Light)', { "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
+		{ 'Holy Shock', 'health <= UI(L_HS)', { "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
+		{ 'Holy Shock', 'infront(player) && inRange.spell && combat && !debuff(Glimmer of Light)', {'target', 'enemies'}},
+		{ 'Holy Shock', 'infront(player) && inRange.spell && combat', {'target', 'enemies'}},
+
+		{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 && buff(Rule of Law)', 'player'},
+		{ 'Light of Dawn', 'area(15,90).heal.infront >= 3', 'player'},
+
+		{ 'Crusader Strike', 'infront(player) && inRange.spell && { talent(1,1) && spell(Holy Shock).cooldown >= 1.5 || !talent(1,1) }', { 'target', 'enemies'}},
+
+		-- Infusion of Light --
+		{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+		{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+		{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
+
+		-- Dont waste buff
+		{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3 && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
+	}, 'UI(glim)'},
 
 	{ aoeHealing},
 
@@ -190,11 +215,6 @@ local healing = {
 		{ 'Light of the Martyr', '!self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
 		{ 'Light of the Martyr', '!self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
 	}, 'player.health >= UI(P_LotM)'},
-
-	-- Glimmer of Light
-	{{
-		{ 'Holy Shock', 'health <= UI(L_HS) && !buff(Glimmer of Light)', { "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
-	}, 'UI(glim)'},
 
 	-- Cast on people without beacons first
 	{ 'Holy Shock', 'health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
