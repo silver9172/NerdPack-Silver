@@ -65,10 +65,11 @@ NeP.DSL:Register('magicDispel', function(unit)
   -- BoD
   or NeP.DSL:Get('debuff.any')(unit, 'Searing Embers')
   or NeP.DSL:Get('debuff.any')(unit, 'Hex of Lethargy')
+  or NeP.DSL:Get('debuff.any')(unit, 'Mind Wipe')
 
   -- Crucible
   or NeP.DSL:Get('debuff.count.any')(unit, 'Promises of Power') >= 5
-
+  or NeP.DSL:Get('debuff.any')(unit, 'Unknowable Terror')
 end)
 
 NeP.DSL:Register('poisonDispel', function(unit)
@@ -108,29 +109,29 @@ NeP.DSL:Register('diseaseDispel', function(unit)
 	-- BFA Dungeons --
 	------------------
 	-- Atal'Dazar
-	return NeP.DSL:Get('debuff.any')(unit, 'Lingering Nausea')
+	return NeP.DSL:Get('debuff.duration.any')(unit, 'Lingering Nausea') >= 11 and NeP.DSL:Get('debuff.any')(unit, 'Lingering Nausea')
 
 	-- Freehold
-	or NeP.DSL:Get('debuff.count.any')(unit, 'Infected Wound') >= 4
-	or NeP.DSL:Get('debuff.any')(unit, 'Plague Step')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Infected Wound') >= 11 and NeP.DSL:Get('debuff.count.any')(unit, 'Infected Wound') >= 4
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Plague Step') >= 17 and NeP.DSL:Get('debuff.any')(unit, 'Plague Step')
 
 	-- King's Rest
-	or NeP.DSL:Get('debuff.any')(unit, 'Wretched Discharge')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Wretched Discharge') >= 11 and NeP.DSL:Get('debuff.any')(unit, 'Wretched Discharge')
 
 	-- The MOTHERLODE!!!
-	or NeP.DSL:Get('debuff.any')(unit, 'Festering Bite')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Festering Bite') >= 9 and NeP.DSL:Get('debuff.any')(unit, 'Festering Bite')
 
 	-- Temple of Sethraliss
-	or NeP.DSL:Get('debuff.any')(unit, 'Plague')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Plague') >= 9 and NeP.DSL:Get('debuff.any')(unit, 'Plague')
 
 	-- Underrot
-	or NeP.DSL:Get('debuff.any')(unit, 'Decaying Mind')
-	or NeP.DSL:Get('debuff.count.any')(unit, 'Decaying Spores') >= 2
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Decaying Mind') >= 29 and NeP.DSL:Get('debuff.any')(unit, 'Decaying Mind')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Decaying Spores') >= 5 and NeP.DSL:Get('debuff.count.any')(unit, 'Decaying Spores') >= 2
 
 	-- Waycrest Manor
-	or NeP.DSL:Get('debuff.any')(unit, 'Infected Thorn')
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Infected Thorn') >= 7 and NeP.DSL:Get('debuff.any')(unit, 'Infected Thorn')
 	or NeP.DSL:Get('debuff.any')(unit, 'Severing Serpent')
-	or NeP.DSL:Get('debuff.any')(unit, 'Virulent Pathogen') and NeP.DSL:Get('area.friendly')(unit, 'Virulent Pathogen') and NeP.DSL:Get('area.friendly')(unit,'8') == 0
+	or NeP.DSL:Get('debuff.duration.any')(unit, 'Virulent Pathogen') >= 4 and NeP.DSL:Get('debuff.any')(unit, 'Virulent Pathogen') and NeP.DSL:Get('area.friendly')(unit,'8') == 0
 end)
 
 NeP.DSL:Register('curseDispel', function(unit)
@@ -162,7 +163,17 @@ end)
 -- Priority Targeting --
 ------------------------
 NeP.DSL:Register('priorityHeal', function(unit)
+  -- Mythic+
+  return NeP.DSL:Get('debuff.count.any')(unit,'Grievous Wound') >= 3
+  or NeP.DSL:Get('debuff.any')(unit,'Grievous Wound')
 
+  or NeP.DSL:Get('name')(unit,'Avatar of Sethraliss') and not NeP.DSL:Get('debuff.any')(unit, 'Tainted')
+end)
+
+NeP.DSL:Register('ignoreHeal', function(unit)
+  -- Mythic+
+  return NeP.DSL:Get('debuff.any')(unit,'Insatiable Torment')
+  or NeP.DSL:Get('debuff.any')(unit,'Embrace of the Void')
 end)
 
 NeP.DSL:Register('priorityTarget', function(unit)

@@ -176,18 +176,18 @@ local aoeHealing = {
 
 local healing = {
 	{{
-		{ 'Light of the Martyr', '!self && health <= UI(T_LotM) && player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
-		{ 'Light of the Martyr', '!self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
-		{ 'Light of the Martyr', '!self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(T_LotM) && player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
 	}, 'player.health >= UI(P_LotM)'},
 
 	-- Glimmer of Light
 	{{
-		{ 'Holy Shock', 'ttd <= 3', 'friendly'},
-		{ 'Holy Shock', 'health <= UI(L_HS) && !buff(Beacon of Light) && !buff(Glimmer of Light)', {'tank', 'tank2'}},
-		{ 'Holy Shock', 'health <= UI(L_HS) && buff(Beacon of Light) && !buff(Glimmer of Light)', {'tank', 'tank2'}},
-		{ 'Holy Shock', 'health <= UI(L_HS) && !buff(Glimmer of Light)', { "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
-		{ 'Holy Shock', 'health <= UI(L_HS)', { "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
+		{ 'Holy Shock', '!ignoreHeal && ttd <= 3', 'friendly'},
+		{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && !buff(Beacon of Light) && !buff(Glimmer of Light)', {'tank', 'tank2'}},
+		{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && buff(Beacon of Light) && !buff(Glimmer of Light)', {'tank', 'tank2'}},
+		{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && !buff(Glimmer of Light)', { 'priorityHeal', "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
+		{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS)', { 'priorityHeal', "lowest", "lowest2", "lowest3", "lowest4", "lowest5", "lowest6", "lowest7", "lowest8", "lowest9", "lowest10", "friendly"}},
 		{ 'Holy Shock', 'infront(player) && inRange.spell && combat && !debuff(Glimmer of Light)', {'target', 'enemies'}},
 		{ 'Holy Shock', 'infront(player) && inRange.spell && combat', {'target', 'enemies'}},
 
@@ -197,75 +197,81 @@ local healing = {
 		{ 'Crusader Strike', 'infront(player) && inRange.spell && { talent(1,1) && spell(Holy Shock).cooldown >= 1.5 || !talent(1,1) }', { 'target', 'enemies'}},
 
 		-- Infusion of Light --
-		{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
-		{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
-		{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
+		{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && player.buff(Infusion of Light) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+		{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && player.buff(Infusion of Light) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+		{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
 
 		-- Dont waste buff
-		{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3 && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
+		{ 'Holy Light', '!ignoreHeal && player.buff(Infusion of Light).duration <= 3 && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
 	}, 'UI(glim)'},
 
 	{ aoeHealing},
 
 	-- Infusion of Light --
-	{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
-	{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
-	{ 'Flash of Light', 'health <= UI(L_FoL) && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && player.buff(Infusion of Light) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && player.buff(Infusion of Light) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
 
 	-- Dont waste buff
-	{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3 && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
+	{ 'Holy Light', '!ignoreHeal && player.buff(Infusion of Light).duration <= 3 && player.buff(Infusion of Light)', { 'lowest', 'friendly'}},
 	-----------------------
 
 	{{
-		{ 'Light of the Martyr', '!self && health <= UI(T_LotM) && player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
-		{ 'Light of the Martyr', '!self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
-		{ 'Light of the Martyr', '!self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(T_LotM) && player.health >= UI(P_LotM)', { 'tank', 'tank2'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(L_LotM) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(L_FoL) && player.buff(Divine Shield)', { 'lowest', 'friendly'}},
 	}, 'player.health >= UI(P_LotM)'},
 
 	-- Cast on people without beacons first
-	{ 'Holy Shock', 'health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
-	{ 'Holy Shock', 'health <= UI(L_HS) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
 
 	-- Ignore beacon checks (Heal members with beacon if no one else actually needs healed)
-	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
-	{ 'Holy Shock', 'health <= UI(L_HS)', { 'lowest', 'friendly'}},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(T_HS)', { 'tank', 'tank2'}},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS)', { 'lowest', 'friendly'}},
 
-	{ 'Judgment', 'infront(player) && inRange.spell && enemy && talent(5,1) || infront(player) && inRange.spell && enemy && graceOfJusticar && area(8,95).heal >= 1', 'target'},
+	{ 'Judgment', '!ignoreHeal && infront(player) && inRange.spell && enemy && talent(5,1) || infront(player) && inRange.spell && enemy && graceOfJusticar && area(8,95).heal >= 1', 'target'},
 
 	-- Cast on people without beacons first
-	{ 'Flash of Light', 'health <= UI(L_FoL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
-	{ 'Flash of Light', 'health <= UI(L_FoL) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
-	{ 'Holy Light', 'health <= UI(L_HL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
-	{ 'Holy Light', 'health <= UI(L_HL) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+	{ 'Holy Light', '!ignoreHeal && health <= UI(L_HL) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+	{ 'Holy Light', '!ignoreHeal && health <= UI(L_HL) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
 
 	-- Ignore beacon checks (Heal members with beacon if no one else actually needs healed)
-	{ 'Flash of Light', 'health <= UI(T_FoL)', { 'tank', 'tank2'}},
-	{ 'Flash of Light', 'health <= UI(L_FoL)', { 'lowest', 'friendly'}},
-	{ 'Holy Light', 'health <= UI(T_HL)', { 'tank', 'tank2'}},
-	{ 'Holy Light', 'health <= UI(L_HL)', { 'lowest', 'friendly'}},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(T_FoL)', { 'tank', 'tank2'}},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL)', { 'lowest', 'friendly'}},
+	{ 'Holy Light', '!ignoreHeal && health <= UI(T_HL)', { 'tank', 'tank2'}},
+	{ 'Holy Light', '!ignoreHeal && health <= UI(L_HL)', { 'lowest', 'friendly'}},
 }
 
 local emergency = {
-	{ '!Holy Shock', '!player.casting(Flash of Light)', { 'lowest', 'friendly'}},
-	{ '!Flash of Light', '!player.moving && !player.casting(Flash of Light)', { 'lowest', 'friendly'}},
-	{ '!Light of the Martyr', '!self && !player.casting(Flash of Light) && !player.casting(Flash of Light) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
+	{ '!Holy Shock', '!ignoreHeal && !player.casting(Flash of Light)', { 'lowest', 'friendly'}},
+	{ '!Flash of Light', '!ignoreHeal && !player.moving && !player.casting(Flash of Light)', { 'lowest', 'friendly'}},
+	{ '!Light of the Martyr', '!ignoreHeal && !self && !player.casting(Flash of Light) && !player.casting(Flash of Light) && player.health >= UI(P_LotM)', { 'lowest', 'friendly'}},
+}
+
+local priorityHeal = {
+	{ 'Holy Shock', '!ignoreHeal && priorityHeal', 'allFriendly'},
+	{ 'Flash of Light', '!ignoreHeal && priorityHeal && !player.moving', 'allFriendly'},
+	{ 'Light of the Martyr', '!ignoreHeal && priorityHeal && !self && player.health >= UI(P_LotM)', 'allFriendly'},
 }
 
 local moving = {
 	{ aoeHealing},
 
 	{{
-		{ 'Light of the Martyr', '!self && health <= UI(T_LotM)', { 'tank', 'tank2'}},
-		{ 'Light of the Martyr', '!self && health <= UI(L_LotM)', { 'lowest', 'friendly'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(T_LotM)', { 'tank', 'tank2'}},
+		{ 'Light of the Martyr', '!ignoreHeal && !self && health <= UI(L_LotM)', { 'lowest', 'friendly'}},
 	}, 'player.health >= UI(P_LotM) || player.buff(Divine Shield)'},
 
 	-- Cast on people without beacons first
-	{ 'Holy Shock', 'health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
-	{ 'Holy Shock', 'health <= UI(L_HS) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && { !lowest.buff(Beacon of Light) || !lowest.buff(Beacon of Faith) || !lowest.buff(Beacon of Virtue)}', 'lowest'},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) && { !friendly.buff(Beacon of Light) || !friendly.buff(Beacon of Faith) || !friendly.buff(Beacon of Virtue)}', 'friendly'},
 
 	-- Ignore beacon checks (Heal members with beacon if no one else actually needs healed)
-	{ 'Holy Shock', 'health <= UI(T_HS)', { 'tank', 'tank2'}},
-	{ 'Holy Shock', 'health <= UI(L_HS)', { 'lowest', 'friendly'}},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(T_HS)', { 'tank', 'tank2'}},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS)', { 'lowest', 'friendly'}},
 
 	{ 'Judgment', 'infront(player) && inRange.spell && enemy && talent(5,1)', 'target'},
 }
@@ -274,16 +280,16 @@ local manaRestore = {
 	{ aoeHealing},
 
 	-- Holy Shock
-	{ 'Holy Shock', 'health <= UI(T_HS) / 2', { 'tank', 'tank2'}},
-	{ 'Holy Shock', 'health <= UI(L_HS) / 2', { 'lowest', 'friendly'}},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(T_HS) / 2', { 'tank', 'tank2'}},
+	{ 'Holy Shock', '!ignoreHeal && health <= UI(L_HS) / 2', { 'lowest', 'friendly'}},
 
 	-- Flash of Light
-	{ 'Flash of Light', 'health <= UI(T_FoL) / 2', { 'tank', 'tank2'}},
-	{ 'Flash of Light', 'health <= UI(L_FoL) / 2', { 'lowest', 'friendly'}},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(T_FoL) / 2', { 'tank', 'tank2'}},
+	{ 'Flash of Light', '!ignoreHeal && health <= UI(L_FoL) / 2', { 'lowest', 'friendly'}},
 
 	-- Holy Light
-	{ 'Holy Light', 'health <= UI(T_HL) / 2', { 'tank', 'tank2'}},
-	{ 'Holy Light', 'health <= UI(L_HL) / 2', { 'lowest', 'friendly'}},
+	{ 'Holy Light', '!ignoreHeal && health <= UI(T_HL) / 2', { 'tank', 'tank2'}},
+	{ 'Holy Light', '!ignoreHeal && health <= UI(L_HL) / 2', { 'lowest', 'friendly'}},
 }
 
 local inCombat = {
@@ -294,6 +300,7 @@ local inCombat = {
 	{ dispel, 'UI(G_Disp)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ emergency, 'lowest.health <= UI(G_CHP) && !player.casting(Flash of Light)'},
+	{ priorityHeal},
 	{ tank},
 	{ DPS, 'toggle(dps) && target.enemy && lowest.health > UI(G_DPS) || player.buff(Avenging Crusader) && toggle(dps) && target.enemy'},
 	{ moving, 'player.moving'},
@@ -311,9 +318,6 @@ local outCombat = {
 	{ 'Bestow Faith', 'dbm(Pull in) <= 2', 'tank'},
 
 	{ oocTopUp, 'UI(G_OOC)'},
-
-	-- testing
-	--{ 'Holy Light', '!self && !player.moving', 'allFriendly'},
 }
 
 NeP.CR:Add(65, {
