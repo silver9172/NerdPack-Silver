@@ -67,6 +67,8 @@ NeP.DSL:Register('ccCheck', function(unit)
 
 end)
 
+
+-- Need Immunity check for physical/magical depending on the spell
 -- Immunity
 NeP.DSL:Register('immunityCheck', function(unit)
 
@@ -271,7 +273,7 @@ NeP.DSL:Register('priorityTarget', function(unit)
   ------------------
   ----- testing ----
   ------------------
-  or NeP.DSL:Get('name')(unit,'Raider\'s Training Dummy')
+  -- or NeP.DSL:Get('name')(unit,'Raider\'s Training Dummy')
 end)
 
 -----------
