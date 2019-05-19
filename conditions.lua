@@ -107,7 +107,8 @@ end)
 
 --USAGE in CR:
 --{"%target", "CONDITION", "UNIT"}
-NeP.Actions:Add('target', function(eval) eval.exe = function(eva) _G.TargetUnit(eva.target)
+NeP.Actions:Add('target', function(eval) eval.exe = function(eva) NeP.Protected.TargetUnit(eva.target)
+    print(eva.target)
     return true
   end
   return true

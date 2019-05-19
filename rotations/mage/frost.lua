@@ -16,12 +16,17 @@ local interrupts = {
 }
 
 local buff = {
-	{ 'Arcane Intellect', '!buff.any && !los', { 'tank', 'player', 'lowest', 'friendly'}},
+	--{ 'Arcane Intellect', nil, 'player'},
+	{ 'Arcane Intellect', '!buff.any', { 'tank', 'player', 'lowest', 'friendly'}},
 	{ 'Summon Water Elemental', '!player.moving && !talent(1,2) && { pet.dead || !pet.exists}'},
 }
 
 local survival = {
 	{ 'Ice Barrier', 'buff.duration <= 15 && !buff(Refreshment) && { player.incdmg(5) >= { player.health.max * 0.25}} && combat', 'player'},
+}
+
+local pet = {
+	{ 'Waterbolt', nil, 'target'},
 	{ 'Freeze', 'target.area(8).enemmies >= 3 && bosscheck = 0 && range <= 40', 'target.ground'},
 }
 
@@ -66,7 +71,7 @@ local movement = {
 
 local aoe = {
 	-- actions.aoe=frozen_orb
-	{ 'Frozen Orb', 'infront && range <= 40', 'target'},
+	{ 'Frozen Orb', 'infront(player)', 'target'},
 	-- actions.aoe+=/blizzard
 	{ 'Blizzard', '!player.moving', 'target.ground'},
 	-- actions.aoe+=/comet_storm
@@ -106,7 +111,7 @@ local single = {
 	-- actions.single+=/flurry,if=talent.glacial_spike.enabled&buff.brain_freeze.react&(prev_gcd.1.frostbolt&buff.icicles.stack<4|prev_gcd.1.glacial_spike|prev_gcd.1.ebonbolt)
 	{ 'Flurry', '{ talent(7,3) && player.buff(Brain Freeze) && { lastgcd(Frostbolt) && player.buff(Icicles).count < 4 || lastgcd(Glacial Spike) || lastgcd(Ebonbolt)}}', 'target'},
 	-- actions.single+=/frozen_orb
-	{ 'Frozen Orb', 'infront && range <= 40', 'target'},
+	{ 'Frozen Orb', 'infront(player)', 'target'},
 	-- # With Freezing Rain and at least 2 targets, Blizzard needs to be used with higher priority to make sure you can fit both instant Blizzards into a single Freezing Rain. Starting with three targets, Blizzard leaves the low priority filler role and is used on cooldown (and just making sure not to waste Brain Freeze charges) with or without Freezing Rain.
 	-- actions.single+=/blizzard,if=active_enemies>2|active_enemies>1&cast_time=0&buff.fingers_of_frost.react<2
 	{ 'Blizzard', '!player.moving && { area(8).enemies > 2 || area(8).enemies > 1 && player.spell.casttime = 0 && player.buff(Fingers of Frost).count < 2}', 'target.ground'},
@@ -156,6 +161,7 @@ local rotation = {
 }
 
 local preCombat = {
+	{ pet, 'dbm(Pull in) <= 2 && dbm(Pull in) > 0'},
 	{ 'Frostbolt', 'dbm(Pull in) <= 2 && dbm(Pull in) > 0', 'target'},
 }
 
@@ -164,6 +170,7 @@ local inCombat = {
 	{ buff},
 	{ dispel, 'UI(G_Curse)'},
 	{ survival},
+	{ pet},
 	{ rotation, 'infront(player)'},
 }
 
@@ -181,6 +188,6 @@ NeP.CR:Add(64, {
 	 ooc = outCombat,
 	 gui = GUI,
 	load = exeOnLoad,
- wow_ver = '8.0.1',
- nep_ver = '1.11',
+ wow_ver = '8.1.5',
+ nep_ver = '1.12',
 })

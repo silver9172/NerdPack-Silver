@@ -2,6 +2,84 @@ local _, Silver = ...
 local _G = _G
 local NeP = NeP
 
+
+------------------
+-- Safe Casting --
+------------------
+-- Playerbased CC
+NeP.DSL:Register('ccCheck', function(unit)
+	------------------
+	-- Death Knight --
+	------------------
+	return NeP.DSL:Get('debuff.any')(unit, 'Hungering Cold')
+
+	-----------
+	-- Druid --
+	-----------
+	or NeP.DSL:Get('debuff.any')(unit, 'Cyclone')
+	or NeP.DSL:Get('debuff.any')(unit, 'Entangling Roots')
+	or NeP.DSL:Get('debuff.any')(unit, 'Hibernate')
+
+	------------
+	-- Hunter --
+	------------
+	or NeP.DSL:Get('debuff.any')(unit, 'Scatter Shot')
+	or NeP.DSL:Get('debuff.any')(unit, 'Scare Beast')
+	or NeP.DSL:Get('debuff.any')(unit, 'Freezing Trap')
+	or NeP.DSL:Get('debuff.any')(unit, 'Wyvern Sting')
+
+	----------
+	-- Mage --
+	----------
+	or NeP.DSL:Get('debuff.any')(unit, 'Dragon\'s Breath')
+	or NeP.DSL:Get('debuff.any')(unit, 'Polymorph')
+	or NeP.DSL:Get('debuff.any')(unit, 'Deep Freeze')
+
+	-------------
+	-- Paladin --
+	-------------
+	or NeP.DSL:Get('debuff.any')(unit, 'Repentance')
+
+	------------
+	-- Priest --
+	------------
+	or NeP.DSL:Get('debuff.any')(unit, 'Psychic Scream')
+	or NeP.DSL:Get('debuff.any')(unit, 'Shackle Undead')
+
+	-----------
+	-- Rogue --
+	-----------
+	or NeP.DSL:Get('debuff.any')(unit, 'Blind')
+	or NeP.DSL:Get('debuff.any')(unit, 'Gouge')
+	or NeP.DSL:Get('debuff.any')(unit, 'Sap')
+
+	------------
+	-- Shaman --
+	------------
+	or NeP.DSL:Get('debuff.any')(unit, 'Hex')
+
+	-------------
+	-- Warlock --
+	-------------
+	or NeP.DSL:Get('debuff.any')(unit, 'Banish')
+	or NeP.DSL:Get('debuff.any')(unit, 'Fear')
+	or NeP.DSL:Get('debuff.any')(unit, 'Howl of Terror')
+
+end)
+
+-- Immunity
+NeP.DSL:Register('immunityCheck', function(unit)
+
+end)
+
+-- Combined Check
+NeP.DSL:Register('safeCast', function(unit)
+	if NeP.DSL:Get('ccCheck')(unit) or NeP.DSL:Get('immuneCheck')(unit) then
+		return false
+	else return true
+	end
+end)
+
 --------------
 -- Dispells --
 --------------
