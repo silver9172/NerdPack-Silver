@@ -13,7 +13,7 @@ local interrupts = {
 }
 
 local utility = {
-	{ 'Arcane Intellect', '!buff.any && !los', { 'tank', 'player', 'lowest', 'friendly'}},
+	{ 'Arcane Intellect', '!buff.any', 'friendly'},
 	{ '/stopcasting', 'cancelCastingEvent', 'enemies'},
 	{ 'Spellsteal', 'spellstealEvent', 'enemies'},
 }
@@ -70,7 +70,7 @@ local combustion = {
 local rop = {
 	-- actions.rop_phase=rune_of_power
 	-- actions.rop_phase+=/flamestrike,if=((talent.flame_patch.enabled&active_enemies>1)|active_enemies>4)&buff.hot_streak.react
-	{ 'Flamestrike', '{{ talent(6,1) & area(8).enemies > 1} || area(8).enemies > 4} & player.buff(Hot Streak!)', 'target.ground'},
+	{ 'Flamestrike', '{{ talent(6,1) & target.area(8).enemies > 1} || target.area(8).enemies > 4} & player.buff(Hot Streak!)', 'target.ground'},
 	-- actions.rop_phase+=/pyroblast,if=buff.hot_streak.react
 	{ 'Pyroblast', 'player.buff(Hot Streak!) & inRange.spell', 'target'},
 	-- actions.rop_phase+=/call_action_list,name=active_talents
@@ -168,7 +168,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(63, {
-	name = '[Silver] Mage - Fire',
+	name = '[Silver !BETA!] Mage - Fire',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

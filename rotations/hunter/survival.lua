@@ -1,6 +1,6 @@
 local _, Xeer = ...
 local GUI = {
-} 
+}
 
 local exeOnLoad = function()
 	-- Xeer.ExeOnLoad()
@@ -58,7 +58,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(255, {
-	name = 'Silver Hunter - Survival',
+	name = '[Silver !BETA!] Hunter - Survival',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

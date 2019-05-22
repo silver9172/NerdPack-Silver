@@ -118,7 +118,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(253, {
-	name = '|cffFF7373[Silver]|r HUNTER - Beast Mastery',
+	name = '[Silver !BETA!] HUNTER - Beast Mastery',
 	ic = inCombat,
 	ooc = outCombat,
 	gui = GUI,

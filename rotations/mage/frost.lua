@@ -183,7 +183,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(64, {
-	name = 'MAGE - Frost',
+	name = '[Silver !BETA!] MAGE - Frost',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

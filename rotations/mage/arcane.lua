@@ -6,11 +6,11 @@ local GUI = {
 }
 
 local dispel = {
-	{ 'Remove Curse', 'curseDispel', { 'tank', 'player', 'lowest', 'friendly'}}, 
+	{ 'Remove Curse', 'curseDispel', { 'tank', 'player', 'lowest', 'friendly'}},
 }
 
 local buff = {
-	{ 'Arcane Intellect', 'buff.duration <= 600', { 'lowest', 'friendly'}}, 
+	{ 'Arcane Intellect', 'buff.duration <= 600', { 'lowest', 'friendly'}},
 }
 
 local interrupts = {
@@ -18,7 +18,7 @@ local interrupts = {
 }
 
 local survival = {
-	{ 'Blazing Barrier', 'buff.duration <= 15 & !buff(Replenishment)', 'player'}, 
+	{ 'Blazing Barrier', 'buff.duration <= 15 & !buff(Replenishment)', 'player'},
 }
 
 	-- # Increment our burn phase counter. Whenever we enter the `burn` actions without being in a burn phase, it means that we are about to start one.
@@ -62,12 +62,12 @@ local conserve = {
 	-- actions.conserve+=/arcane_missiles,if=mana.pct<=95&buff.clearcasting.react&variable.pressure_rotation=0,chain=1
 	-- # During conserve, we still just want to continue not dropping charges as long as possible.So keep 'burning' as long as possible (aka conserve_mana threshhold) and then swap to a 4x AB->Abarr conserve rotation. This is mana neutral for RoT, mana negative with arcane familiar. If we do not have 4 AC, we can dip slightly lower to get a 4th AC.
 	-- actions.conserve+=/arcane_barrage,if=((buff.arcane_charge.stack=buff.arcane_charge.max_stack)&(mana.pct<=variable.conserve_mana|variable.pressure_rotation)|(talent.arcane_orb.enabled&cooldown.arcane_orb.remains<=gcd&cooldown.arcane_power.remains>10))|mana.pct<=(variable.conserve_mana-10)
-	-- # Supernova is barely worth casting, which is why it is so far down, only just above AB. 
+	-- # Supernova is barely worth casting, which is why it is so far down, only just above AB.
 	-- actions.conserve+=/supernova,if=mana.pct<=95
 	-- # Keep 'burning' in aoe situations until conserve_mana pct. After that only cast AE with 3 Arcane charges, since it's almost equal mana cost to a 3 stack AB anyway. At that point AoE rotation will be AB x3 -> AE -> Abarr
 	-- actions.conserve+=/arcane_explosion,if=active_enemies>=3&(mana.pct>=variable.conserve_mana|buff.arcane_charge.stack=3)
 	-- actions.conserve+=/arcane_blast
-	{ 'Arcane Blast'}, 
+	{ 'Arcane Blast'},
 	-- actions.conserve+=/arcane_barrage
 	{ 'Arcane Barrage'},
 }
@@ -79,9 +79,9 @@ local movement = {
 	-- actions.movement+=/arcane_missiles
 	-- actions.movement+=/arcane_orb
 	-- actions.movement+=/supernova
-	{ 'Supernova'}, 
+	{ 'Supernova'},
 }
-	
+
 	-- # Executed before combat begins. Accepts non-harmful actions only.
 	-- actions.precombat=flask
 	-- actions.precombat+=/food
@@ -95,7 +95,7 @@ local movement = {
 	-- actions.precombat+=/mirror_image
 	-- actions.precombat+=/potion
 	-- actions.precombat+=/arcane_blast
-	
+
 	-- # Executed every time the actor is available.
 	-- # Interrupt the boss when possible.
 	-- actions=counterspell,if=target.debuff.casting.react
@@ -108,21 +108,21 @@ local movement = {
 	-- actions+=/call_action_list,name=movement
 
 local inCombat = {
-	{ buff}, 
+	{ buff},
 	{ dispel, 'UI(G_Curse)'},
-	{ survival}, 
-	{ rotation}, 
+	{ survival},
+	{ rotation},
 }
 
 local outCombat = {
 	{'%pause', 'player.buff(Replenishment)'},
-	{ buff}, 
-	{ survival}, 
-	--{ preCombat}, 
+	{ buff},
+	{ survival},
+	--{ preCombat},
 }
 
 NeP.CR:Add(62, {
-	name = 'Mage - Arcane',
+	name = '[Silver !BETA!] Mage - Arcane',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

@@ -128,7 +128,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(70, {
-	name = '[Silver] PALADIN - Retribution',
+	name = '[Silver !BETA!] PALADIN - Retribution',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

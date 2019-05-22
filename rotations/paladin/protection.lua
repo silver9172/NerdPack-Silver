@@ -103,7 +103,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(66, {
-	name = '[Silver] Paladin - Protection',
+	name = '[Silver !BETA!] Paladin - Protection',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

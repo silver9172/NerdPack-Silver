@@ -42,7 +42,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(254, {
-	name = '|cffFF7373[Silver]|r HUNTER - Marksmanship',
+	name = '[Silver !BETA!] HUNTER - Marksmanship',
 	ic = inCombat,
 	ooc = outCombat,
 	gui = GUI,

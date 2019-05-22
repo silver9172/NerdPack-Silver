@@ -151,13 +151,13 @@ local tank = {
 		-- Raid
 		-- Only one tank
 		{ 'Beacon of Light', '!buff && partycheck = 3 && !tank2.exists', 'tank'},
-		-- If one tank is 20% lower than the other, swap LB
+		-- If one tank is 20% lower than the other, swap
 		{ 'Beacon of Light', 'partycheck = 3 && { !tank1.buff && { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
 		{ 'Beacon of Light', 'partycheck = 3 && { !tank2.buff && { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
-		-- If neither tank has life bloom, apply it to the one with lower health
+		-- If neither tank has beacon, apply it to the one with lower health
 		{ 'Beacon of Light', 'partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank1.health <= tank2.health }}}', 'tank1'},
 		{ 'Beacon of Light', 'partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank2.health < tank1.health }}}', 'tank2'},
-		-- If either tank is at 4.5 seconds or lower, reapply LB on the tank with the lower health
+		-- Replace beacon if tank2 has 20 lower health than tank1
 		{ 'Beacon of Light', 'partycheck = 3 && !tank1.buff && !tank2.buff && tank1.health <= tank2.health', 'tank1'},
 		{ 'Beacon of Light', 'partycheck = 3 && !tank2.buff && !tank1.buff && tank2.health < tank1.health', 'tank2'},
 	}, 'talent(7,1) && !focus.buff(Beacon of Light)'},
@@ -314,6 +314,7 @@ local outCombat = {
 	{ tank},
 	{ topUp, 'keybind(lcontrol)'},
 
+	{ 'Holy Light', nil, 'healer'},
 	-- Precombat
 	{ 'Bestow Faith', 'dbm(Pull in) <= 2', 'tank'},
 
@@ -321,7 +322,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(65, {
-	name = '[Silver] Paladin - Holy',
+	name = '[Silver !BETA!] Paladin - Holy',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,

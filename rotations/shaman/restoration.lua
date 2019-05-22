@@ -58,21 +58,21 @@ local cooldowns = {
 
 local earthShield = {
 	-- Solo
-	{ 'Earth Shield', '!los && player.buff.duration <= 4.5 && { partycheck = 1 || { partycheck = 2 && !tank1.exists } || { partycheck = 3 && !tank1.exists }}', 'player'},
+	{ 'Earth Shield', 'player.buff.duration <= 4.5 && { partycheck = 1 || { partycheck = 2 && !tank1.exists } || { partycheck = 3 && !tank1.exists }}', 'player'},
 	-- 5 man
-	{ 'Earth Shield', '!los && tank.buff.duration <= 4.5 && partycheck = 2', 'tank'},
+	{ 'Earth Shield', 'tank.buff.duration <= 4.5 && partycheck = 2', 'tank'},
 	-- Raid
 	-- Only one tank
-	{ 'Earth Shield', '!los && tank.buff.duration <= 4.5 & partycheck = 3 & !tank2.exists', 'tank'},
+	{ 'Earth Shield', 'tank.buff.duration <= 4.5 & partycheck = 3 & !tank2.exists', 'tank'},
 	-- If one tank is 20% lower than the other, swap ES
-	{ 'Earth Shield', '!los && partycheck = 3 && { !tank1.buff && { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
-	{ 'Earth Shield', '!los && partycheck = 3 && { !tank2.buff && { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
+	{ 'Earth Shield', 'partycheck = 3 && { !tank1.buff && { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
+	{ 'Earth Shield', 'partycheck = 3 && { !tank2.buff && { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
 	-- If neither tank has ES, apply it to the one with lower health
-	{ 'Earth Shield', '!los && partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank1.health <= tank2.health }}}', 'tank1'},
-	{ 'Earth Shield', '!los && partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank2.health < tank1.health }}}', 'tank2'},
+	{ 'Earth Shield', 'partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank1.health <= tank2.health }}}', 'tank1'},
+	{ 'Earth Shield', 'partycheck = 3 && {{ !tank1.buff && !tank2.buff && { tank2.health < tank1.health }}}', 'tank2'},
 	-- If either tank is at 4.5 seconds or lower, reapply ES on the tank with the lower health
-	{ 'Earth Shield', '!los && partycheck = 3 && tank1.buff.duration <= 4.5 && !tank2.buff && tank1.health <= tank2.health', 'tank1'},
-	{ 'Earth Shield', '!los && partycheck = 3 && tank2.buff.duration <= 4.5 && !tank1.buff && tank2.health < tank1.health', 'tank2'},
+	{ 'Earth Shield', 'partycheck = 3 && tank1.buff.duration <= 4.5 && !tank2.buff && tank1.health <= tank2.health', 'tank1'},
+	{ 'Earth Shield', 'partycheck = 3 && tank2.buff.duration <= 4.5 && !tank1.buff && tank2.health < tank1.health', 'tank2'},
 }
 
 local healing = {
@@ -88,6 +88,7 @@ local healing = {
 	{ 'Healing Rain', 'friendly.area(10,90).heal >= 2 && !player.moving && UI(hr)', 'friendly.ground'},
 	{ 'Unleash Life', ' health <= UI(hw)', { 'tank', 'lowest', 'friendly'}},
 	{ 'Wellspring', 'area(12,85).heal.infront >= 3', 'player'},
+	{ 'Cloudburst Totem', 'health <= UI(hst) && inRange.spell(Riptide) && !totem', { 'tank', 'lowest', 'friendly'}},
 	{ 'Healing Stream Totem', 'health <= UI(hst) && inRange.spell(Riptide) && !totem', { 'tank', 'lowest', 'friendly'}},
 	{ 'Earthen Wall Totem', 'area(12,65).heal > 3', 'player'},
 
@@ -103,10 +104,10 @@ local survival = {
 
 local dps = {
 	--{ '#trinket2', 'xequipped(128318) && inRange.spell(Flame Shock) && infront && combat', { 'target', 'enemies'}},
-	{ 'Flame Shock', 'debuff.duration <= 6.3 && inRange.spell && infront && combat', { 'target', 'enemies'}},
-	{ 'Lava Burst', '{ player.buff(Lava Surge) || !player.moving} && debuff(Flame Shock).duration >= 2 && inRange.spell && infront', { 'target', 'enemies'}},
-	{ 'Chain Lightning', 'area(12).enemies >= 2 && inRange.spell && infront && combat && toggle(aoe) && !player.moving', 'target'},
-	{ 'Lightning Bolt', 'inRange.spell && infront && combat && !player.moving', 'target'},
+	{ 'Flame Shock', 'debuff.duration <= 6.3 && inRange.spell && infront(player) && combat', { 'target', 'enemies'}},
+	{ 'Lava Burst', '{ player.buff(Lava Surge) || !player.moving} && debuff(Flame Shock).duration >= 2 && inRange.spell && infront(player)', { 'target', 'enemies'}},
+	{ 'Chain Lightning', 'area(12).enemies >= 2 && inRange.spell && infront(player) && combat && toggle(aoe) && !player.moving', 'target'},
+	{ 'Lightning Bolt', 'inRange.spell && infront(player) && combat && !player.moving', 'target'},
 }
 
 local inCombat = {
@@ -127,7 +128,7 @@ local outCombat = {
 }
 
 NeP.CR:Add(264, {
-	name = '[Silver] Shaman - Restoration',
+	name = '[Silver !BETA!] Shaman - Restoration',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,
