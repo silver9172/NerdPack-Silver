@@ -525,3 +525,11 @@ NeP.DSL:Register('spammable_seed', function ()
 	end
 	return false
 end)
+
+
+-----------------
+-- Classic WoW --
+-----------------
+NeP.DSL:Register('iswanding', function()
+  return NeP._G.IsCurrentSpell(5019)
+end)

@@ -7,44 +7,47 @@
 conditions.lua
 unitconditions.lua
 
-rotations\rogue\assassination.lua
-rotations\rogue\subtley.lua
-rotations\rogue\outlaw.lua
+rotations\classic\warrior\leveling.lua
+rotations\classic\warlock\leveling.lua
 
-rotations\paladin\protection.lua
-rotations\paladin\holy.lua
-rotations\paladin\retribution.lua
+rotations\retail\rogue\assassination.lua
+rotations\retail\rogue\subtley.lua
+rotations\retail\rogue\outlaw.lua
 
-rotations\priest\disc.lua
+rotations\retail\paladin\protection.lua
+rotations\retail\paladin\holy.lua
+rotations\retail\paladin\retribution.lua
 
-rotations\monk\brewmaster.lua
-rotations\monk\mistweaver.lua
+rotations\retail\priest\disc.lua
 
-rotations\druid\balance.lua
-rotations\druid\restoration.lua
-rotations\druid\feral.lua
-rotations\druid\guardian.lua
+rotations\retail\monk\brewmaster.lua
+rotations\retail\monk\mistweaver.lua
 
-rotations\warlock\demonology.lua
-rotations\warlock\destruction.lua
-rotations\warlock\affliction.lua
+rotations\retail\druid\balance.lua
+rotations\retail\druid\restoration.lua
+rotations\retail\druid\feral.lua
+rotations\retail\druid\guardian.lua
 
-rotations\warrior\protection.lua
-rotations\warrior\fury.lua
-rotations\warrior\arms.lua
+rotations\retail\warlock\demonology.lua
+rotations\retail\warlock\destruction.lua
+rotations\retail\warlock\affliction.lua
 
-rotations\deathknight\blood.lua
-rotations\deathknight\frost.lua
+rotations\retail\warrior\protection.lua
+rotations\retail\warrior\fury.lua
+rotations\retail\warrior\arms.lua
+
+rotations\retail\deathknight\blood.lua
+rotations\retail\deathknight\frost.lua
 rotations\deathknight\unholy.lua
 
-rotations\mage\frost.lua
-rotations\mage\fire.lua
-rotations\mage\arcane.lua
+rotations\retail\mage\frost.lua
+rotations\retail\mage\fire.lua
+rotations\retail\mage\arcane.lua
 
-rotations\shaman\elemental.lua
-rotations\shaman\enhancement.lua
-rotations\shaman\restoration.lua
+rotations\retail\shaman\elemental.lua
+rotations\retail\shaman\enhancement.lua
+rotations\retail\shaman\restoration.lua
 
-rotations\hunter\beast_mastery.lua
-rotations\hunter\survival.lua
-rotations\hunter\marksmanship.lua
+rotations\retail\hunter\beast_mastery.lua
+rotations\retail\hunter\survival.lua
+rotations\retail\hunter\marksmanship.lua
