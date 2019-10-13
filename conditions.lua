@@ -74,11 +74,9 @@ NeP.DSL:Register('recharge_time', function(_, spell)
     end
 end)
 
-NeP.DSL:Register("inRange.spell",function(target,spell)
-	local spellIndex,spellBook = NeP.Core:GetSpellBookIndex(spell)
-	if not spellIndex then return false end
-	if spellIndex and _G.IsSpellInRange(spellIndex,spellBook,target) == 1 then
-	return true end
+-- /dump NeP.DSL:Get('inRange.spell')('Sinister Strike')
+NeP.DSL:Register("inRange.spell", function(unit, spell)
+  return _G.IsSpellInRange(spell, unit) == 1
 end)
 
 -- /dump NeP.DSL:Get('execute_time')('player','Pyroblast')
@@ -530,6 +528,30 @@ end)
 -----------------
 -- Classic WoW --
 -----------------
+-- /dump NeP.DSL:Get('iswanding')()
 NeP.DSL:Register('iswanding', function()
-  return NeP._G.IsCurrentSpell(5019)
+  return IsCurrentSpell(5019)
+end)
+
+-- /dump NeP.DSL:Get('shardCount')()
+NeP.DSL:Register('shardCount', function()
+  return GetItemCount(6265)
+end)
+
+-- /dump NeP.DSL:Get('healthStoneCount')()
+NeP.DSL:Register('healthStoneCount', function()
+  ITEM_HEALTHSTONES = {19005, 19004, 5512, 5511, 5509, 5510, 9421}
+  local count = 0
+  for i=1, #ITEM_HEALTHSTONES do
+    if GetItemCount(ITEM_HEALTHSTONES[i]) > 0 then
+      count = count + GetItemCount(ITEM_HEALTHSTONES[i])
+    end
+  end
+  return count
+end)
+
+-- /dump NeP.DSL:Get('isClass')('target')
+NeP.DSL:Register('isClass', function(target)
+  local className, classFilename, classID = UnitClass(target)
+  return classID
 end)

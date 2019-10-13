@@ -2,22 +2,21 @@
 -- List of all elements can be found at:
 -- https://github.com/MrTheSoulz/NerdPack/wiki/Class-Interface
 local GUI = {
-  {type = "dropdown", text = "Pet", key = "pet", width = 100, list = {
-  {key = "0", text = "None"},
-  {key = "1", text = "Imp"},
-  {key = "2", text = "Voidwalker"},
+  {type = "dropdown", text = "Role", key = "role", width = 100, list = {
+  {key = "1", text = "Arms DPS"},
+  {key = "2", text = "Prot Tanking"},
+  {key = "3", text = "Fury DPS"},
   }, default = "1" },
 
   {type = 'header', text = 'Arms Settings', align = 'center'},
 
-  {type = 'header', text = 'Class Settings', align = 'center'},
-  {type = 'spinner', text = 'Wand Start', 		key = 'wand', 		default = 25},
-  {type = 'spinner', text = 'Shard Count', 		key = 'shard', 		default = 5},
+  {type = 'header', text = 'Prot Settings', align = 'center'},
+  {type = 'spinner', text = 'Wand StartH', 		key = 'wand', 		default = 25},
 }
 
 -- OPTIONAL!
 local GUI_ST = {
-  title='[Silver] Warrior',
+  title='[Silver] Mage',
   --width='256',
   --height='300',
   --color='A330C9'
@@ -37,35 +36,27 @@ local ExeOnUnload = function()
   NeP.Core:Print('Goodbye :(')
 end
 
-local petCare = {
-  { '/petattack','targettimeout(pet,1) && pet.exists && combat && distance <= 35','target'}
-}
-
 local buff = {
-  { 'Demon Skin','buff.duration <= 120','player'},
-
+  { 'Frost Armor','buff.duration <= 120','player'},
+  { 'Arcane Intellect','buff.duration.any <= 120','player'},
+  { 'Arcane Intellect','inRange.spell && !buff.any && friend',{'target','friendly'}},
 }
 
 local rotation = {
-  { '!Drain Soul','inRange.spell && !player.moving && health <= 10 && !player.channeling(Drain Soul) && {shardCount < UI(shard) || player.mana <= 45}','target'},
-
-  { 'Immolate','inRange.spell && !player.moving && targettimeout(immo,1.6) && !debuff','target'},
-  { 'Immolate','inRange.spell && !player.moving && targettimeout(immo,1.6) && !debuff && combat && toggle(aoe)','enemies'},
-  { 'Corruption','inRange.spell && targettimeout(corrupt,1.6) && !debuff','target'},
-  { 'Corruption','inRange.spell && targettimeout(corrupt,1.6) && !debuff && combat && toggle(aoe)','enemies'},
-  { 'Curse of Agony','inRange.spell && targettimeout(agony,1.6) && !debuff','target'},
-  { 'Curse of Agony','inRange.spell && targettimeout(agony,1.6) && !debuff && combat && toggle(aoe)','enemies'},
-
-  { 'Shadow Bolt','inRange.spell && !player.moving && player.mana > UI(wand)','target'},
+  { 'Blizzard','target.area(8).enemies >= 2','target.ground'},
+  -- Close AoE
+  --{ 'Arcane Explosion','player.area(10).enemies >= 2','target'},
+  -- Single target
+  { 'Frostbolt','inRange.spell && infront(player) && player.mana >= UI(wand)','target'},
+  { 'Fireball','inRange.spell && infront(player) && player.mana >= UI(wand)','target'},
   -- Wand
-  { 'Shoot','targettimeout(wand,1) && inRange.spell && !player.moving && !iswanding && !lastcast.succeed && !lastcast && player.mana <= UI(wand) && spell.cooldown(Shadow Bolt) = 0','target'},
+  { 'Shoot','timeout(wand,1) && inRange.spell && infront(player) && !iswanding && !lastcast.succeed && !lastcast && player.mana < UI(wand) && spell.cooldown(Frostbolt) = 0','target'},
 }
 
 local InCombat = {
-  { petCare},
   { buff},
-  { 'Life Tap','player.mana <= UI(wand) && player.health > 65','target'},
-  { rotation},
+  { '!Frost Nova','distance <= 10 && !dead && !player.channeling(Blizzard)','target'},
+  { rotation,'!player.moving'},
 }
 
 --CR for out of combat
@@ -94,10 +85,10 @@ local blacklist = {
 
 -- SPEC_ID can be found on:
 -- https://github.com/MrTheSoulz/NerdPack/wiki/Class-&-Spec-IDs
-NeP.CR:Add(9, {
+NeP.CR:Add(8, {
      wow_ver = '1.12', -- Optional!
      nep_ver = "2", -- Optional!
-     name = '[Silver] Warlock',
+     name = '[Silver] Mage',
      ic = InCombat, -- Optional!
      ooc= OutCombat, -- Optional!
      load = ExeOnLoad, -- Optional!

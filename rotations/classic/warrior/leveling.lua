@@ -12,6 +12,8 @@ local GUI = {
 
   {type = 'header', text = 'Prot Settings', align = 'center'},
   {type = 'checkbox', text = 'Thunder Clap', 		key = 'P_TC', 		default = false},
+  -- Rage pool
+  {type = 'spinner', 	text = 'Rage Pool', 						key = 'POOL', 	default = 20},
 }
 
 -- OPTIONAL!
@@ -37,28 +39,38 @@ local ExeOnUnload = function()
 end
 
 local defStance = {
-  { 'Bloodrage','health >= 60','player'},
-  { 'Demoralizing Shout','!debuff.any && distance <= 10','enemies'},
-  { 'Revenge','player.rage >= 5','target'},
+  { 'Bloodrage','inRange.spell(Sunder Armor) && health >= 60','player'},
+  { 'Shield Block','inRange.spell(Sunder Armor) && player.rage >= 10 && infront(player)','target'},
+
+  -- Get sunder to 3 on target
+  --{ 'Sunder Armor','debuff.count < 3 && player.rage >= 15','target'},
+
+  { 'Demoralizing Shout','!debuff.any && distance <= 10 && player.rage >= 10 + UI(POOL)','enemies'},
+  { 'Revenge','inRange.spell && player.rage >= 5 + UI(POOL) && infront(player)','target'},
 
   -- AoE tanking (More than 3)
-  { 'Battle Shout','area(10).enemies > 3','enemies'},
+  {{
+    { 'Battle Shout','rage >= 10 && buff.duration.any < 120','player'},
+    { '&Cleave','inRange.spell && player.rage >= 20 + UI(POOL) && infront(player)','target'},
+  },'area(10).enemies > 3'},
 
   -- AoE tanking (More than 1). Check target first
   {{
-    { 'Sunder Armor','!debuff && player.rage >= 15','target'},
-    { 'Sunder Armor','!debuff && player.rage >= 15','enemies'},
-    { 'Sunder Armor','debuff.count < 2 && player.rage > 15','target'},
-    { 'Sunder Armor','debuff.count < 2 && player.rage > 15','enemies'},
-    { 'Sunder Armor','debuff.count < 3 && player.rage > 15','target'},
-    { 'Sunder Armor','debuff.count < 3 && player.rage > 15','enemies'},
-    { 'Sunder Armor','debuff.count < 4 && player.rage > 15','target'},
-    { 'Sunder Armor','debuff.count < 4 && player.rage > 15','enemies'},
-    { 'Sunder Armor','debuff.count < 5 && player.rage > 15','target'},
-    { 'Sunder Armor','debuff.count < 5 && player.rage > 15','enemies'},
+    { 'Sunder Armor','inRange.spell && !debuff && infront(player) && player.rage >= 15 + UI(POOL) && infront(player)','target'},
+    { 'Sunder Armor','inRange.spell && !debuff && infront(player) && player.rage >= 15 + UI(POOL) && infront(player)','enemies'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 2 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','target'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 2 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','enemies'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 3 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','target'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 3 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','enemies'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 4 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','target'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 4 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','enemies'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 5 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','target'},
+    { 'Sunder Armor','inRange.spell && debuff.count < 5 && infront(player) && player.rage > 15 + UI(POOL) && infront(player)','enemies'},
+    { '&Cleave','inRange.spell && player.rage >= 20 + UI(POOL) && infront(player)','target'},
   },'area(8).enemies > 1'},
 
-  { 'Sunder Armor','player.rage >= 15','target'}
+  { 'Sunder Armor','inRange.spell && player.rage >= 15 + UI(POOL) && infront(player)','target'},
+  { '&Heroic Strike','inRange.spell && player.rage > 50 + UI(POOL) && infront(player)','target'},
 }
 
 local battleStance = {
@@ -70,8 +82,8 @@ local battleStance = {
 }
 
 local InCombat = {
-  { '/startattack','!isattacking & target.exists'},
-  { 'Battle Shout','!buff.any && distance <= 20 && player.rage >= 10','friendly'},
+  { '&/startattack','!isattacking & target.exists && !dead','target'},
+  { 'Battle Shout','!buff.any && distance <= 20 && player.rage >= 10','player'},
 
   -- Thunderclap stance dance
   { 'Thunder Clap','UI(role) == 2 && player.rage >= 20 && combat && distance <= 10 && !debuff && UI(T_TC) && toggle(aoe)','enemies'},
@@ -82,13 +94,16 @@ local InCombat = {
 
   { battleStance,'stance == 1'},
   { defStance,'stance == 2'},
+
+  { 'Shoot Bow','inRange.spell && !player.moving','target'},
+  { 'Shoot Gun','inRange.spell && !player.moving','target'},
 }
 
 --CR for out of combat
 -- OPTIONAL!
 local OutCombat = {
   -- Set to battle stance so that we can charge in
-  { 'Battle Stance','stance ~= 1','player'},
+  { 'Battle Stance','stance ~= 1 && target.distance <= 20 && target.exists','player'},
 }
 
 -- Enter name and ID
@@ -111,7 +126,7 @@ local blacklist = {
 -- SPEC_ID can be found on:
 -- https://github.com/MrTheSoulz/NerdPack/wiki/Class-&-Spec-IDs
 NeP.CR:Add(1, {
-     wow_ver = '1.12', -- Optional!
+     wow_ver = '1.13.2', -- Optional!
      nep_ver = "2", -- Optional!
      name = '[Silver] Warrior',
      ic = InCombat, -- Optional!

@@ -9,6 +9,10 @@ unitconditions.lua
 
 rotations\classic\warrior\leveling.lua
 rotations\classic\warlock\leveling.lua
+rotations\classic\shaman\leveling.lua
+rotations\classic\rogue\leveling.lua
+rotations\classic\mage\leveling.lua
+rotations\classic\paladin\leveling.lua
 
 rotations\retail\rogue\assassination.lua
 rotations\retail\rogue\subtley.lua
