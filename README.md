@@ -7,7 +7,3 @@ Nerdpack required -- [Click Here](https://github.com/MrTheSoulz/NerdPack-Tool/ra
 Lua unlocker required, advanced recommended
 
 Currently looking to support mage for Shadowlands
-
-Completed profiles:
-- [Paladin] - Holy, Protection - 8.0.1
-- [Rogue] - Subtley, Assassination(Beta) - 8.0.1

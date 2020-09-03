@@ -35,12 +35,10 @@ local items = {
 
 	-- Other
 	{ '#168973', 'equipped(168973) && item(168973).usable && { player.buff(Combustion) || player.spell(Combustion).cooldown > 45}', 'player'},
-	--{ '#trinket1'},
-	--{ '#trinket2'},
-	--{ '#mainhand'},
+
 }
 
-local testRotation = {
+local rotation = {
 	{ 'Time Warp', 'lustEvent && !player.sated && UI(G_TW)', 'enemies'},
 	{ interrupts},
 	-- Activate Memory of Lucid Dreams Combustion is off cooldown. (Use before RoP)
@@ -48,13 +46,13 @@ local testRotation = {
 	-- Use Rune of Power when Combustion is off cooldown. (Wait till MoLD is used)
 	{ 'Rune of Power', '!player.moving && player.spell(Combustion).cooldown <= 2 && { player.spell(Memory of Lucid Dreams).exists && player.buff(Memory of Lucid Dreams) || !player.spell(Memory of Lucid Dreams).exists} && inRange.spell(Scorch)', 'target'},
 	-- Cast Meteor if Combustion is not coming off cooldown within the next 45 seconds, Combustion is off cooldown or Combustion is currently active. If Rune of Power is talented, only cast Meteor during Rune of Power.
-	{ 'Meteor', '!target.moving && { player.spell(Combustion).cooldown > 45 || player.spell(Combustion).cooldown == 0 || player.buff(Combustion)} && { !talent(3,3) || talent(3,3) && player.buff(Rune of Power)}', 'target.ground'},
+	{ 'Meteor', '!target.moving && target.ttd > 11 && { player.spell(Combustion).cooldown > 45 || player.spell(Combustion).cooldown == 0 || player.buff(Combustion)} && { !talent(3,3) || talent(3,3) && player.buff(Rune of Power)}', 'target.ground'},
 	-- Cast Combustion when it is off cooldown.
 	{ '*Combustion', 'inRange.spell(Scorch) && infront && bosscheck == 1 && { !player.moving && talent(3,3) && player.buff(Rune of Power) || player.moving && talent(3,3) || !talent(3,3)}', 'target'},
 	{ items},
 	-- Cast Rune of Power if it has 2 charges or will have 2 charges within 2 seconds.
-	{ 'Rune of Power', '!player.moving && player.spell(Rune of Power).recharge <= gcd && inRange.spell(Scorch)', 'target'},
-	{ 'Rune of Power', '!player.moving && player.spell(Combustion).cooldown > 40 && inRange.spell(Scorch)', 'target'},
+	{ 'Rune of Power', '!player.moving && player.spell(Rune of Power).recharge <= gcd && inRange.spell(Scorch) && target.ttd > 15', 'target'},
+	{ 'Rune of Power', '!player.moving && player.spell(Combustion).cooldown > 40 && inRange.spell(Scorch) && target.ttd > 15', 'target'},
 	-- Cast Flamestrike when there are 5 or more targets stacked and you have Hot Streak (8+ while Combustion is active). If you have Flame Patch talented, cast Flamestrike on 2+ targets without Combustion, or 3+ with Combustion.
 	{ 'Flamestrike', '{ target.area(10).enemies >= 8 && player.buff(Combustion) && player.buff(Hot Streak!) || target.area(10).enemies >= 5 && !player.buff(Combustion) && player.buff(Hot Streak!)} && !talent(6,1)', 'target.ground'},
 	{ 'Flamestrike', '{ target.area(10).enemies >= 3 && player.buff(Combustion) && player.buff(Hot Streak!) || target.area(10).enemies >= 2 && !player.buff(Combustion) && player.buff(Hot Streak!)} && talent(6,1)', 'target.ground'},
@@ -81,12 +79,11 @@ local inCombat = {
 	{ dispel, 'UI(G_Curse)'},
 	{ utility},
 	{ survival},
-	-- { rotation},
-	{ testRotation},
+	{ rotation},
 }
 
 local outCombat = {
-	--{ '%pause','PauseFor4'},
+	{ '%pause','PauseFor10 == 1'},
 	{ '%pause', 'player.buff(Replenishment)'},
 	{ utility},
 	{ preCombat},

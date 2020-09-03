@@ -118,11 +118,11 @@ end)
 
 local PauseCR = 1
 NeP.Listener:Add('NeP_Load','PLAYER_ENTERING_WORLD', function()
-  --local PauseCR = 1
-  C_Timer.After(4, (function() PauseCR = 0 end), nil)
+  PauseCR = 1
+  C_Timer.After(10, (function() PauseCR = 0 end), nil)
 end)
 
-NeP.DSL:Register('PauseFor4', function()
+NeP.DSL:Register('PauseFor10', function()
   return PauseCR
 end)
 
