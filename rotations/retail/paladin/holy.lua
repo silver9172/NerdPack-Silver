@@ -81,7 +81,7 @@ local topUp = {
 
 local utility = {
 	{ 'Arcane Torrent', 'inRange.spell(Crusader Strike) & purgeEvent', 'enemies'},
-	{ 'Hammer of Justice', 'stunEvent', 'enemies'},
+	--{ 'Hammer of Justice', 'stunEvent', 'enemies'},
 	{ 'Blessing of Protection', 'bopEvent & !debuff(Forbearance).any', 'friendly'},
 }
 
@@ -300,7 +300,7 @@ local inCombat = {
 	{ dispel, 'UI(G_Disp)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ emergency, 'lowest.health <= UI(G_CHP) && !player.casting(Flash of Light)'},
-	{ priorityHeal},
+	--{ priorityHeal},
 	{ tank},
 	{ DPS, 'toggle(dps) && target.enemy && lowest.health > UI(G_DPS) || player.buff(Avenging Crusader) && toggle(dps) && target.enemy'},
 	{ moving, 'player.moving'},
@@ -312,7 +312,7 @@ local inCombat = {
 local outCombat = {
 	-- Need to prevent this while eating
 	{ tank},
-	{ topUp, 'keybind(lcontrol)'},
+	--{ topUp, 'keybind(lcontrol)'},
 
 	{ 'Holy Light', nil, 'healer'},
 	-- Precombat

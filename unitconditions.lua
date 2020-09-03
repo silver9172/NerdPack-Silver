@@ -247,7 +247,7 @@ NeP.DSL:Register('priorityHeal', function(unit)
   return NeP.DSL:Get('debuff.count.any')(unit,'Grievous Wound') >= 3
   or NeP.DSL:Get('debuff.any')(unit,'Grievous Wound')
 
-  or NeP.DSL:Get('name')(unit,'Avatar of Sethraliss') and not NeP.DSL:Get('debuff.any')(unit, 'Tainted')
+  or NeP.DSL:Get('hasName')(unit,'Avatar of Sethraliss') and not NeP.DSL:Get('debuff.any')(unit, 'Tainted')
 end)
 
 NeP.DSL:Register('ignoreHeal', function(unit)
@@ -260,20 +260,20 @@ NeP.DSL:Register('priorityTarget', function(unit)
 	------------------
 	-- BFA Dungeons --
 	------------------
-	return NeP.DSL:Get('name')(unit,'Explosives')
+	return NeP.DSL:Get('hasName')(unit,'Explosives')
 	-- Atal'Dazar
-	or NeP.DSL:Get('name')(unit,'Spirit of Gold')
+	or NeP.DSL:Get('hasName')(unit,'Spirit of Gold')
 	-- Kings Rest
-	or NeP.DSL:Get('name')(unit,'Healing Tide Totem')
+	or NeP.DSL:Get('hasName')(unit,'Healing Tide Totem')
 	------------------
 	---- BFA Raids ---
 	------------------
-	or NeP.DSL:Get('name')(unit,'Coalesced Blood')
+	or NeP.DSL:Get('hasName')(unit,'Coalesced Blood')
 
   ------------------
   ----- testing ----
   ------------------
-  -- or NeP.DSL:Get('name')(unit,'Raider\'s Training Dummy')
+  -- or NeP.DSL:Get('hasName')(unit,'Raider\'s Training Dummy')
 end)
 
 -----------
@@ -285,15 +285,15 @@ NeP.DSL:Register('stunEvent', function(unit)
 	-- BFA Dungeons --
 	------------------
 	-- Atal'Dazar
-	return NeP.DSL:Get('name')(unit,'Spirit of Gold')
-	or NeP.DSL:Get('name')(unit,'Shieldbearer of Zul') and NeP.DSL:Get('channeling')(unit,'Bulwark of Juju')
+	return NeP.DSL:Get('hasName')(unit,'Spirit of Gold')
+	or NeP.DSL:Get('hasName')(unit,'Shieldbearer of Zul') and NeP.DSL:Get('channeling')(unit,'Bulwark of Juju')
 
-	or NeP.DSL:Get('name')(unit,'Orb Guardian')
+	or NeP.DSL:Get('hasName')(unit,'Orb Guardian')
 
 	------------------
 	---- BFA Raids ---
 	------------------
-	or NeP.DSL:Get('name')(unit,'Colatile Droplet')
+	or NeP.DSL:Get('hasName')(unit,'Colatile Droplet')
 end)
 
 ----------------------
@@ -357,6 +357,31 @@ NeP.DSL:Register('spellstealEvent', function(unit)
 	---- BFA Raids ---
 	------------------
 
+end)
+
+
+-- /dump NeP.DSL:Get('lustEvent')('target')
+------------------
+-- BFA Dungeons --
+------------------
+NeP.DSL:Register('lustEvent', function(unit)
+	return NeP.DSL:Get('hasName')(unit,'Rezan')
+	or NeP.DSL:Get('hasName')(unit,'Yazma')
+	or NeP.DSL:Get('hasName')(unit,'Skycap\'n Kragg')
+	or NeP.DSL:Get('hasName')(unit,'Harlan Sweete')
+	or NeP.DSL:Get('hasName')(unit,'The Golden Serpent')
+	or NeP.DSL:Get('hasName')(unit,'Dazar, The First King')
+	or NeP.DSL:Get('hasName')(unit,'Aqu\'sirr')
+	or NeP.DSL:Get('hasName')(unit,'Vol\'zith the Whisperer')
+	or NeP.DSL:Get('hasName')(unit,'Sergent Bainbridge')
+	or NeP.DSL:Get('hasName')(unit,'Adderis')
+	or NeP.DSL:Get('hasName')(unit,'Galvazzt')
+	or NeP.DSL:Get('hasName')(unit,'Coin-Operated Crowd Pummeler')
+	or NeP.DSL:Get('hasName')(unit,'Mogul Razdunk')
+	or NeP.DSL:Get('hasName')(unit,'Elder Leaxa')
+	or NeP.DSL:Get('hasName')(unit,'Unboud Abomination')
+	or NeP.DSL:Get('hasName')(unit,'The Sand Queen')
+	or NeP.DSL:Get('hasName')(unit,'Overseer Korgus')
 end)
 
 NeP.DSL:Register('purgeEvent', function(unit)

@@ -116,6 +116,16 @@ NeP.FakeUnits:Add('allFriendly', function()
 	return NeP.OM:Get('Friendly')
 end)
 
+local PauseCR = 1
+NeP.Listener:Add('NeP_Load','PLAYER_ENTERING_WORLD', function()
+  --local PauseCR = 1
+  C_Timer.After(4, (function() PauseCR = 0 end), nil)
+end)
+
+NeP.DSL:Register('PauseFor4', function()
+  return PauseCR
+end)
+
 ---------------------------------------
 ---------------- Raid -----------------
 ---------------------------------------
@@ -152,6 +162,9 @@ NeP.DSL:Register('bosscheck', function()
 		elseif UnitLevel('target') < 0 then
 			check = 1
 			return check
+    elseif NeP.DSL:Get('ttd')('target') >= 60 and NeP.DSL:Get('health')('target') < 100 then
+      check = 1
+      return check
 		else
 			return check
 		end
@@ -182,6 +195,8 @@ end)
 NeP.DSL:Register('firestarter.active', function(unit)
     return NeP.DSL:Get('talent.enabled')(nil, '1,1') == 1 and NeP.DSL:Get('health')(unit) > 90
 end)
+
+
 
 ---------------------------------------
 --------------- Hunter ----------------
@@ -522,36 +537,4 @@ NeP.DSL:Register('spammable_seed', function ()
 		return true
 	end
 	return false
-end)
-
-
------------------
--- Classic WoW --
------------------
--- /dump NeP.DSL:Get('iswanding')()
-NeP.DSL:Register('iswanding', function()
-  return IsCurrentSpell(5019)
-end)
-
--- /dump NeP.DSL:Get('shardCount')()
-NeP.DSL:Register('shardCount', function()
-  return GetItemCount(6265)
-end)
-
--- /dump NeP.DSL:Get('healthStoneCount')()
-NeP.DSL:Register('healthStoneCount', function()
-  ITEM_HEALTHSTONES = {19005, 19004, 5512, 5511, 5509, 5510, 9421}
-  local count = 0
-  for i=1, #ITEM_HEALTHSTONES do
-    if GetItemCount(ITEM_HEALTHSTONES[i]) > 0 then
-      count = count + GetItemCount(ITEM_HEALTHSTONES[i])
-    end
-  end
-  return count
-end)
-
--- /dump NeP.DSL:Get('isClass')('target')
-NeP.DSL:Register('isClass', function(target)
-  local className, classFilename, classID = UnitClass(target)
-  return classID
 end)

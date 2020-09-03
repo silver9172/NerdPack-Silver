@@ -94,6 +94,7 @@ local singleTarget = {
 local rotation = {
 	-- actions=auto_attack
 	{ '/startattack', '!isattacking & target.exists'},
+
 	-- actions+=/charge
 	-- # This is mostly to prevent cooldowns from being accidentally used during movement.
 	-- actions+=/run_action_list,name=movement,if=movement.distance>5
@@ -106,10 +107,33 @@ local rotation = {
 	{ 'Furious Slash', 'inRange.spell && talent(3,3) && { player.buff(Furious Slash).count < 3 || player.buff(Furious Slash).duration < 3 || { spell(Recklessness).cooldown < 3 && player.buff(Furious Slash).duration < 9}}', 'target'},
 	-- actions+=/rampage,if=cooldown.recklessness.remains<3
 	{ 'Rampage', 'spell(Recklessness).cooldown < 3 && toggle(cooldowns) && bosscheck >= 1 && inRange.spell', 'target'},
+
+	--------------
+	-- Essances --
+	--------------
+
+	-- actions+=/blood_of_the_enemy,if=buff.recklessness.up
+	-- actions+=/purifying_blast,if=!buff.recklessness.up&!buff.siegebreaker.up
+	-- actions+=/ripple_in_space,if=!buff.recklessness.up&!buff.siegebreaker.up
+	-- actions+=/worldvein_resonance,if=!buff.recklessness.up&!buff.siegebreaker.up
+	-- actions+=/focused_azerite_beam,if=!buff.recklessness.up&!buff.siegebreaker.up
+	-- actions+=/reaping_flames,if=!buff.recklessness.up&!buff.siegebreaker.up
+	{ 'Reaping Flames', '!player.buff(Recklessness) && !debuff(Siegebreaker)', 'target'},
+	-- actions+=/concentrated_flame,if=!buff.recklessness.up&!buff.siegebreaker.up&dot.concentrated_flame_burn.remains=0
+	{ 'Concentrated Flame', '!player.buff(Recklessness) && !debuff(Siegebreaker) && !debuff(Ancient Flame)', 'target'},
+	-- actions+=/guardian_of_azeroth,if=!buff.recklessness.up&(target.time_to_die>195|target.health.pct<20)
+	-- actions+=/memory_of_lucid_dreams,if=!buff.recklessness.up
+
+
 	-- actions+=/recklessness
 	{ 'Recklessness', 'toggle(cooldowns) && bosscheck >= 1 && inRange.spell(Bloodthirst)', 'target'},
 	-- actions+=/whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
 	{ 'Whirlwind', 'toggle(aoe) && player.area(8).enemies > 1 && !player.buff(Whirlwind) && inRange.spell(Bloodthirst)', 'target'},
+
+	-------------
+	-- Racials --
+	-------------
+
 	-- actions+=/blood_fury,if=buff.recklessness.up
 	{ 'Blood Fury', 'player.buff(Recklessness) && inRange.spell(Bloodthirst)'},
 	-- actions+=/berserking,if=buff.recklessness.up
@@ -120,6 +144,7 @@ local rotation = {
 	{ 'Fireblood', 'player.buff(Recklessness) && inRange.spell(Bloodthirst)'},
 	-- actions+=/ancestral_call,if=buff.recklessness.up
 	{ 'Ancestral Call', 'player.buff(Recklessness) && inRange.spell(Bloodthirst)'},
+
 	-- actions+=/run_action_list,name=single_target
 	{ singleTarget},
 }
@@ -134,7 +159,7 @@ local inCombat = {
 	{ interrupts, 'target.interruptAt(35)'},
 	{ utility},
 	{ survival},
-	{ priorityTarget, 'UI(prio)'},
+	--{ priorityTarget, 'UI(prio)'},
 	{ rotation},
 	{ 'Heroic Throw', 'inRange.spell && infront', 'target'},
 }
