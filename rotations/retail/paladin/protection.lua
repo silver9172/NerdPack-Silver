@@ -29,35 +29,36 @@ local dispel = {
 }
 
 local priorityTarget = {
-	{ 'Avenger\'s Shield', 'priorityTarget & inRange.spell & area(10).enemies 12>= 2', 'enemies'},
-	{ 'Judgment', 'priorityTarget & inRange.spell & { talent(2,2) & player.spell.charges >= 2} || priorityTarget & inRange.spell & !talent(2,2)', 'enemies' },
-	{ 'Consecration', 'priorityTarget & inRange.spell(Hammer of the Righteous) & !player.buff', 'enemies'},
-	{ 'Judgment', 'priorityTarget & inRange.spell', 'enemies'},
-	{ 'Avenger\'s Shield', 'priorityTarget & inRange.spell', 'enemies'},
-	{ 'Hammer of the Righteous', 'priorityTarget & inRange.spell', 'enemies'},
-	{ 'Consecration', 'priorityTarget & inRange.spell(Hammer of the Righteous)', 'enemies'},
+	{ 'Avenger\'s Shield', 'priorityTarget && inRange.spell && area(10).enemies 12>= 2', 'enemies'},
+	{ 'Judgment', 'priorityTarget && inRange.spell && { talent(2,2) && player.spell.charges >= 2} || priorityTarget && inRange.spell && !talent(2,2)', 'enemies' },
+	{ 'Consecration', 'priorityTarget && inRange.spell(Hammer of the Righteous) && !player.buff', 'enemies'},
+	{ 'Judgment', 'priorityTarget && inRange.spell', 'enemies'},
+	{ 'Avenger\'s Shield', 'priorityTarget && inRange.spell', 'enemies'},
+	{ 'Hammer of the Righteous', 'priorityTarget && inRange.spell', 'enemies'},
+	{ 'Consecration', 'priorityTarget && inRange.spell(Hammer of the Righteous)', 'enemies'},
 }
 
 local utility = {
 	-- Use charge of SotR for events that need AM up
-	{ 'Shield of the Righteous', 'inRange.spell(Hammer of the Righteous) & tankEvent & player.buff.duration < 2', 'enemies'},
-	{ 'Arcane Torrent', 'inRange.spell(Hammer of the Righteous) & purgeEvent', 'enemies'},
-	{ 'Hammer of Justice', 'stunEvent', 'enemies'},
-	{ 'Blessing of Protection', 'bopEvent & !debuff(Forbearance).any', 'friendly'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && infront && tankEvent && player.buff.duration < 2', 'enemies'},
+	{ 'Arcane Torrent', 'inRange.spell(Rebuke) && purgeEvent', 'enemies'},
+	{ 'Hammer of Justice', 'inRange.spell && stunEvent', 'enemies'},
+	{ 'Blessing of Protection', 'bopEvent && !debuff(Forbearance).any', 'friendly'},
 }
 
 local interrupts = {
-	{ 'Rebuke', 'inRange.spell & interruptAt(35)', 'enemies'},
-	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35) && infront', 'enemies'},
-	--{ 'Hammer of Justice', '{ player.spell(Rebuke).cooldown > gcd & inRange.spell(Rebuke) || !inRange.spell(Rebuke) } & interruptAt(35)', 'enemies'},
+	{ 'Rebuke', 'inRange.spell && interruptAt(35)', 'enemies'},
+	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd && inRange.spell(Rebuke) && interruptAt(65) || !inRange.spell(Rebuke) } && interruptAt(65) && infront}', 'enemies'},
+	{ 'Hammer of Justice', '{ player.spell(Rebuke).cooldown > gcd && inRange.spell(Rebuke) && interruptAt(65) || !inRange.spell(Rebuke) } && interruptAt(65)}', 'enemies'},
+	{ 'Blinding Light', 'player.spell(Rebuke).cooldown > gcd && range <= 10 && interruptAt(65)', 'enemies'},
 }
 
 local cooldowns = {
 	-- Shield of the Righteous
-	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & !talent(7,3)', 'target'},
-	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) & player.spell(Shield of the Righteous).charges >= 2.7 & !player.buff & talent(7,3) & player.spell(Seraphim).cooldown > 0', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges >= 2.7 && !player.buff && !talent(7,3)', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges >= 2.7 && !player.buff && talent(7,3) && player.spell(Seraphim).cooldown > 0', 'target'},
 	-- Use 2nd charge
-	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) & !player.buff & player.incdmg(5) >= { player.health.max * 0.25 } & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && !player.buff && player.incdmg(5) >= { player.health.max * 0.25 } && player.spell.charges >= 2 && target.range <= 8 && target.threat == 100'},
 
 	-- Light of the Protector
 	{ 'Light of the Protector', 'health <= UI(lotp)', { 'player', 'tank', 'tank2', 'lowest'}},
@@ -65,35 +66,37 @@ local cooldowns = {
 	{ 'Bastion of Light', 'player.spell(Shield of the Righteous).charges < 1'},
 
 	-- All health based. Uncheck in UI to use only manually
-	{ 'Ardent Defender', 'UI(ad_check) & player.health <= UI(ad_spin) & !target.debuff(Eye of Tyr) & !player.buff(Guardian of Ancient Kings)'},
-	{ 'Guardian of Ancient Kings', 'UI(ak_check) & player.health <= UI(ak_spin) & !target.debuff(Eye of Tyr) & !player.buff(Ardent Defender)'},
+	{ 'Ardent Defender', 'UI(ad_check) && player.health <= UI(ad_spin) && !player.buff(Guardian of Ancient Kings)'},
+	{ 'Guardian of Ancient Kings', 'UI(ak_check) && player.health <= UI(ak_spin) && !target.debuff(Eye of Tyr) && !player.buff(Ardent Defender)'},
 
-	{ 'Seraphim', 'inRange.spell(Rebuke) & player.spell(Shield of the Righteous).charges > 2', 'target'},
+	{ 'Seraphim', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges > 2', 'target'},
 
-	{ 'Avenging Wrath', 'inRange.spell(Rebuke) & player.buff(Consecration) & !talent(7,3) & target.range <= 10'},
-	{ 'Avenging Wrath', 'inRange.spell(Rebuke) & player.buff(Consecration) & talent(7,3) & player.buff(Seraphim) & target.range <= 10'},
+	{ 'Avenging Wrath', 'inRange.spell(Rebuke) && player.buff(Consecration) && !talent(7,3)', 'player'},
+	{ 'Avenging Wrath', 'inRange.spell(Rebuke) && player.buff(Consecration) && talent(7,3) && player.buff(Seraphim) && target.range <= 10'},
 
 	-- Add UI toggle for LoH
 	{ 'Lay on Hands', 'health < 15', { 'player', 'tank', 'tank2', 'lowest'}},
 }
 
 local rotation = {
-	{ 'Avenger\'s Shield', 'inRange.spell & area(10).enemies >= 2', 'target'},
-	{ 'Judgment', 'inRange.spell && talent(2,2) && player.spell.charges >= 2 || inRange.spell && !talent(2,2)', 'target' },
-	{ 'Consecration', 'inRange.spell(Rebuke) && !player.buff', 'target'},
-	{ 'Consecration', 'inRange.spell(Rebuke) && player.totem.duration <= 2 && player.buff', 'target'},
-	{ 'Judgment', 'inRange.spell', 'target'},
-	{ 'Avenger\'s Shield', 'inRange.spell', 'target'},
-	{ 'Hammer of the Righteous', 'inRange.spell(Rebuke)', 'target'},
-	{ 'Consecration', 'inRange.spell(Rebuke)', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell && infront && area(8).enemies >= 2', { 'target', 'enemies'}},
+	{ 'Judgment', 'inRange.spell && infront && combat', { 'target', 'enemies'}},
+	{ 'Consecration', 'area(8).enemies >= 1 && !buff', 'player'},
+	{ 'Avenger\'s Shield', 'inRange.spell && infront', { 'target', 'enemies'}},
+	{ 'Hammer of the Righteous', 'inRange.spell(Rebuke) && infront', { 'target', 'enemies'}},
+	{ 'Consecration', 'area(8).enemies >= 1', 'player'},
+}
+
+local preCombat = {
+	{ 'Avenging Wrath', 'dbm(Pull in) < 1', 'player'},
 }
 
 local inCombat = {
-	{ '/startattack', '!isattacking & target.exists'},
+	{ '/startattack', '!isattacking && target.exists'},
 	{ interrupts},
 	{ utility},
 	{ dispel},
-	{ cooldowns, 'toggle(cooldowns) & inRange.spell(Rebuke)'},
+	{ cooldowns, 'toggle(cooldowns) && inRange.spell(Rebuke)'},
 	--{ priorityTarget},
 	{ rotation}
 }
@@ -109,5 +112,5 @@ NeP.CR:Add(66, {
 	 gui = GUI,
 	load = exeOnLoad,
  wow_ver = '8.1.5',
- nep_ver = '1.12',
+ nep_ver = '1.14  ',
 })

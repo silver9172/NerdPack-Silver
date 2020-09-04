@@ -6,4 +6,4 @@ Nerdpack required -- [Click Here](https://github.com/MrTheSoulz/NerdPack-Tool/ra
 
 Lua unlocker required, advanced recommended
 
-Currently looking to support mage for Shadowlands
+Currently looking to support mage and prot paladin for Shadowlands

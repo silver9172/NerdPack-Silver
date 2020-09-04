@@ -54,8 +54,8 @@ local rotation = {
 	{ 'Rune of Power', '!player.moving && player.spell(Rune of Power).recharge <= gcd && inRange.spell(Scorch) && target.ttd > 15', 'target'},
 	{ 'Rune of Power', '!player.moving && player.spell(Combustion).cooldown > 40 && inRange.spell(Scorch) && target.ttd > 15', 'target'},
 	-- Cast Flamestrike when there are 5 or more targets stacked and you have Hot Streak (8+ while Combustion is active). If you have Flame Patch talented, cast Flamestrike on 2+ targets without Combustion, or 3+ with Combustion.
-	{ 'Flamestrike', '{ target.area(10).enemies >= 8 && player.buff(Combustion) && player.buff(Hot Streak!) || target.area(10).enemies >= 5 && !player.buff(Combustion) && player.buff(Hot Streak!)} && !talent(6,1)', 'target.ground'},
-	{ 'Flamestrike', '{ target.area(10).enemies >= 3 && player.buff(Combustion) && player.buff(Hot Streak!) || target.area(10).enemies >= 2 && !player.buff(Combustion) && player.buff(Hot Streak!)} && talent(6,1)', 'target.ground'},
+	{ 'Flamestrike', 'toggle(aoe) && { target.area(10).enemies >= 8 && player.buff(Combustion) && player.buff(Hot Streak!) || target.area(10).enemies >= 5 && !player.buff(Combustion) && player.buff(Hot Streak!)} && !talent(6,1)', 'target.ground'},
+	{ 'Flamestrike', 'toggle(aoe) && { target.area(10).enemies >= 3 && player.buff(Combustion) && player.buff(Hot Streak!) || target.area(10).enemies >= 2 && !player.buff(Combustion) && player.buff(Hot Streak!)} && talent(6,1)', 'target.ground'},
 	-- Cast Pyroblast when you have a Hot Streak proc.
 	{ 'Pyroblast', 'inRange.spell && infront && player.buff(Hot Streak!)', 'target'},
 	-- Cast Living Bomb if there are 3 or more targets stacked, and at least 1 of the targets will live for at least 8 seconds.
