@@ -457,6 +457,31 @@ NeP.DSL:Register('tankEvent', function(unit)
 
 	-- Kings Rest
 	or NeP.DSL:Get('casting')(unit, 'Tail Thrash')
+	or NeP.DSL:Get('casting')(unit, 'Blade Combo')
+	or NeP.DSL:Get('casting')(unit, 'Debilitating Backhand')
+
+	-- Freehold
+	or NeP.DSL:Get('buff.any')(unit, 'Loaded Dice: Man-O-War')
+
+	-- Shrine of the Storm
+	or NeP.DSL:Get('casting')(unit, 'Hindering Cleave')
+	or NeP.DSL:Get('buff.any')(unit, 'Blessing of Ironsides')
+
+	-- Siege of Boralus
+	or NeP.DSL:Get('casting')(unit, 'Crimson Swipe')
+
+	-- Temple of Sethraliss
+	or NeP.DSL:Get('casting')(unit, 'Heart Attack')
+
+	-- The MOTHERLODE!!
+	or NeP.DSL:Get('buff.any')(unit, 'Pay to Win')
+
+	-- The Underrot
+	or NeP.DSL:Get('casting')(unit, 'Indigestion')
+	or NeP.DSL:Get('casting')(unit, 'Shockwave')
+
+	-- Waycrest Manor
+	or NeP.DSL:Get('casting')(unit, 'Crush')
 
 	-- Testing
 	or NeP.DSL:Get('casting')(unit, 'Uber Strike')
