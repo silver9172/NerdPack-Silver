@@ -45,17 +45,17 @@ local cooldowns = {
 	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges >= 2.7 && !player.buff && !talent(7,3)', 'target'},
 	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges >= 2.7 && !player.buff && talent(7,3) && player.spell(Seraphim).cooldown > 0', 'target'},
 	-- Use 2nd charge
-	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && !player.buff && player.incdmg(5) >= { player.health.max * { UI(sotr) * 0.01} } && player.spell.charges >= 2 && target.threat == 100', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && !player.buff && { player.incdmg(5) >= { player.health.actual * { UI(sotr) * 0.01}}} && player.spell.charges >= 2', 'target'},
 	-- Use 3rd Charge (When we'll have SoTR back up by the time that the buff ends)
-	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && !player.buff && player.incdmg(5) >= { player.health.max * { UI(sotr3) * 0.01} } && player.spell.charges >= 1 && player.spell.recharge <= 4 && target.threat == 100', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && !player.buff && { player.incdmg(5) >= { player.health.actual * { UI(sotr3) * 0.01}}} && player.spell.charges >= 1 && player.spell.recharge <= 4', 'target'},
 
 	-- Light of the Protector
 	{ 'Light of the Protector', 'health <= UI(lotp)', { 'player', 'tank', 'tank2', 'lowest'}},
 
 	{ 'Bastion of Light', 'player.spell(Shield of the Righteous).charges < 1'},
 
-	{ 'Ardent Defender', '!player.buff(Guardian of Ancient Kings) && { player.incdmg(5) >= { player.health.max * { UI(ad_spin) * 0.01}'},
-	{ 'Guardian of Ancient Kings', '!player.buff(Ardent Defender) && { player.incdmg(5) >= { player.health.max * { UI(ak_spin) * 0.01}'},
+	{ 'Ardent Defender', '!player.buff(Guardian of Ancient Kings) && { player.incdmg(5) >= { player.health.actual * { UI(ad_spin) * 0.01}}}'},
+	{ 'Guardian of Ancient Kings', '!player.buff(Ardent Defender) && { player.incdmg(5) >= { player.health.actual * { UI(ak_spin) * 0.01}}}'},
 
 	{ 'Seraphim', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges > 2', 'target'},
 
@@ -66,13 +66,23 @@ local cooldowns = {
 	{ 'Lay on Hands', 'health < 15', { 'player', 'tank', 'tank2', 'lowest'}},
 }
 
+local essences = {
+	-- Concentrated Flame
+	{ 'Concentrated Flame', 'inRange.spell && infront', 'target'},
+}
+
 local items = {
 	-- Razbubk's Big Red Button
 	{ '#159611', 'equipped(159611) && item(159611).usable && inRange.spell(Rebuke) && infront', 'target.ground'},
 }
 
 local rotation = {
+	-- Shield of the Righteous
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges >= 2.7 && !player.buff && !talent(7,3)', 'target'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && player.spell(Shield of the Righteous).charges >= 2.7 && !player.buff && talent(7,3) && player.spell(Seraphim).cooldown > 0', 'target'},
+
 	{ items},
+	{ essences},
 	{ 'Avenger\'s Shield', 'inRange.spell && infront && area(8).enemies >= 2', 'target'},
 	{ 'Consecration', 'inRange.spell(Rebuke) && player.buff < gcd', { 'target', 'enemies'}},
 	{ 'Judgment', 'inRange.spell && infront', 'target'},
