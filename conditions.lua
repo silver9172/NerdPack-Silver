@@ -97,16 +97,16 @@ NeP.DSL:Register('self', function(unit)
 	return UnitIsUnit(unit, 'player');
 end)
 
--- Spell in range. Credit to Kleei
-NeP.DSL:Register("inRange.spell", function(unit, spell)
-   local spellIndex, spellBook = NeP.Core:GetSpellBookIndex(spell)
-   return spellIndex and _G.IsSpellInRange(spellIndex, spellBook, unit) == 1
-end)
+-- -- Spell in range. Credit to Kleei
+-- NeP.DSL:Register("inRange.spell", function(unit, spell)
+--    local spellIndex, spellBook = NeP.Core:GetSpellBookIndex(spell)
+--    return spellIndex and _G.IsSpellInRange(spellIndex, spellBook, unit) == 1
+-- end)
 
 --USAGE in CR:
 --{"%target", "CONDITION", "UNIT"}
 NeP.Actions:Add('target', function(eval) eval.exe = function(eva) NeP.Protected.TargetUnit(eva.target)
-    print(eva.target)
+    --print(eva.target)
     return true
   end
   return true
@@ -114,6 +114,11 @@ end)
 
 NeP.FakeUnits:Add('allFriendly', function()
 	return NeP.OM:Get('Friendly')
+end)
+
+-- This is needed for explosive orbs in m+
+NeP.FakeUnits:Add('critters', function()
+	return NeP.OM:Get('Critters')
 end)
 
 local PauseCR = 1
@@ -232,14 +237,16 @@ NeP.DSL:Register('energy.time_to_max', function()
     local deficit = NeP.DSL:Get('deficit')()
     local eregen = NeP.DSL:Get('energy.regen')()
     return deficit / eregen
-end)NeP.DSL:Register('energy.time_to_max', function()
-    local deficit = NeP.DSL:Get('deficit')()
-    local eregen = NeP.DSL:Get('energy.regen')()
-    return deficit / eregen
+end)
+
+NeP.DSL:Register('energypercent', function()
+  local max = UnitPowerMax('player')
+  local curr = UnitPower('player')
+  return (curr / max)
 end)
 
 -- /dump NeP.DSL:Get('combopoints.deficit')('player')
-NeP.DSL:Register('combopoints.deficit', function ()
+NeP.DSL:Register('combopoints.deficit', function (target)
 	local max = 5
     if NeP.DSL:Get('talent.enabled')(nil, '3,2') == 1 and not NeP.DSL:Get('class')('player','Druid') then
         max = 6

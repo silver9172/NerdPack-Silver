@@ -27,17 +27,17 @@ local dispel = {
 
 local utility = {
 	-- Use charge of SotR for events that need AM up
-	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && infront && tankEvent && player.buff.duration < 2', 'enemies'},
-	{ 'Arcane Torrent', 'inRange.spell(Rebuke) && purgeEvent', 'enemies'},
-	{ 'Hammer of Justice', 'inRange.spell && stunEvent', 'enemies'},
+	{ 'Shield of the Righteous', 'inRange.spell(Rebuke) && infront && tankEvent && player.buff.duration < 2', 'combatenemies'},
+	{ 'Arcane Torrent', 'inRange.spell(Rebuke) && purgeEvent', 'combatenemies'},
+	{ 'Hammer of Justice', 'inRange.spell && stunEvent', 'combatenemies'},
 	{ 'Blessing of Protection', 'bopEvent && !debuff(Forbearance).any', 'friendly'},
 }
 
 local interrupts = {
-	{ 'Rebuke', 'inRange.spell && interruptAt(35) && infront', 'enemies'},
-	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd && inRange.spell(Rebuke) && interruptAt(65) || !inRange.spell(Rebuke) } && interruptAt(65) && infront}', 'enemies'},
-	{ 'Hammer of Justice', '{ player.spell(Rebuke).cooldown > gcd && inRange.spell(Rebuke) && interruptAt(65) || !inRange.spell(Rebuke) } && interruptAt(65)}', 'enemies'},
-	{ 'Blinding Light', 'player.spell(Rebuke).cooldown > gcd && range <= 10 && interruptAt(65)', 'enemies'},
+	{ 'Rebuke', 'inRange.spell && interruptAt(35) && infront', 'combatenemies'},
+	{ 'Avenger\'s Shield', '{ player.spell(Rebuke).cooldown > gcd && inRange.spell(Rebuke) && interruptAt(65) || !inRange.spell(Rebuke) } && interruptAt(65) && infront}', 'combatenemies'},
+	{ 'Hammer of Justice', '{ player.spell(Rebuke).cooldown > gcd && inRange.spell(Rebuke) && interruptAt(65) || !inRange.spell(Rebuke) } && interruptAt(65)}', 'combatenemies'},
+	{ 'Blinding Light', 'player.spell(Rebuke).cooldown > gcd && range <= 10 && interruptAt(65)', 'combatenemies'},
 }
 
 local cooldowns = {
@@ -83,12 +83,12 @@ local rotation = {
 
 	{ items},
 	{ essences},
-	{ 'Avenger\'s Shield', 'inRange.spell && infront && area(8).enemies >= 2', 'target'},
-	{ 'Consecration', 'inRange.spell(Rebuke) && player.buff < gcd', { 'target', 'enemies'}},
-	{ 'Judgment', 'inRange.spell && infront', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell && infront && area(8).combatenemies >= 2', 'target'},
+	{ 'Consecration', 'inRange.spell(Rebuke) && player.buff < gcd', { 'target', 'combatenemies'}},
+	{ 'Judgment', 'inRange.spell && infront && player.spell(Shield of the Righteous).recharge > 4', 'target'},
 	{ 'Avenger\'s Shield', 'inRange.spell && infront', 'target'},
-	{ 'Hammer of the Righteous', 'inRange.spell(Rebuke) && infront', { 'target', 'enemies'}},
-	{ 'Consecration', 'inRange.spell(Rebuke)', { 'target', 'enemies'}},
+	{ 'Hammer of the Righteous', 'inRange.spell(Rebuke) && infront', { 'target', 'combatenemies'}},
+	{ 'Consecration', 'inRange.spell(Rebuke)', { 'target', 'combatenemies'}},
 }
 
 local preCombat = {

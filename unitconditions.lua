@@ -273,7 +273,8 @@ NeP.DSL:Register('priorityTarget', function(unit)
   ------------------
   ----- testing ----
   ------------------
-  -- or NeP.DSL:Get('hasName')(unit,'Raider\'s Training Dummy')
+  --or NeP.DSL:Get('hasName')(unit,'Raider\'s Training Dummy')
+	--or NeP.DSL:Get('hasName')(unit,'Dung Beetle')
 end)
 
 -----------
