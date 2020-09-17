@@ -214,6 +214,17 @@ NeP.DSL:Register('diseaseDispel', function(unit)
 	or NeP.DSL:Get('debuff.duration.any')(unit, 'Virulent Pathogen') >= 4 and NeP.DSL:Get('debuff.any')(unit, 'Virulent Pathogen') and NeP.DSL:Get('area.friendly')(unit,'8') == 0
 end)
 
+-- silver.diseaseDispel = 'debuff(debuff).any && area(8).friendly > 8', { 'healer', 'tank'}
+--
+-- silver.diseaseDispel_A, silver.diseaseDispelTargets_A = 'debuff(debuff),any && area(8).friendly > 8', { 'tank', ''dps, 'healer', ''}
+--
+-- silver.diseaseDispel_B, silver.diseaseDispelTargets_B = 'debuff(debuff),any && area(8).friendly > 8', { 'healer', 'dps',  'tank'}
+-- { 'Cleanse', silver.diseaseDispel_A, silver.diseaseDispelTargets_A}
+-- { 'Cleanse', silver.diseaseDispel_B, silver.diseaseDispelTargets_B}
+
+-- debuff A - Tank -> DPS -> Healer
+-- debuff B - Healer -> DPS -> Tank
+
 NeP.DSL:Register('curseDispel', function(unit)
 	------------------
 	-- BFA Dungeons --
@@ -254,6 +265,7 @@ NeP.DSL:Register('ignoreHeal', function(unit)
   -- Mythic+
   return NeP.DSL:Get('debuff.any')(unit,'Insatiable Torment')
   or NeP.DSL:Get('debuff.any')(unit,'Embrace of the Void')
+	or NeP.DSL:Get('hasName')(unit,'Avatar of Sethraliss') and NeP.DSL:Get('debuff.any')(unit, 'Tainted')
 end)
 
 NeP.DSL:Register('priorityTarget', function(unit)

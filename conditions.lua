@@ -121,6 +121,34 @@ NeP.FakeUnits:Add('critters', function()
 	return NeP.OM:Get('Critters')
 end)
 
+NeP.FakeUnits:Add('healable', function()
+  local tempTable = {}
+  for _, Obj in pairs(NeP.OM:Get('Friendly')) do
+    if NeP.DSL:Get('los')(Obj.key) and not NeP.DSL:Get('ignoreHeal')(Obj.key) then
+        tempTable[#tempTable+1] = {
+            key = Obj.key,
+            health = Obj.health,
+            prio = (NeP.DSL:Get('priorityHeal')(Obj.key) and 0.1 or 1) * NeP.DSL:Get('health')(Obj.key)
+        }
+    end
+  end
+  table.sort( tempTable, function(a,b) return a.prio < b.prio end )
+  return tempTable
+end)
+
+NeP.FakeUnits:Add('killable', function()
+  local tempTable = {}
+  for _, Obj in pairs(NeP.OM:Get('Enemy')) do
+    if NeP.DSL:Get('combat')(Obj.key) and NeP.DSL:Get('los')(Obj.key) and NeP.DSL:Get('safeCast') then
+        tempTable[#tempTable+1] = {
+            key = Obj.key
+        }
+    end
+  end
+
+  return tempTable
+end)
+
 local PauseCR = 1
 NeP.Listener:Add('NeP_Load','PLAYER_ENTERING_WORLD', function()
   PauseCR = 1
@@ -239,6 +267,7 @@ NeP.DSL:Register('energy.time_to_max', function()
     return deficit / eregen
 end)
 
+-- /dump NeP.DSL:Get('energypercent')()
 NeP.DSL:Register('energypercent', function()
   local max = UnitPowerMax('player')
   local curr = UnitPower('player')

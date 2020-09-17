@@ -83,9 +83,9 @@ local rotation = {
 
 	{ items},
 	{ essences},
-	{ 'Avenger\'s Shield', 'inRange.spell && infront && area(8).combatenemies >= 2', 'target'},
+	{ 'Avenger\'s Shield', 'inRange.spell && infront && area(8).combatenemies >= 2', { 'target', 'combatenemies'}},
 	{ 'Consecration', 'inRange.spell(Rebuke) && player.buff < gcd', { 'target', 'combatenemies'}},
-	{ 'Judgment', 'inRange.spell && infront && player.spell(Shield of the Righteous).recharge > 4', 'target'},
+	{ 'Judgment', 'inRange.spell && infront && player.spell(Shield of the Righteous).recharge > 4', { 'target', 'combatenemies'}},
 	{ 'Avenger\'s Shield', 'inRange.spell && infront', 'target'},
 	{ 'Hammer of the Righteous', 'inRange.spell(Rebuke) && infront', { 'target', 'combatenemies'}},
 	{ 'Consecration', 'inRange.spell(Rebuke)', { 'target', 'combatenemies'}},

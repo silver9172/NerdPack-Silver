@@ -62,7 +62,7 @@ local stealth = {
 }
 
 local rotation = {
-	{ stealth, 'player.stealthed'},
+	{ '/startattack', '!isattacking & target.enemy && !player.stealthed'},
 	{ interrupts, 'interruptAt(35)'},
 	{ cooldowns},
 	{ 'Garrote', 'inRange.spell(Rupture) && infront && debuff.duration <= gcd && player.combopoints.deficit >= 1', { 'target', 'combatenemies'}},
@@ -85,12 +85,12 @@ local preCombat = {
 }
 
 local inCombat = {
-	{ '/startattack', '!isattacking & target.enemy'},
 	{ utility},
 	{ tricks},
 	{ survival},
+	{ stealth, 'player.stealthed'},
 	{ rotation},
-	{ 'Poisoned Knife', 'inRange.spell && infront && energy.time_to_max <= gcd', 'target'},
+	{ 'Poisoned Knife', 'inRange.spell && infront && energy.time_to_max <= gcd && !player.stealthed', 'target'},
 }
 
 local outCombat = {
